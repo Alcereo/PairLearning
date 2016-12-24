@@ -23,26 +23,26 @@
 <!-- Server responses get written here -->
 <div id="messages"></div>
 
-<!-- Script to utilise the WebSocket -->
+<!-- Script to utilise the ChatSocketConnection -->
 <script type="text/javascript">
 
-    var webSocket;
+    var chatSocketConnection;
     var messages = document.getElementById("messages");
 
 
     function openSocket(){
         // Ensures only one connection is open at a time
-        if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED){
-            writeResponse("WebSocket is already opened.");
+        if(chatSocketConnection !== undefined && chatSocketConnection.readyState !== WebSocket.CLOSED){
+            writeResponse("ChatSocketConnection is already opened.");
             return;
         }
         // Create a new instance of the websocket
-        webSocket = new WebSocket("ws://localhost:8085/socket");
+        chatSocketConnection = new WebSocket("ws://localhost:8085/socket");
 
         /**
          * Binds functions to the listeners for the websocket.
          */
-        webSocket.onopen = function(event){
+        chatSocketConnection.onopen = function(event){
             // For reasons I can't determine, onopen gets called twice
             // and the first time event.data is undefined.
             // Leave a comment if you know the answer.
@@ -52,11 +52,11 @@
             writeResponse(event.data);
         };
 
-        webSocket.onmessage = function(event){
+        chatSocketConnection.onmessage = function(event){
             writeResponse(event.data);
         };
 
-        webSocket.onclose = function(event){
+        chatSocketConnection.onclose = function(event){
             writeResponse("Connection closed");
         };
     }
@@ -66,11 +66,11 @@
      */
     function send(){
         var text = document.getElementById("messageinput").value;
-        webSocket.send(text);
+        chatSocketConnection.send(text);
     }
 
     function closeSocket(){
-        webSocket.close();
+        chatSocketConnection.close();
     }
 
     function writeResponse(text){

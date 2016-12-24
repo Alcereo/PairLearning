@@ -1,6 +1,5 @@
 package ru.alcereo.pairlearning.DAO;
 
-
 import ru.alcereo.pairlearning.Service.UserFront;
 
 import java.util.UUID;
@@ -64,6 +63,5 @@ public class User implements UserFront {
         result = 31 * result + (passwordHash != null ? passwordHash.hashCode() : 0);
         return result;
     }
-
 
 }

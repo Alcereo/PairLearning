@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-
 public class UsersAPI extends HttpServlet{
 
     private static final Logger log = LoggerFactory.getLogger(UsersAPI.class);

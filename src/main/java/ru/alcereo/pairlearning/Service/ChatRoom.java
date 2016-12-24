@@ -1,28 +1,22 @@
 package ru.alcereo.pairlearning.Service;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.DAO.SessionDAO;
-import ru.alcereo.pairlearning.DAO.SessionDAOMock;
-import ru.alcereo.pairlearning.DAO.User;
-
 import javax.websocket.Session;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.concurrent.locks.Lock;
 
-public class ChatRoom {
+/**
+ * Created by alcereo on 24.12.16.
+ */
+public interface ChatRoom {
 
-    private static final Logger log = LoggerFactory.getLogger(ChatRoom.class);
+    Lock getLock();
 
-    private static final SessionDAO sessions = new SessionDAOMock();
+    void onMessage(String message, Session session) throws IOException;
 
-    private final Map<String, Session> sessionMap = new HashMap<>();
+    void onClose(Session session) throws IOException;
 
-    private boolean roomIsEmpty = true;
+    void inviteToThisRoom(UserFront user, Session session, Roomable chatSocketConnection);
 
-    public void addToRoom(String sessionId, Session session){
-
-    }
+    boolean canInvite(UserFront user);
 
 }
