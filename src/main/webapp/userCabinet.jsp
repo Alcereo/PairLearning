@@ -15,8 +15,11 @@
 <%if (SessionProvider.validateSession(request.getSession().getId())){%>
     <h3>Личный кабинет пользователя</h3>
     Привет, <%=SessionProvider.getCurrentUser(request.getSession().getId()).getName()%>!
+
+<a href="/ChatRoom.jsp">Чат</a>
 <%}else{%>
     Требуется авторизация!
+    <a href="/">Гланая страница</a>
 <%}%>
 
 </body>

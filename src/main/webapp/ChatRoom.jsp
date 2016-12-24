@@ -12,6 +12,10 @@
 </head>
 <body>
 
+<a href="/">Главная страница</a>
+
+<p></p>
+
 <div>
     <input type="text" id="messageinput"/>
 </div>

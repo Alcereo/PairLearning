@@ -50,7 +50,7 @@ public class ChatSocketConnection implements Roomable {
         log.debug("Сообщение:{} от соединения: {}", message, wsSession.getHttpSessionId());
 
         try {
-            chatRoom.onMessage(message, session);
+            chatRoom.onMessage(message, new SessionDecorator(session));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,7 +64,7 @@ public class ChatSocketConnection implements Roomable {
         log.debug("Соединение разорвано: {}", wsSession.getHttpSessionId());
 
         try {
-            chatRoom.onClose(session);
+            chatRoom.onClose(new SessionDecorator(session));
         } catch (IOException e) {
             e.printStackTrace();
         }

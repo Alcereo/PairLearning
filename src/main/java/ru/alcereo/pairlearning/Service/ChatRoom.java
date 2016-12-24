@@ -11,11 +11,11 @@ public interface ChatRoom {
 
     Lock getLock();
 
-    void onMessage(String message, Session session) throws IOException;
+    void onMessage(String message, MessageHandler handler) throws IOException;
 
-    void onClose(Session session) throws IOException;
+    void onClose(MessageHandler handler) throws IOException;
 
-    void inviteToThisRoom(UserFront user, Session session, Roomable chatSocketConnection);
+    void inviteToThisRoom(UserFront user, MessageHandler handler, Roomable roomable);
 
     boolean canInvite(UserFront user);
 

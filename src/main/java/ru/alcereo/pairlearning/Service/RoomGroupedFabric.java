@@ -7,9 +7,9 @@ import javax.websocket.Session;
 public class RoomGroupedFabric implements RoomFabric {
 
     @Override
-    public ChatRoom newRoom(UserFront user, Session session, ChatSocketConnection chatSocketConnection) {
+    public ChatRoom newRoom(UserFront user, MessageHandler handler, ChatSocketConnection chatSocketConnection) {
         ChatRoom newRoom = new ChatRoomGrouped();
-        newRoom.inviteToThisRoom(user, session, chatSocketConnection);
+        newRoom.inviteToThisRoom(user, handler, chatSocketConnection);
         return newRoom;
     }
 
