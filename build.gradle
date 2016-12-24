@@ -1,0 +1,28 @@
+group 'ru.alcereo'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    compile "org.slf4j:slf4j-api:1.7.21"
+    compile "org.slf4j:slf4j-log4j12:1.7.21"
+
+    compile "org.postgresql:postgresql:9.4.1212.jre7"
+    compile "javax.servlet:javax.servlet-api:3.1.0"
+
+//    compile group: 'javax.websocket', name: 'javax.websocket-api', version: '1.1'
+
+    compile group: 'org.apache.tomcat', name: 'tomcat-websocket-api', version: '9.0.0.M15'
+    compile group: 'org.apache.tomcat', name: 'tomcat-websocket', version: '9.0.0.M15'
+
+
+}
