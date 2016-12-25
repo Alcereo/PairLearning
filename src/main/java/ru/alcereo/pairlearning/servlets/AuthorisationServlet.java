@@ -2,18 +2,20 @@ package ru.alcereo.pairlearning.servlets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.Service.SessionProvider;
+import ru.alcereo.pairlearning.Service.SessionService;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-public class UsersAPI extends HttpServlet{
+@WebServlet("/users/api")
+public class AuthorisationServlet extends HttpServlet{
 
-    private static final Logger log = LoggerFactory.getLogger(UsersAPI.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthorisationServlet.class);
 
     {
-        log.debug("New instance of UserAPI: {}",this);
+        log.debug("New instance: {}",this);
     }
 
     @Override
@@ -23,7 +25,7 @@ public class UsersAPI extends HttpServlet{
 
         HttpSession session = req.getSession();
 
-        if (SessionProvider.userAuthorization(
+        if (SessionService.userAuthorization(
                 req.getParameter("login"),
                 req.getParameter("passwordHash"),
                 session.getId())) {
@@ -37,6 +39,5 @@ public class UsersAPI extends HttpServlet{
         }
 
     }
-
 
 }

@@ -5,7 +5,7 @@ public interface SessionDAO {
     Session getSessionById(String id);
     Session getSessionByUser(User user);
 
-    void addSession(Session session);
+    void insertOrUpdateSession(Session session);
     void deleteSession(Session session);
 
 }

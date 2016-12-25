@@ -13,5 +13,6 @@ public interface UsersDAO {
     User findByLogin(String login);
     void addUser(User user);
     void deleteUser(User user);
+    User makeActive(User user);
 
 }

@@ -5,12 +5,14 @@ import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class SessionDAOMock implements SessionDAO {
 
-    private static final List<Session> sessionList = new ArrayList<>();
+    private static final Set<Session> sessionList = new HashSet<>();
 
     @Override
     public Session getSessionById(String id) {
@@ -35,7 +37,10 @@ public class SessionDAOMock implements SessionDAO {
     }
 
     @Override
-    public void addSession(Session session) {
+    public void insertOrUpdateSession(Session session) {
+        if (sessionList.contains(session))
+            sessionList.remove(session);
+
         sessionList.add(session);
     }
 
@@ -43,4 +48,5 @@ public class SessionDAOMock implements SessionDAO {
     public void deleteSession(Session session) {
         sessionList.remove(session);
     }
+
 }

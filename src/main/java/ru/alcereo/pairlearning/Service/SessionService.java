@@ -5,7 +5,7 @@ import ru.alcereo.pairlearning.DAO.*;
 
 import java.util.Objects;
 
-public class SessionProvider {
+public class SessionService {
 
     private static final UsersDAO users = new UsersDAOMock();
     private static final SessionDAO sessions = new SessionDAOMock();
@@ -19,7 +19,7 @@ public class SessionProvider {
             User user = users.findByLogin(login);
 
             if (user != null && Objects.equals(user.getPasswordHash(), password)) {
-                sessions.addSession(new Session(sessionId, user));
+                sessions.insertOrUpdateSession(new Session(sessionId, user));
                 result = true;
             }
 
@@ -45,7 +45,8 @@ public class SessionProvider {
 
         if (SessionId != null) {
             Session session = sessions.getSessionById(SessionId);
-            result = session.getUser();
+            if (session != null)
+                result = session.getUser();
         }
 
         return result;

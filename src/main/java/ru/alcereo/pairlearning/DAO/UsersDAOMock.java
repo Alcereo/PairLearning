@@ -13,10 +13,21 @@ public class UsersDAOMock implements UsersDAO {
     private static List<User> users = new ArrayList<>();
 
     static {
-        users.add(new User(UUID.randomUUID(),"Ivan1", "40bd001563085fc35165329ea1ff5c5ecbdbbeef","Иван1"));
-        users.add(new User(UUID.randomUUID(),"Ivan2","40bd001563085fc35165329ea1ff5c5ecbdbbeef","Иван2"));
-        users.add(new User(UUID.randomUUID(),"Ivan3","40bd001563085fc35165329ea1ff5c5ecbdbbeef","Иван3"));
-        users.add(new User(UUID.randomUUID(),"Ivan4","40bd001563085fc35165329ea1ff5c5ecbdbbeef","Иван4"));
+        users.add(new User(
+                UUID.randomUUID(),
+                "Ivan1",
+                "40bd001563085fc35165329ea1ff5c5ecbdbbeef",
+                "Иван1",
+                "",
+                true));
+
+        users.add(new User(
+                UUID.randomUUID(),
+                "Ivan2",
+                "40bd001563085fc35165329ea1ff5c5ecbdbbeef",
+                "Иван2",
+                "",
+                true));
     }
 
     @Override
@@ -55,4 +66,21 @@ public class UsersDAOMock implements UsersDAO {
     public void deleteUser(User user) {
 
     }
+
+    @Override
+    public User makeActive(User user) {
+
+        User resultUser = null;
+
+        for (User innerUser: users)
+            if (innerUser.equals(user)){
+                users.remove(innerUser);
+                resultUser = innerUser.getActive();
+                users.add(resultUser);
+            }
+
+        return resultUser;
+
+    }
+
 }

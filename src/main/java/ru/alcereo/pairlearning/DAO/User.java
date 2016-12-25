@@ -10,12 +10,16 @@ public class User implements UserFront {
     private final String login;
     private final String passwordHash;
     private final String name;
+    private final String email;
+    private final boolean active;
 
-    public User(UUID id, String login, String passwordHash, String name) {
-        this.uid = id;
+    public User(UUID uid, String login, String passwordHash, String name, String email, boolean active) {
+        this.uid = uid;
         this.login = login;
         this.passwordHash = passwordHash;
         this.name = name;
+        this.email = email;
+        this.active = active;
     }
 
     public User() {
@@ -23,7 +27,9 @@ public class User implements UserFront {
                 UUID.fromString(""),
                 "",
                 "",
-                ""
+                "",
+                "",
+                false
         );
     }
 
@@ -42,6 +48,25 @@ public class User implements UserFront {
     @Override
     public String getName() {
         return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    User getActive(){
+        return new User(
+                this.getUid(),
+                this.login,
+                this.passwordHash,
+                this.getName(),
+                this.email,
+                true
+        );
     }
 
     @Override
@@ -64,4 +89,15 @@ public class User implements UserFront {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "uid=" + uid +
+                ", login='" + login + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", active=" + active +
+                '}';
+    }
 }

@@ -1,4 +1,4 @@
-<%@ page import="ru.alcereo.pairlearning.Service.SessionProvider" %><%--
+<%@ page import="ru.alcereo.pairlearning.Service.SessionService" %><%--
   Created by IntelliJ IDEA.
   User: alcereo
   Date: 24.12.16
@@ -16,11 +16,11 @@
 
 <p></p>
 
-<%if (SessionProvider.validateSession(request.getSession().getId())){%>
+<%if (SessionService.validateSession(request.getSession().getId())){%>
 <h3>Чат с пользователем</h3>
 <p></p>
 
-Имя в чате: <%=SessionProvider.getCurrentUser(request.getSession().getId()).getName()%>
+Имя в чате: <%=SessionService.getCurrentUser(request.getSession().getId()).getName()%>
 <p></p>
 <div>
     <input type="text" id="messageinput"/>

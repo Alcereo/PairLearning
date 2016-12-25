@@ -23,9 +23,9 @@ public class SocketSessionProvider{
 
         if (SessionId != null) {
 
-            if (SessionProvider.validateSession(SessionId)) {
+            if (SessionService.validateSession(SessionId)) {
 
-                UserFront user = SessionProvider.getCurrentUser(SessionId);
+                UserFront user = SessionService.getCurrentUser(SessionId);
 
                 for(ChatRoom chatRoom: rooms){
                     chatRoom.getLock().lock();

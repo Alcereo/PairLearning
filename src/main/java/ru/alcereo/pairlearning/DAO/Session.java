@@ -24,4 +24,20 @@ public class Session {
     public User getUser() {
         return user;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Session session = (Session) o;
+
+        return sessionId != null ? sessionId.equals(session.sessionId) : session.sessionId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return sessionId != null ? sessionId.hashCode() : 0;
+    }
+
 }

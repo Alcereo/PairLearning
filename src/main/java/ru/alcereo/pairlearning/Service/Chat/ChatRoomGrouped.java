@@ -24,7 +24,9 @@ public class ChatRoomGrouped implements ChatRoom {
 
     public boolean canInvite(UserFront user){
         //Тут боллее серьезная обработка
-        return roomIsEmpty;
+        // Пока проверка, что комната пустая
+        // и пользователь не тот же самый
+        return (roomIsEmpty && !sessionMap.values().contains(user));
     }
 
     @Override
