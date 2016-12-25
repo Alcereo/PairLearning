@@ -4,7 +4,6 @@ import org.apache.tomcat.websocket.WsSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.ChatRoom;
-import ru.alcereo.pairlearning.Service.Roomable;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 @ServerEndpoint(value = "/socket")
-public class ChatSocketConnection implements Roomable {
+public class ChatSocketConnection {
 
     private static final Logger log = LoggerFactory.getLogger(ChatSocketConnection.class);
 

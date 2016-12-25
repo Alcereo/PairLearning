@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocketSessionProvider {
+public class SocketSessionProvider{
 
     private static final Logger log = LoggerFactory.getLogger(SocketSessionProvider.class);
 
@@ -27,11 +27,11 @@ public class SocketSessionProvider {
                 for(ChatRoom chatRoom: rooms){
                     chatRoom.getLock().lock();
                     try{
-                        if (chatRoom.canInvite(user))
-                            chatRoom.inviteToThisRoom(
-                                    user,
-                                    new SessionDecorator(session),
-                                    chatSocketConnection);
+                        if (chatRoom.canInvite(user)) {
+                            chatRoom.inviteToThisRoom(user, new SessionDecorator(session));
+
+                            chatSocketConnection.setChatRoom(chatRoom);
+                        }
 
                     }finally {
                         chatRoom.getLock().unlock();
@@ -41,9 +41,9 @@ public class SocketSessionProvider {
                 if (chatSocketConnection.roomIsEmpty()){
                     ChatRoom chatRoom = roomFabric.newRoom(
                             user,
-                            new SessionDecorator(session),
-                            chatSocketConnection);
+                            new SessionDecorator(session));
 
+                    chatSocketConnection.setChatRoom(chatRoom);
                     rooms.add(chatRoom);
                 }
 

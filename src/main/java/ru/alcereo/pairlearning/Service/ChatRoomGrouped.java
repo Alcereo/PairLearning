@@ -57,16 +57,25 @@ public class ChatRoomGrouped implements ChatRoom {
             for (MessageHandler innerSession : sessionMap.keySet())
                 if (!innerSession.equals(handler)) {
                     innerSession.sendMessage(String.format("%s закрыл сессию.", user.getName()));
-                    sessionMap.remove(innerSession);
-                    innerSession.close();
+
+                    new Thread(() -> {
+                        try {
+                            innerSession.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
                 }
+
+            sessionMap.clear();
+            roomIsEmpty = true;
         } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public void inviteToThisRoom(UserFront user, MessageHandler handler, Roomable roomable) {
+    public void inviteToThisRoom(UserFront user, MessageHandler handler) {
 
         lock.lock();
         try{
@@ -74,7 +83,6 @@ public class ChatRoomGrouped implements ChatRoom {
                 roomIsEmpty = false;
 
             sessionMap.put(handler, user);
-            roomable.setChatRoom(this);
 
             log.debug("User: {} invite room: {}",user.getName(),this);
         }finally {

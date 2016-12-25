@@ -15,7 +15,7 @@ public interface ChatRoom {
 
     void onClose(MessageHandler handler) throws IOException;
 
-    void inviteToThisRoom(UserFront user, MessageHandler handler, Roomable roomable);
+    void inviteToThisRoom(UserFront user, MessageHandler handler);
 
     boolean canInvite(UserFront user);
 
