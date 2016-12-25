@@ -1,6 +1,6 @@
 package ru.alcereo.pairlearning.SocketChat;
 
-import ru.alcereo.pairlearning.Service.MessageHandler;
+import ru.alcereo.pairlearning.Service.Chat.MessageHandler;
 
 import javax.websocket.Session;
 import java.io.IOException;

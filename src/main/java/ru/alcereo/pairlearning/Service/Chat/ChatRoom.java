@@ -1,6 +1,7 @@
-package ru.alcereo.pairlearning.Service;
+package ru.alcereo.pairlearning.Service.Chat;
 
-import javax.websocket.Session;
+import ru.alcereo.pairlearning.Service.UserFront;
+
 import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 

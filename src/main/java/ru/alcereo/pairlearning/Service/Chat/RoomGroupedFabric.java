@@ -1,8 +1,6 @@
-package ru.alcereo.pairlearning.Service;
+package ru.alcereo.pairlearning.Service.Chat;
 
-import ru.alcereo.pairlearning.SocketChat.ChatSocketConnection;
-
-import javax.websocket.Session;
+import ru.alcereo.pairlearning.Service.UserFront;
 
 public class RoomGroupedFabric implements RoomFabric {
 

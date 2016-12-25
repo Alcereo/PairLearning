@@ -3,7 +3,7 @@ package ru.alcereo.pairlearning.SocketChat;
 import org.apache.tomcat.websocket.WsSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.Service.ChatRoom;
+import ru.alcereo.pairlearning.Service.Chat.ChatRoom;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;

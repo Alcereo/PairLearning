@@ -3,6 +3,9 @@ package ru.alcereo.pairlearning.SocketChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.*;
+import ru.alcereo.pairlearning.Service.Chat.ChatRoom;
+import ru.alcereo.pairlearning.Service.Chat.RoomFabric;
+import ru.alcereo.pairlearning.Service.Chat.RoomGroupedFabric;
 
 import javax.websocket.Session;
 import java.io.IOException;
@@ -16,7 +19,7 @@ public class SocketSessionProvider{
     private static final List<ChatRoom> rooms = new ArrayList<>();
     private static final RoomFabric roomFabric = new RoomGroupedFabric();
 
-    public static void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection) {
+    static void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection) {
 
         if (SessionId != null) {
 

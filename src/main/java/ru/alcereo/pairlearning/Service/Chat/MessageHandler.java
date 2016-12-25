@@ -1,4 +1,4 @@
-package ru.alcereo.pairlearning.Service;
+package ru.alcereo.pairlearning.Service.Chat;
 
 
 import java.io.IOException;
