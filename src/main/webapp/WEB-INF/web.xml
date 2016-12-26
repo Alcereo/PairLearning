@@ -38,4 +38,12 @@
         <url-pattern>/js/*</url-pattern>
     </servlet-mapping>
 
+
+
+    <!--DB-->
+    <resource-ref>
+        <description>Database for application</description>
+        <res-ref-name>jdbc/PairLearning</res-ref-name>
+    </resource-ref>
+
 </web-app>

@@ -37,16 +37,18 @@ public class SessionDAOMock implements SessionDAO {
     }
 
     @Override
-    public void insertOrUpdateSession(Session session) {
+    public boolean insertOrUpdateSession(Session session) {
         if (sessionList.contains(session))
             sessionList.remove(session);
 
         sessionList.add(session);
+        return true;
     }
 
     @Override
-    public void deleteSession(Session session) {
+    public boolean deleteSession(Session session) {
         sessionList.remove(session);
+        return true;
     }
 
 }

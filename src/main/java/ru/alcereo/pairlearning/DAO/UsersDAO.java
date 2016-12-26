@@ -11,8 +11,8 @@ public interface UsersDAO {
     List<User> getAll();
     User findByUid(UUID uuid);
     User findByLogin(String login);
-    void addUser(User user);
-    void deleteUser(User user);
+    boolean addUser(User user);
+    boolean deleteUser(User user);
     User makeActive(User user);
 
 }

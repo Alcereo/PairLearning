@@ -7,8 +7,8 @@ import java.util.Objects;
 
 public class SessionService {
 
-    private static final UsersDAO users = new UsersDAOMock();
-    private static final SessionDAO sessions = new SessionDAOMock();
+    private static final UsersDAO users = new UsersDAOPG();
+    private static final SessionDAO sessions = new SessionDAOPG();
 
     public static boolean userAuthorization(String login, String password, String sessionId) {
 

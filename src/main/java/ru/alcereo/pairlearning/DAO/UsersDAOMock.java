@@ -1,8 +1,5 @@
 package ru.alcereo.pairlearning.DAO;
 
-import ru.alcereo.pairlearning.DAO.User;
-import ru.alcereo.pairlearning.DAO.UsersDAO;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,13 +55,14 @@ public class UsersDAOMock implements UsersDAO {
     }
 
     @Override
-    public void addUser(User user) {
+    public boolean addUser(User user) {
         users.add(user);
+        return true;
     }
 
     @Override
-    public void deleteUser(User user) {
-
+    public boolean deleteUser(User user) {
+        return false;
     }
 
     @Override
@@ -75,7 +73,7 @@ public class UsersDAOMock implements UsersDAO {
         for (User innerUser: users)
             if (innerUser.equals(user)){
                 users.remove(innerUser);
-                resultUser = innerUser.getActive();
+                resultUser = innerUser.makeActive();
                 users.add(resultUser);
             }
 

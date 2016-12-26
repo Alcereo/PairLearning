@@ -13,8 +13,8 @@ public class RegistrationService {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
-    private static final UsersDAO users = new UsersDAOMock();
-    private static final SessionDAO sessions = new SessionDAOMock();
+    private static final UsersDAO users = new UsersDAOPG();
+    private static final SessionDAO sessions = new SessionDAOPG();
 
     private static final Map<Integer, User> confirmCodes = new HashMap<>();
 

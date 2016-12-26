@@ -58,7 +58,7 @@ public class User implements UserFront {
         return active;
     }
 
-    User getActive(){
+    User makeActive(){
         return new User(
                 this.getUid(),
                 this.login,
@@ -100,4 +100,5 @@ public class User implements UserFront {
                 ", active=" + active +
                 '}';
     }
+
 }
