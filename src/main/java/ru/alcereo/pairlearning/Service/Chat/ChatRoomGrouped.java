@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.UserFront;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,6 +19,8 @@ public class ChatRoomGrouped implements ChatRoom {
 
     private final Map<MessageHandler, UserFront> sessionMap = new HashMap<>();
 
+    private final InviteChecker inviteChecker = new TopicInviteChecker();
+
     private volatile boolean roomIsEmpty = true;
 
     private final Lock lock = new ReentrantLock();
@@ -26,7 +30,13 @@ public class ChatRoomGrouped implements ChatRoom {
         //Тут боллее серьезная обработка
         // Пока проверка, что комната пустая
         // и пользователь не тот же самый
-        return (roomIsEmpty && !sessionMap.values().contains(user));
+
+        List<UserFront> users = new ArrayList<>(sessionMap.values());
+        users.add(user);
+
+        return (!sessionMap.values().contains(user)
+                && inviteChecker.usersInvitable(users));
+
     }
 
     @Override
@@ -82,20 +92,20 @@ public class ChatRoomGrouped implements ChatRoom {
 
         lock.lock();
         try{
-            if (sessionMap.size()>0)
-                roomIsEmpty = false;
+            if (canInvite(user)){
+                sessionMap.put(handler, user);
 
-            sessionMap.put(handler, user);
+                log.debug("User: {} invite room: {}",user.getName(),this);
 
-            log.debug("User: {} invite room: {}",user.getName(),this);
+
+                try {
+                    onMessage("подключился к чату...", handler);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }finally {
             lock.unlock();
-        }
-
-        try {
-            onMessage("подключился к чату...", handler);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }

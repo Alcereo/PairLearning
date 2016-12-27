@@ -1,3 +1,9 @@
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.PreparedStatement
+import java.sql.ResultSet
+import java.sql.Statement
+
 group 'ru.alcereo'
 version '1.0-SNAPSHOT'
 

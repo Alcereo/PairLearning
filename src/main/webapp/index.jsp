@@ -32,7 +32,7 @@
     $("#authorization").submit(function (event) {
 
         event.preventDefault();
-        var posting = $.post(
+        $.post(
             "/users/api",
             {
                 login: $('#login').val(),
