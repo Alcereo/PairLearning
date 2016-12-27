@@ -16,12 +16,9 @@
 </head>
 <body>
 
-<%if (SessionService.validateSession(request.getSession().getId())){%>
-<% UserFront user = SessionService.getCurrentUser(request.getSession().getId()); %>
-
     <h3>Личный кабинет пользователя</h3>
 
-    Привет, <%=user.getName()%>!
+    Привет, <%=((UserFront)request.getAttribute("user")).getName()%>!
 
 <p></p>
 
@@ -32,7 +29,7 @@
             <td> Наименование темы </td> <td> Изучить </td> <td> Рассказать </td>
         </tr>
 
-        <% for (TopicRowFront topicRow: TopicService.getUserTopic(user)) { %>
+        <% for (TopicRowFront topicRow: TopicService.getUserTopic((UserFront)request.getAttribute("user"))) { %>
             <tr>
                 <td> <%=topicRow.getTopic().getTitle()%> </td>
                 <td> <input type="checkbox" class="checker" id="<%=topicRow.getTopic().getId()%>" <%=(topicRow.isLearn() ? "checked" : "")%> value="learn"> </td>
@@ -47,11 +44,10 @@
 
 <a href="/chatroom">Чат</a>
 
-<%}else{%>
-    Требуется авторизация!
-    <a href="/">Гланая страница</a>
-<%}%>
-
+<form action="${pageContext.request.contextPath}/users/api" method="post">
+    <input name="action" value="exit" hidden>
+    <input type="submit" value="Выход">
+</form>
 
 <script type='text/javascript'>
 

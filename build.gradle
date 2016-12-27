@@ -1,8 +1,17 @@
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.Statement
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath group: 'org.hsqldb', name: 'hsqldb', version: gradle.hsqldbVersion
+    }
+}
+
+plugins {
+    id 'org.liquibase.gradle' version '1.1.1'
+}
 
 group 'ru.alcereo'
 version '1.0-SNAPSHOT'
@@ -25,10 +34,38 @@ dependencies {
     compile "org.postgresql:postgresql:9.4.1212.jre7"
     compile "javax.servlet:javax.servlet-api:3.1.0"
 
-//    compile group: 'javax.websocket', name: 'javax.websocket-api', version: '1.1'
+    compile group: 'javax.websocket', name: 'javax.websocket-api', version: '1.1'
 
     compile group: 'org.apache.tomcat', name: 'tomcat-websocket-api', version: '9.0.0.M15'
     compile group: 'org.apache.tomcat', name: 'tomcat-websocket', version: '9.0.0.M15'
+    
+    compile group: 'org.mockito', name: 'mockito-core', version: '2.3.4'
+}
 
 
+apply from: 'databaseHSQL.gradle'
+
+
+def dbUser = project.properties['dbUser'] ?: gradle.dbUser
+def dbPassword = project.properties['dbPassword'] ?: gradle.dbPassword
+def dbUrl = project.properties['dbUrl'] ?: gradle.dbUrl
+
+liquibase {
+    activities {
+        //noinspection GroovyAssignabilityCheck
+        main {
+            changeLogFile 'src/sql/main/changelog.xml'
+            url dbUrl
+            username dbUser
+            password dbPassword
+        }
+    }
+}
+
+task updateDbMain(dependsOn: startDatabase) {
+    group = 'develop'
+    doLast {
+        liquibase.runList = 'main'
+        tasks.update.execute()
+    }
 }

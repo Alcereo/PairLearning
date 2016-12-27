@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ru.alcereo.pairlearning.Service.UserFront" %><%--
   Created by IntelliJ IDEA.
   User: alcereo
   Date: 23.12.16
@@ -13,6 +13,9 @@
     <script src="<%=request.getContextPath()%>/js/utils.js"></script>
 </head>
 <body>
+
+<% if (request.getAttribute("user")==null) {%>
+
 Регистрация нового пользователя
 
 <form id="registration">
@@ -44,6 +47,18 @@
     <input type="submit" value="Подтвердить">
 
 </form>
+
+<%}else{%>
+<p></p>
+Вы зашли, как: <%=((UserFront)request.getAttribute("user")).getName()%>
+<p></p>
+
+<form action="${pageContext.request.contextPath}/users/api" method="post">
+    <input name="action" value="exit" hidden>
+    <input type="submit" value="Выход">
+</form>
+
+<%}%>
 
 <script type='text/javascript'>
 

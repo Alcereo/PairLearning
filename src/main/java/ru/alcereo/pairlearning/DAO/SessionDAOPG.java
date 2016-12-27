@@ -3,6 +3,8 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.DAO.models.Session;
+import ru.alcereo.pairlearning.DAO.models.User;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -13,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class SessionDAOPG implements SessionDAO {
+public class SessionDAOPG implements SessionDAO{
 
     private static final Logger log = LoggerFactory.getLogger(SessionDAOPG.class);
 
@@ -22,17 +24,21 @@ public class SessionDAOPG implements SessionDAO {
         try {
             ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
         } catch (NamingException e) {
-            e.printStackTrace();
+            log.warn("DataSource не был загружен из контекста, используется PGSimpleDataSource");
+
+            PGSimpleDataSource source = new PGSimpleDataSource();
+            source.setServerName("localhost");
+            source.setDatabaseName("PairLearning");
+            source.setUser("postgres");
+            source.setPassword("");
+            ds = source;
         }
     }
-//    static {
-//        PGSimpleDataSource source = new PGSimpleDataSource();
-//        source.setServerName("localhost");
-//        source.setDatabaseName("PairLearning");
-//        source.setUser("postgres");
-//        source.setPassword("");
-//        ds = source;
-//    }
+
+
+    public static void setDs(DataSource ds) {
+        SessionDAOPG.ds = ds;
+    }
 
     private User userFromResultSet(ResultSet resultSet) throws SQLException {
 
@@ -55,7 +61,6 @@ public class SessionDAOPG implements SessionDAO {
     }
 
 
-    @Override
     public Session getSessionById(String id) {
 
         Session result=null;
@@ -75,14 +80,12 @@ public class SessionDAOPG implements SessionDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
         }
 
         return result;
     }
 
-    @Override
     public Session getSessionByUser(User user) {
         Session result=null;
 
@@ -100,14 +103,13 @@ public class SessionDAOPG implements SessionDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
         }
 
         return result;
     }
 
-    @Override
     public boolean insertOrUpdateSession(Session session) {
 
         String upsertQuery =
@@ -148,8 +150,7 @@ public class SessionDAOPG implements SessionDAO {
 
     }
 
-    @Override
-    public boolean deleteSession(Session session) {
+    public boolean deleteSessionById(String sessionId) {
 
         boolean result=false;
 
@@ -158,7 +159,7 @@ public class SessionDAOPG implements SessionDAO {
                 PreparedStatement st = conn.prepareStatement("DELETE FROM sessions WHERE id = ?");
         ){
 
-            st.setString(1, session.getSessionId());
+            st.setString(1, sessionId);
 
             result = st.executeUpdate()==1;
 
@@ -171,7 +172,7 @@ public class SessionDAOPG implements SessionDAO {
 
     }
 
-    public static void main(String[] args) {
+    public void main(String[] args) {
 
         SessionDAOPG sessionDAOPG = new SessionDAOPG();
 

@@ -1,4 +1,5 @@
-<%@ page import="ru.alcereo.pairlearning.Service.SessionService" %><%--
+<%@ page import="ru.alcereo.pairlearning.Service.SessionService" %>
+<%@ page import="ru.alcereo.pairlearning.Service.UserFront" %><%--
   Created by IntelliJ IDEA.
   User: alcereo
   Date: 24.12.16
@@ -16,11 +17,10 @@
 
 <p></p>
 
-<%if (SessionService.validateSession(request.getSession().getId())){%>
 <h3>Чат с пользователем</h3>
 <p></p>
 
-Имя в чате: <%=SessionService.getCurrentUser(request.getSession().getId()).getName()%>
+Имя в чате: <%=((UserFront)request.getAttribute("user")).getName()%>
 <p></p>
 <div>
     <input type="text" id="messageinput"/>
@@ -32,13 +32,6 @@
 </div>
 <!-- Server responses get written here -->
 <div id="messages"></div>
-
-<%}else{%>
-Требуется авторизация!
-<a href="/">Гланая страница</a>
-<%}%>
-
-
 
 
 <!-- Script to utilise the ChatSocketConnection -->

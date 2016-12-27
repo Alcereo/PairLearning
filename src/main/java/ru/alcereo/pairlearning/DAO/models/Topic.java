@@ -1,4 +1,4 @@
-package ru.alcereo.pairlearning.DAO;
+package ru.alcereo.pairlearning.DAO.models;
 
 import ru.alcereo.pairlearning.Service.TopicFront;
 

@@ -17,6 +17,8 @@ public class RegistrationServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationServlet.class);
 
+    private static final RegistrationService registrationService = new RegistrationService();
+
     {
         log.debug("New instance: {}",this);
     }
@@ -45,7 +47,7 @@ public class RegistrationServlet extends HttpServlet {
         HttpSession session = req.getSession();
 
         switch (
-                RegistrationService.registration(
+                registrationService.registration(
                         session.getId(),
                         req.getParameter("login"),
                         req.getParameter("name"),
@@ -89,7 +91,7 @@ public class RegistrationServlet extends HttpServlet {
 
         log.debug("Получили код подтверждения: {}", code);
 
-        if(RegistrationService.confirmRegistration(
+        if(registrationService.confirmRegistration(
                 session.getId(),
                 code))
             resp.setStatus(200);

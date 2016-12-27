@@ -12,6 +12,8 @@ import java.io.IOException;
 @WebServlet("/users/api")
 public class AuthorisationServlet extends HttpServlet{
 
+    private final SessionService sessionService = new SessionService();
+
     private static final Logger log = LoggerFactory.getLogger(AuthorisationServlet.class);
 
     {
@@ -25,18 +27,41 @@ public class AuthorisationServlet extends HttpServlet{
 
         HttpSession session = req.getSession();
 
-        if (SessionService.userAuthorization(
-                req.getParameter("login"),
-                req.getParameter("passwordHash"),
-                session.getId())) {
+        String action = req.getParameter("action");
 
-            log.debug("Пользователь авторизовался: {}, {}", req.getParameter("login"), session.getId());
+        if (action!=null){
 
-            resp.setStatus(200);
+            switch (action){
+                case "auth":
 
-        } else {
+                    if (SessionService.userAuthorization(
+                            req.getParameter("login"),
+                            req.getParameter("passwordHash"),
+                            session.getId())) {
+
+                        log.debug("Пользователь авторизовался: {}, {}", req.getParameter("login"), session.getId());
+
+                        resp.setStatus(200);
+
+                    } else {
+                        resp.setStatus(401);
+                    }
+
+                    break;
+
+                case "exit":
+
+                    SessionService.deleteSession(session.getId());
+                    resp.sendRedirect("/");
+
+                    break;
+
+                default:
+                    resp.setStatus(401);
+            }
+
+        }else
             resp.setStatus(401);
-        }
 
     }
 

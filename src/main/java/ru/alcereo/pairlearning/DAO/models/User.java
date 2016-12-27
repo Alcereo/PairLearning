@@ -1,4 +1,4 @@
-package ru.alcereo.pairlearning.DAO;
+package ru.alcereo.pairlearning.DAO.models;
 
 import ru.alcereo.pairlearning.Service.UserFront;
 
@@ -58,7 +58,7 @@ public class User implements UserFront {
         return active;
     }
 
-    User makeActive(){
+    public User makeActive(){
         return new User(
                 this.getUid(),
                 this.login,

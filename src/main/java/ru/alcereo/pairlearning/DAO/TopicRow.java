@@ -1,10 +1,8 @@
 package ru.alcereo.pairlearning.DAO;
 
-import ru.alcereo.pairlearning.Service.TopicFront;
+import ru.alcereo.pairlearning.DAO.models.Topic;
+import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.TopicRowFront;
-import ru.alcereo.pairlearning.Service.UserFront;
-
-import java.util.UUID;
 
 
 public class TopicRow implements TopicRowFront {

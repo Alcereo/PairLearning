@@ -1,6 +1,4 @@
-package ru.alcereo.pairlearning.DAO;
-
-import ru.alcereo.pairlearning.DAO.User;
+package ru.alcereo.pairlearning.DAO.models;
 
 public class Session {
 

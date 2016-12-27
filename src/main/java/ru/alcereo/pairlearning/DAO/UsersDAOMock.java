@@ -1,5 +1,7 @@
 package ru.alcereo.pairlearning.DAO;
 
+import ru.alcereo.pairlearning.DAO.models.User;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

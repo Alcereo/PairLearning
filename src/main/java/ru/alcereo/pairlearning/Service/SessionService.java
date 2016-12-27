@@ -1,14 +1,30 @@
 package ru.alcereo.pairlearning.Service;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.DAO.*;
+import ru.alcereo.pairlearning.DAO.models.Session;
+import ru.alcereo.pairlearning.DAO.models.User;
 
 import java.util.Objects;
 
 public class SessionService {
+    
+    private static final Logger log = LoggerFactory.getLogger(SessionService.class);
 
-    private static final UsersDAO users = new UsersDAOPG();
-    private static final SessionDAO sessions = new SessionDAOPG();
+    private static UsersDAO users = new UsersDAOPG();
+    private static SessionDAO sessions = new SessionDAOPG();
+
+    public static void setUsers(UsersDAO users) {
+        SessionService.users = users;
+    }
+
+    public static void setSessions(SessionDAO sessions) {
+        SessionService.sessions = sessions;
+    }
+
+
 
     public static boolean userAuthorization(String login, String password, String sessionId) {
 
@@ -22,6 +38,8 @@ public class SessionService {
                     && Objects.equals(user.getPasswordHash(), password)
                     && user.isActive()) {
                 sessions.insertOrUpdateSession(new Session(sessionId, user));
+                
+                log.debug("User authorizate: {} session: {}", user, sessionId);
                 result = true;
             }
 
@@ -54,4 +72,9 @@ public class SessionService {
         return result;
     }
 
+    public static void deleteSession(String SessionId) {
+
+        sessions.deleteSessionById(SessionId);
+
+    }
 }

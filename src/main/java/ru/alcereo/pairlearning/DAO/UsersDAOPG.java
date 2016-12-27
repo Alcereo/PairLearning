@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.DAO.models.User;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -16,21 +17,21 @@ public class UsersDAOPG implements UsersDAO {
 
     private static final Logger log = LoggerFactory.getLogger(UsersDAOPG.class);
 
-    private static DataSource ds;
-//    static {
-//        try {
-//            ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
-//        } catch (NamingException e) {
-//            e.printStackTrace();
-//        }
-//    }
-    static {
-        PGSimpleDataSource source = new PGSimpleDataSource();
-        source.setServerName("localhost");
-        source.setDatabaseName("PairLearning");
-        source.setUser("postgres");
-        source.setPassword("");
-        ds = source;
+    private DataSource ds;
+    {
+        try {
+            ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
+        } catch (NamingException e) {
+
+            log.warn("DataSource не был загружен из контекста, используется PGSimpleDataSource");
+
+            PGSimpleDataSource source = new PGSimpleDataSource();
+            source.setServerName("localhost");
+            source.setDatabaseName("PairLearning");
+            source.setUser("postgres");
+            source.setPassword("");
+            ds = source;
+        }
     }
 
     private static final String getAllquery=

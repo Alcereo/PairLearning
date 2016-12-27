@@ -12,13 +12,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/topic/api")
-public class TopicServlet  extends HttpServlet {
+public class TopicServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(TopicServlet.class);
+
+//    private final SessionService sessionService = new SessionService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,49 +27,44 @@ public class TopicServlet  extends HttpServlet {
         log.debug("Запрос с параметрами: {}", req.getParameterMap());
 
         String action = req.getParameter("action");
+        UserFront user = (UserFront) req.getAttribute("user");
 
-        HttpSession session = req.getSession();
-        if (SessionService.validateSession(session.getId())){
-            UserFront user = SessionService.getCurrentUser(session.getId());
+        switch (action) {
+            case "concrete":
 
-            switch (action) {
-                case "concrete":
+                TopicPredicateSide side = null;
 
-                    TopicPredicateSide side = null;
+                switch (req.getParameter("value")) {
+                    case "learn":
+                        side = TopicPredicateSide.LEARN;
+                        break;
+                    case "teach":
+                        side = TopicPredicateSide.TEACH;
+                }
 
-                    switch (req.getParameter("value")){
-                        case "learn":
-                            side = TopicPredicateSide.LEARN;
-                            break;
-                        case "teach":
-                            side = TopicPredicateSide.TEACH;
-                    }
+                boolean predicate = "true".equals(req.getParameter("predicate"));
 
-                    boolean predicate = "true".equals(req.getParameter("predicate"));
+                Long id = null;
 
-                    Long id = null;
-
-                    try {
-                        id = new Long(req.getParameter("id"));
-                    }catch (NumberFormatException e){
-                        e.printStackTrace();
-                        resp.setStatus(400);
-                    }
-
-                    if (TopicService.setTopicRow(
-                            user,
-                            id,
-                            side,
-                            predicate
-                    ))
-                        resp.setStatus(200);
-                    break;
-                default:
+                try {
+                    id = new Long(req.getParameter("id"));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                     resp.setStatus(400);
-            }
+                }
 
-        }else{
-            resp.setStatus(401);
+                if (TopicService.setTopicRow(
+                        user,
+                        id,
+                        side,
+                        predicate
+                ))
+                    resp.setStatus(200);
+                break;
+            default:
+                resp.setStatus(400);
         }
+
     }
+
 }

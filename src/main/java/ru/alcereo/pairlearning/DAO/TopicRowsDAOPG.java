@@ -3,6 +3,8 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.DAO.models.Topic;
+import ru.alcereo.pairlearning.DAO.models.User;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -23,17 +25,16 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         try {
             ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
         } catch (NamingException e) {
-            e.printStackTrace();
+            log.warn("DataSource не был загружен из контекста, используется PGSimpleDataSource");
+
+            PGSimpleDataSource source = new PGSimpleDataSource();
+            source.setServerName("localhost");
+            source.setDatabaseName("PairLearning");
+            source.setUser("postgres");
+            source.setPassword("");
+            ds = source;
         }
     }
-//    static {
-//        PGSimpleDataSource source = new PGSimpleDataSource();
-//        source.setServerName("localhost");
-//        source.setDatabaseName("PairLearning");
-//        source.setUser("postgres");
-//        source.setPassword("");
-//        ds = source;
-//    }
 
 
     @Override
@@ -124,7 +125,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
             result = true;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
         }
 

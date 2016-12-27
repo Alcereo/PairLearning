@@ -1,7 +1,8 @@
 package ru.alcereo.pairlearning.DAO;
 
 
-import ru.alcereo.pairlearning.Service.UserFront;
+import ru.alcereo.pairlearning.DAO.models.Topic;
+import ru.alcereo.pairlearning.DAO.models.User;
 
 import java.util.List;
 import java.util.Set;

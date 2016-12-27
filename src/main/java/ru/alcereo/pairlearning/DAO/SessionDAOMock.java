@@ -1,12 +1,9 @@
 package ru.alcereo.pairlearning.DAO;
 
-import ru.alcereo.pairlearning.DAO.Session;
-import ru.alcereo.pairlearning.DAO.SessionDAO;
-import ru.alcereo.pairlearning.DAO.User;
+import ru.alcereo.pairlearning.DAO.models.Session;
+import ru.alcereo.pairlearning.DAO.models.User;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -46,8 +43,10 @@ public class SessionDAOMock implements SessionDAO {
     }
 
     @Override
-    public boolean deleteSession(Session session) {
-        sessionList.remove(session);
+    public boolean deleteSessionById(String sessionId) {
+        for (Session session:sessionList)
+            if (session.getSessionId().equals(sessionId))
+                sessionList.remove(session);
         return true;
     }
 

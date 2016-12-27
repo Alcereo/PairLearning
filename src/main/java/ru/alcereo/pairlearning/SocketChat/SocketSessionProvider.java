@@ -19,13 +19,15 @@ public class SocketSessionProvider{
     private static final List<ChatRoom> rooms = new ArrayList<>();
     private static final RoomFabric roomFabric = new RoomGroupedFabric();
 
+    private static final SessionService sessionService = new SessionService();
+
     static void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection) {
 
         if (SessionId != null) {
 
-            if (SessionService.validateSession(SessionId)) {
+            if (sessionService.validateSession(SessionId)) {
 
-                UserFront user = SessionService.getCurrentUser(SessionId);
+                UserFront user = sessionService.getCurrentUser(SessionId);
 
                 for(ChatRoom chatRoom: rooms){
                     chatRoom.getLock().lock();
