@@ -88,7 +88,9 @@ public class ChatRoomGrouped implements ChatRoom {
     }
 
     @Override
-    public void inviteToThisRoom(UserFront user, MessageHandler handler) {
+    public boolean tryToInvite(UserFront user, MessageHandler handler) {
+
+        boolean result = false;
 
         lock.lock();
         try{
@@ -97,16 +99,21 @@ public class ChatRoomGrouped implements ChatRoom {
 
                 log.debug("User: {} invite room: {}",user.getName(),this);
 
-
                 try {
                     onMessage("подключился к чату...", handler);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                result = true;
+            }else {
+                log.debug("User: {} NOT! invite room (by canInvite): {}",user.getName(),this);
             }
         }finally {
             lock.unlock();
         }
+
+        return result;
 
     }
 

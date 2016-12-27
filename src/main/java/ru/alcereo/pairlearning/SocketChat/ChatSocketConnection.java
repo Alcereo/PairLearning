@@ -28,7 +28,7 @@ public class ChatSocketConnection {
         this.chatRoom = chatRoom;
     }
 
-    public boolean roomIsEmpty(){
+    public boolean notConnectedToRoom(){
         return Objects.isNull(chatRoom);
     }
 

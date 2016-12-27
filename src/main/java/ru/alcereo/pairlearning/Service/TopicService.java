@@ -33,21 +33,21 @@ public class TopicService {
 
     }
 
-    public static boolean setTopicRow(UserFront user, Long id, TopicPredicateSide side, boolean predicate) {
+    public static boolean setTopicRow(UserFront userFront, Long id, TopicPredicateSide side, boolean predicate) {
         boolean result = false;
 
-        if (user != null & side != null) {
+        if (userFront!=null & side!=null) {
 
-            User userModel = users.findByLogin(user.getLogin());
+            User user = users.findByUid(userFront.getUid());
 
             switch (side) {
                 case LEARN:
                     log.debug("Меняем LEARN на {} у id:{}",predicate, id);
-                    result = topicRows.setLearnPredicate(id, userModel, predicate);
+                    result = topicRows.setLearnPredicate(id, user, predicate);
                     break;
                 case TEACH:
                     log.debug("Меняем TEACH на {} у id:{}",predicate, id);
-                    result = topicRows.setTeachPredicate(id, userModel, predicate);
+                    result = topicRows.setTeachPredicate(id, user, predicate);
                     break;
             }
 
@@ -60,12 +60,10 @@ public class TopicService {
 
         boolean result=false;
 
-        log.debug("Определяем возможность входа для: {}",usersList);
+        log.debug("Определяем возможность входа для: {}", usersList);
 
         if (usersList.size() < 2)
             result = true;
-
-        log.debug("Прошли по количеству: {}",result);
 
         if (usersList.size()==2){
 
@@ -86,7 +84,7 @@ public class TopicService {
 
                 userSet1.retainAll(userSet2);
 
-                log.debug("Количество пересечений 2: {}",userSet1);
+                log.debug("Количество пересечений 2: {}",userSet1.size());
 
                 if (userSet1.size()>0)
                     result = true;

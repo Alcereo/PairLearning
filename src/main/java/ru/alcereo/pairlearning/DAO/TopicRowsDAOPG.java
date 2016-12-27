@@ -37,7 +37,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
 
     @Override
-    public boolean setLearnPredicate(Long id, User userModel, boolean predicate) {
+    public boolean setLearnPredicate(Long id, User user, boolean predicate) {
 
         boolean result=false;
 
@@ -64,15 +64,15 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
             st.setBoolean(1,predicate);
             st.setLong(2,id);
-            st.setObject(3, userModel.getUid());
+            st.setObject(3, user.getUid());
 
             st.setLong(4,id);
-            st.setObject(5, userModel.getUid());
+            st.setObject(5, user.getUid());
             st.setBoolean(6,predicate);
 
             st.executeUpdate();
 
-            log.debug("Выполнили запрос learn: id:{}, pred:{}, usermod:{}",id,predicate, userModel.getUid());
+            log.debug("Выполнили запрос learn: id:{}, pred:{}, usermod:{}",id,predicate, user.getUid());
 
             result = true;
 
@@ -287,9 +287,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
 
-        System.out.println(
-                topicRowsDAOPG.getAllByUser(new UsersDAOPG().findByLogin("Ivan"))
-        );
+        System.out.println();
 
     }
 

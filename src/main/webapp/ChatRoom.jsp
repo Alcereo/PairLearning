@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<a href="/">Главная страница</a>
+<a href="${pageContext.request.contextPath}/usercabinet">Личный кабинет</a>
 
 <p></p>
 

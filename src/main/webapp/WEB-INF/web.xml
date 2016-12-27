@@ -33,6 +33,15 @@
         <url-pattern>/usercabinet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>Chat room</servlet-name>
+        <jsp-file>/ChatRoom.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Chat room</servlet-name>
+        <url-pattern>/chatroom</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/js/*</url-pattern>

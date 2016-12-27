@@ -45,7 +45,7 @@
 
 <p></p>
 
-<a href="/ChatRoom.jsp">Чат</a>
+<a href="/chatroom">Чат</a>
 
 <%}else{%>
     Требуется авторизация!

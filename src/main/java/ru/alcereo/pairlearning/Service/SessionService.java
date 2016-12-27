@@ -18,7 +18,9 @@ public class SessionService {
 
             User user = users.findByLogin(login);
 
-            if (user != null && Objects.equals(user.getPasswordHash(), password)) {
+            if (user != null
+                    && Objects.equals(user.getPasswordHash(), password)
+                    && user.isActive()) {
                 sessions.insertOrUpdateSession(new Session(sessionId, user));
                 result = true;
             }

@@ -30,18 +30,14 @@ public class SocketSessionProvider{
                 for(ChatRoom chatRoom: rooms){
                     chatRoom.getLock().lock();
                     try{
-                        if (chatRoom.canInvite(user)) {
-                            chatRoom.inviteToThisRoom(user, new SessionDecorator(session));
-
+                        if (chatRoom.tryToInvite(user, new SessionDecorator(session)))
                             chatSocketConnection.setChatRoom(chatRoom);
-                        }
-
                     }finally {
                         chatRoom.getLock().unlock();
                     }
                 }
 
-                if (chatSocketConnection.roomIsEmpty()){
+                if (chatSocketConnection.notConnectedToRoom()){
                     ChatRoom chatRoom = roomFabric.newRoom(
                             user,
                             new SessionDecorator(session));
@@ -59,7 +55,6 @@ public class SocketSessionProvider{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     }
