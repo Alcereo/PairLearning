@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+
+/**
+ * Сервис работы с темами для изучения
+ */
 public class TopicService {
 
     private static final Logger log = LoggerFactory.getLogger(TopicService.class);
@@ -23,6 +27,14 @@ public class TopicService {
     private static final UsersDAO users = new UsersDAOPG();
     private static TopicRowsDAO topicRows = new TopicRowsDAOPG();
 
+
+    /**
+     * Получение всех тем с признаками для данного пользователя
+     * @param user
+     *  Пользователь
+     * @return
+     *  Список строк таблицы с темами и признаками для данного пользователя
+     */
     public static List<TopicRowFront> getUserTopic(UserFront user) throws TopicServiceException {
 
         List<TopicRowFront> result = new ArrayList<>();
@@ -50,6 +62,18 @@ public class TopicService {
 
     }
 
+
+    /**
+     * Изменение признака для темы и выбранного пользователя
+     * @param userFront
+     *  Пользователь
+     * @param id
+     *  Идентификатор темы
+     * @param side
+     *  Признак того, какой признак устанавливается
+     * @param predicate
+     *  Значение предиката
+     */
     public static void setTopicRow(UserFront userFront, Long id, TopicPredicateSide side, boolean predicate) throws TopicServiceException {
 
         if (userFront == null)
@@ -92,6 +116,27 @@ public class TopicService {
 
     }
 
+
+    /**
+     * Проверка на то, что пользователей есть пересечение в интересах по темам,
+     * конкретно, что:
+     * <ul>
+     *     <li>Пользователей в списке не больше чем 2</li>
+     *     <li>У одно из пользователей в списке выбраны темы, для изучения и преподавания, которые у второго выбраны
+     *     зеркально соответственно для преподавания и изучения</li>
+     * </ul>
+     * @param usersList
+     *  Список пользователей для проверки
+     * @return
+     *  true - если:
+     *  <ul>
+     *     <li>Пользователей в списке не больше чем 2</li>
+     *     <li>У одно из пользователей в списке выбраны темы, для изучения и преподавания, которые у второго выбраны
+     *     зеркально соответственно для преподавания и изучения</li>
+     * </ul>
+     * false - если обратное
+     *
+     */
     public static boolean usersHaveIntersectionTopics(List<UserFront> usersList) throws TopicServiceException {
 
         boolean result=false;

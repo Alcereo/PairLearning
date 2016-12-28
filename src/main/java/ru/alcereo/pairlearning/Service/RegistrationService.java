@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.UUID;
 
 
+/**
+ * Сервис регистрации новых пользователей
+ */
 public class RegistrationService {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationService.class);
@@ -31,16 +34,12 @@ public class RegistrationService {
 
     private static final Map<Integer, User> confirmCodes = new HashMap<>();
 
-    private SendingService sendingService;
+    private SendingService sendingService = new SendingServiceMock();
 
-    public RegistrationService(SendingService sendingService) {
+
+    public void setSendingService(SendingService sendingService) {
         this.sendingService = sendingService;
     }
-
-    public RegistrationService() {
-        this(new SendingServiceMock());
-    }
-
 
     public static void setUsers(UsersDAO users) {
         RegistrationService.users = users;
@@ -51,6 +50,21 @@ public class RegistrationService {
     }
 
 
+    /**
+     * Регистрация нового пользователя
+     * @param sessionId
+     *  Идентификатор сессиии
+     * @param login
+     *  Логин
+     * @param name
+     *  Имя
+     * @param password
+     *  Пароль
+     * @param email
+     *  Почтовый адрес
+     * @return
+     *  Результат регистрации
+     */
     public RegResult registration(
             String sessionId,
             String login,
@@ -123,6 +137,16 @@ public class RegistrationService {
         return result;
     }
 
+
+    /**
+     * Подтверждение регистрации
+     * @param sessionId
+     *  Идентификатор сессиии
+     * @param code
+     *  Код подтверждения
+     * @return
+     *  true - если регистрация завершилась успешно, false - иначе
+     */
     public boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
 
         boolean result = false;
@@ -163,6 +187,11 @@ public class RegistrationService {
         return result;
     }
 
+
+    /**
+     * Перечисление отображающее результат
+     * регистрации пользователя
+     */
     public enum RegResult {
         SUCCESS,
         LOGIN_IN_USE,

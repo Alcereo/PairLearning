@@ -12,13 +12,14 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class UsersDAOPG implements UsersDAO {
 
     private static final Logger log = LoggerFactory.getLogger(UsersDAOPG.class);
 
-    private DataSource ds;
+    private static DataSource ds;
     {
         try {
             ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
@@ -33,6 +34,10 @@ public class UsersDAOPG implements UsersDAO {
             source.setPassword("");
             ds = source;
         }
+    }
+
+    public static void setDS(DataSource ds){
+        UsersDAOPG.ds = ds;
     }
 
     private static final String getAllquery=
@@ -143,6 +148,8 @@ public class UsersDAOPG implements UsersDAO {
     @Override
     public boolean addUser(User user) throws UserDataError {
 
+        Objects.requireNonNull(user, "Передан пользователь с сылкой null");
+
         boolean result = false;
 
         try(
@@ -211,12 +218,6 @@ public class UsersDAOPG implements UsersDAO {
         }
 
         return result;
-    }
-
-    public static void main(String[] args) {
-
-        UsersDAO usersDAO = new UsersDAOPG();
-
     }
 
 }

@@ -14,8 +14,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.UUID;
 
+
+/**
+ * Объект доступа к данным сессий из таблицы PostgreSQL
+ */
 public class SessionDAOPG implements SessionDAO{
 
     private static final Logger log = LoggerFactory.getLogger(SessionDAOPG.class);
@@ -91,28 +96,32 @@ public class SessionDAOPG implements SessionDAO{
     public Session getSessionByUser(User user) throws SessionDataError {
         Session result=null;
 
-        try(
-                Connection conn = ds.getConnection();
-                PreparedStatement st = conn.prepareStatement(
-                        "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE users.uid=?");
-        ){
+        if (user!=null) {
+            try (
+                    Connection conn = ds.getConnection();
+                    PreparedStatement st = conn.prepareStatement(
+                            "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE users.uid=?");
+            ) {
 
-            st.setObject(1,user.getUid());
+                st.setObject(1, user.getUid());
 
-            try(ResultSet resultSet = st.executeQuery()){
-                while (resultSet.next())
-                    result = sessionFromResultSet(resultSet);
+                try (ResultSet resultSet = st.executeQuery()) {
+                    while (resultSet.next())
+                        result = sessionFromResultSet(resultSet);
+                }
+
+            } catch (SQLException e) {
+                log.warn(e.getLocalizedMessage());
+                throw new SessionDataError("Ошибка обращения к данным сессий", e);
             }
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new SessionDataError("Ошибка обращения к данным сессий",e);
         }
 
         return result;
     }
 
     public boolean insertOrUpdateSession(Session session) throws SessionDataError {
+
+        Objects.requireNonNull(session, "Передана пустая сессия!");
 
         String upsertQuery =
                 "WITH upsert AS" +
@@ -174,11 +183,4 @@ public class SessionDAOPG implements SessionDAO{
 
     }
 
-    public void main(String[] args) {
-
-        SessionDAOPG sessionDAOPG = new SessionDAOPG();
-
-        System.out.println();
-
-    }
 }

@@ -37,9 +37,16 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         }
     }
 
+    public static void setDs(DataSource ds){
+        TopicRowsDAOPG.ds = ds;
+    }
+
 
     @Override
     public void setLearnPredicate(Long id, User user, boolean predicate) throws TopicRowDataError {
+
+        Objects.requireNonNull(user, "User == null");
+        Objects.requireNonNull(id, "User == null");
 
         try(
                 Connection conn = ds.getConnection();
@@ -56,8 +63,9 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
                                 "    (SELECT uid from topics WHERE id = ?)," +
                                 "    ?," +
                                 "    ?," +
-                                "    FALSE" +
-                                "  WHERE NOT EXISTS" +
+                                "    FALSE " +
+                                "FROM topics  " +
+                                "  WHERE id = ? AND NOT EXISTS" +
                                 "  (SELECT *" +
                                 "   FROM upsert)");
         ){
@@ -69,6 +77,8 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
             st.setLong(4,id);
             st.setObject(5, user.getUid());
             st.setBoolean(6,predicate);
+
+            st.setLong(7,id);
 
             st.executeUpdate();
 
@@ -127,8 +137,10 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
     }
 
     @Override
-    public List<TopicRow> getAllByUser(User userModel) throws TopicRowDataError {
+    public List<TopicRow> getAllByUser(User user) throws TopicRowDataError {
         List<TopicRow> result=new ArrayList<>();
+
+        Objects.requireNonNull(user, "user == null");
 
         try(
                 Connection conn = ds.getConnection();
@@ -143,14 +155,14 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
                                 "  topics LEFT JOIN topic_rows ON topics.uid = topic_rows.topic_uid AND topic_rows.user_uid = ?\n");
         ){
 
-            st.setObject(1,userModel.getUid());
+            st.setObject(1,user.getUid());
 
             try (ResultSet resultSet = st.executeQuery()){
                 while (resultSet.next())
                     result.add(new TopicRow(
                             resultSet.getBoolean("learn"),
                             resultSet.getBoolean("teach"),
-                            userModel,
+                            user,
                             new Topic(
                                     UUID.fromString(resultSet.getString("uid")),
                                     resultSet.getLong("id"),
@@ -275,13 +287,5 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
     }
 
-
-    public static void main(String[] args) {
-
-        TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-
-        System.out.println();
-
-    }
 
 }

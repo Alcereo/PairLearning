@@ -8,16 +8,73 @@ import ru.alcereo.pairlearning.DAO.models.User;
 import java.util.List;
 import java.util.Set;
 
+
+/**
+ * Класс доступа к пользовательским данным связанных с изучением тем
+ */
 public interface TopicRowsDAO {
 
-    void setLearnPredicate(Long id, User userModel, boolean predicate) throws TopicRowDataError;
 
-    void setTeachPredicate(Long id, User userModel, boolean predicate) throws TopicRowDataError;
+    /**
+     * Установка признака `LEARN` для пользователя
+     * @param id
+     *  Идентификатор темы
+     * @param user
+     *  Объект пользователя
+     * @param predicate
+     *  Признак для установки
+     * @throws TopicRowDataError
+     *  Ошибка доступа к данным
+     */
+    void setLearnPredicate(Long id, User user, boolean predicate) throws TopicRowDataError;
 
-    List<TopicRow> getAllByUser(User userModel) throws TopicRowDataError;
 
+    /**
+     * Установка признака `TEACH` для пользователя
+     * @param id
+     *  Идентификатор темы
+     * @param user
+     *  Объект пользователя
+     * @param predicate
+     *  Признак для установки
+     * @throws TopicRowDataError
+     *  Ошибка доступа к данным
+     */
+    void setTeachPredicate(Long id, User user, boolean predicate) throws TopicRowDataError;
+
+
+    /**
+     * Получение данных связанных с пользователем о всех темах для изучения
+     * @param user
+     *  Объект пользователя
+     * @return
+     *  Список тем с признаками learn и teach
+     * @throws TopicRowDataError
+     *  Ошибка доступа к данным
+     */
+    List<TopicRow> getAllByUser(User user) throws TopicRowDataError;
+
+
+    /**
+     * Получение списока тем, которые пользователь выделил признаком Learn
+     * @param user
+     *  Объект пользователя
+     * @return
+     *  Список тем
+     * @throws TopicRowDataError
+     *  Ошибка доступа к данным
+     */
     Set<Topic> getLearnTopicsByUser(User user) throws TopicRowDataError;
 
+    /**
+     * Получение списока тем, которые пользователь выделил признаком Teach
+     * @param user
+     *  Объект пользователя
+     * @return
+     *  Список тем
+     * @throws TopicRowDataError
+     *  Ошибка доступа к данным
+     */
     Set<Topic> getTeachTopicsByUser(User user) throws TopicRowDataError;
 
 }

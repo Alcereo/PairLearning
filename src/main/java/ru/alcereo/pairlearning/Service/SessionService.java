@@ -19,6 +19,10 @@ import ru.alcereo.pairlearning.Service.models.UserFront;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
+
+/**
+ * Сервис работы с сессиями
+ */
 public class SessionService {
     
     private static final Logger log = LoggerFactory.getLogger(SessionService.class);
@@ -35,7 +39,17 @@ public class SessionService {
     }
 
 
-
+    /**
+     * Попытка авторизации пользователя
+     * @param login
+     *  Логин пользователя
+     * @param password
+     *  Пароль пользователя
+     * @param sessionId
+     *  Идентификатор сессии
+     * @return
+     *  true - если авторизация прошла успешно, false - иначе
+     */
     public static boolean userAuthorization(String login, String password, String sessionId) throws AuthorizationException {
 
         boolean result = false;
@@ -90,6 +104,14 @@ public class SessionService {
         return result;
     }
 
+
+    /**
+     * Получение признака того, что сессия зарегистрирована в системе
+     * @param SessionId
+     *  Идентификатор сессии
+     * @return
+     *  true - если текущая сессия присутствует в программе, false - иначе
+     */
     public static boolean validateSession(String SessionId) throws ValidateException {
 
         boolean result = false;
@@ -108,6 +130,14 @@ public class SessionService {
         return result;
     }
 
+
+    /**
+     * Возвращает информаци о пользователе по идентификатору сессии
+     * @param SessionId
+     *  Идентификатор сессии
+     * @return
+     *  Данные о пользователе, либо null, если отсутствует таковой
+     */
     public static UserFront getCurrentUser(String SessionId) throws SessionServiceException {
         UserFront result = null;
 
@@ -130,6 +160,12 @@ public class SessionService {
         return result;
     }
 
+
+    /**
+     * Удаление сессии
+     * @param SessionId
+     *  Идентификатор удаляемой сессии
+     */
     public static void deleteSession(String SessionId) throws SessionServiceException {
 
         try {

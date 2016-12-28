@@ -6,12 +6,56 @@ import ru.alcereo.pairlearning.DAO.models.User;
 
 import java.sql.SQLException;
 
+/**
+ * Класс доступа к данным сессий
+ */
 public interface SessionDAO {
 
-    Session getSessionById(String id) throws SessionDataError;
+
+    /**
+     * Получение объекта сессии по ее идентификатору
+     * @param SessionId
+     *  Идентификатор сессиии.
+     * @return
+     *  Объект сесси
+     * @throws SessionDataError
+     *  Ошибка доступа к данным о сессиях
+     */
+    Session getSessionById(String SessionId) throws SessionDataError;
+
+    /**
+     * Получение объекта сессии по пользователю
+     * @param user
+     *  Объект пользователя
+     * @return
+     *  Объект сесси
+     * @throws SessionDataError
+     *  Ошибка доступа к данным о сессиях
+     */
     Session getSessionByUser(User user) throws SessionDataError;
 
+
+    /**
+     * Вставка объекта сессии или обновление объекта, если такой уже присутствует
+     * @param session
+     *  Объект сессии
+     * @return
+     *  Признак успешного обновления данных
+     * @throws SessionDataError
+     *  Ошибка доступа к данным о сессиях
+     */
     boolean insertOrUpdateSession(Session session) throws SessionDataError;
+
+
+    /**
+     * Удаление сессии по идентификатору
+     * @param sessionId
+     *  Значение идентификатора
+     * @return
+     *  Признак успешного обновления данных
+     * @throws SessionDataError
+     *  Ошибка доступа к данным о сессиях
+     */
     boolean deleteSessionById(String sessionId) throws SessionDataError;
 
 }
