@@ -39,6 +39,7 @@ public class RegistrationServlet extends HttpServlet {
                 break;
             default:
                 try {
+                    resp.setCharacterEncoding("utf-16");
                     resp.getWriter().write(
                             "Действие action не распознано"
                     );
@@ -67,12 +68,14 @@ public class RegistrationServlet extends HttpServlet {
                     resp.setStatus(200);
                     break;
                 case LOGIN_IN_USE:
+                    resp.setCharacterEncoding("utf-16");
                     resp.getWriter().write(
                             "Логин уже используется"
                     );
                     resp.setStatus(409);
                     break;
                 case EMAIL_INCORRECT:
+                    resp.setCharacterEncoding("utf-16");
                     resp.getWriter().write(
                             "Почтовый адрес не корректен"
                     );
@@ -86,6 +89,7 @@ public class RegistrationServlet extends HttpServlet {
         } catch (RegistrationException e) {
             log.warn(e.getLocalizedMessage());
             try {
+                resp.setCharacterEncoding("utf-16");
                 resp.getWriter().write(
                         "Ошибка регистрации: "+e.getLocalizedMessage()
                 );
@@ -110,6 +114,7 @@ public class RegistrationServlet extends HttpServlet {
             code = new Integer(req.getParameter("code"));
         }catch (NumberFormatException e){
             try {
+                resp.setCharacterEncoding("utf-16");
                 resp.getWriter().write(
                         "Ошибка обработки кода"
                 );
@@ -131,6 +136,7 @@ public class RegistrationServlet extends HttpServlet {
                     resp.setStatus(200);
                 else
                     try {
+                        resp.setCharacterEncoding("utf-16");
                         resp.getWriter().write(
                                 "Код подтверждения не корректен"
                         );
@@ -141,6 +147,7 @@ public class RegistrationServlet extends HttpServlet {
                     }
             } catch (RegistrationException e) {
                 try {
+                    resp.setCharacterEncoding("utf-16");
                     resp.getWriter().write(
                             "Ошибка сервиса регистрации. "+e.getLocalizedMessage()
                     );

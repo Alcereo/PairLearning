@@ -3,6 +3,8 @@ package ru.alcereo.pairlearning.Service.Chat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
+import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.io.IOException;
@@ -26,16 +28,21 @@ public class ChatRoomGrouped implements ChatRoom {
     private final Lock lock = new ReentrantLock();
 
 
-    public boolean canInvite(UserFront user){
-        //Тут боллее серьезная обработка
-        // Пока проверка, что комната пустая
-        // и пользователь не тот же самый
+    public boolean canInvite(UserFront user) throws ChatInviteException {
+        boolean result = false;
 
         List<UserFront> users = new ArrayList<>(sessionMap.values());
         users.add(user);
 
-        return (!sessionMap.values().contains(user)
-                && inviteChecker.usersInvitable(users));
+        try {
+            result = (!sessionMap.values().contains(user)
+                    && inviteChecker.usersInvitable(users));
+        } catch (TopicServiceException e) {
+            log.warn(e.getLocalizedMessage());
+            throw new ChatInviteException("Ошибка проверки доступа в комнату. Ошибка сервиса тем. "+e.getLocalizedMessage());
+        }
+
+        return result;
 
     }
 
@@ -88,7 +95,7 @@ public class ChatRoomGrouped implements ChatRoom {
     }
 
     @Override
-    public boolean tryToInvite(UserFront user, MessageHandler handler) {
+    public boolean tryToInvite(UserFront user, MessageHandler handler) throws ChatInviteException {
 
         boolean result = false;
 
@@ -102,7 +109,8 @@ public class ChatRoomGrouped implements ChatRoom {
                 try {
                     onMessage("подключился к чату...", handler);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.warn(e.getLocalizedMessage());
+                    throw new ChatInviteException("Ошибка отправки сообщения",e);
                 }
 
                 result = true;

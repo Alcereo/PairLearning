@@ -6,8 +6,11 @@ import ru.alcereo.pairlearning.Service.*;
 import ru.alcereo.pairlearning.Service.Chat.ChatRoom;
 import ru.alcereo.pairlearning.Service.Chat.RoomFabric;
 import ru.alcereo.pairlearning.Service.Chat.RoomGroupedFabric;
+import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
+import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
+import ru.alcereo.pairlearning.SocketChat.exceptions.SocketConnectionConstructionException;
 
 import javax.websocket.Session;
 import java.io.IOException;
@@ -23,7 +26,8 @@ public class SocketSessionProvider{
 
 //    private static final SessionService sessionService = new SessionService();
 
-    static void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection) throws SocketConnectionConstructionException {
+    static void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection)
+            throws SocketConnectionConstructionException {
 
         if (SessionId != null) {
 
@@ -37,15 +41,24 @@ public class SocketSessionProvider{
                         try{
                             if (chatRoom.tryToInvite(user, new SessionDecorator(session)))
                                 chatSocketConnection.setChatRoom(chatRoom);
-                        }finally {
+                        } catch (ChatInviteException e) {
+                            log.warn(e.getLocalizedMessage());
+                            throw new SocketConnectionConstructionException("Ошибка при подключении к сервисам комнат",e);
+                        } finally {
                             chatRoom.getLock().unlock();
                         }
                     }
 
                     if (chatSocketConnection.notConnectedToRoom()){
-                        ChatRoom chatRoom = roomFabric.newRoom(
-                                user,
-                                new SessionDecorator(session));
+                        ChatRoom chatRoom = null;
+                        try {
+                            chatRoom = roomFabric.newRoom(
+                                    user,
+                                    new SessionDecorator(session));
+                        } catch (ChatInviteException e) {
+                            log.warn(e.getLocalizedMessage());
+                            throw new SocketConnectionConstructionException("Ошибка подключении к сервисам комнат",e);
+                        }
 
                         chatSocketConnection.setChatRoom(chatRoom);
                         rooms.add(chatRoom);
@@ -61,7 +74,7 @@ public class SocketSessionProvider{
                         e.printStackTrace();
                     }
                 }
-            } catch (ValidateException e) {
+            } catch (ValidateException | SessionServiceException e) {
                 log.warn(e.getLocalizedMessage());
                 throw new SocketConnectionConstructionException("Не удалось установить соединение",e);
             }

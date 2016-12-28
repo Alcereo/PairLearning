@@ -5,6 +5,7 @@ import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
+import ru.alcereo.pairlearning.Service.exeptions.AuthorizationException;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 
 import static org.junit.Assert.*;
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class SessionServiceTest {
 
     @Test
-    public void userAuthorization() throws Exception {
+    public void userAuthorization() throws Exception, AuthorizationException {
 
         UsersDAO users = mock(UsersDAO.class);
         SessionDAO sessionDAO = mock(SessionDAO.class);

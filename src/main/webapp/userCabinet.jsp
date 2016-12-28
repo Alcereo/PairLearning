@@ -49,6 +49,9 @@
     <input type="submit" value="Выход">
 </form>
 
+<p></p>
+<div id="error_messages"></div>
+
 <script type='text/javascript'>
 
     $(".checker").click( function(event){
@@ -73,11 +76,18 @@
 
         }).fail(function (data) {
 
-            console.log('fail');
+            console.log(data);
+            writeError(data.responseText);
 
         });
 
     });
+
+    var messages = document.getElementById("error_messages");
+
+    function writeError(text){
+        messages.innerHTML += "<br/>" + text;
+    }
 
 </script>
 

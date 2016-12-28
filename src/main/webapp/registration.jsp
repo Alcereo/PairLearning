@@ -60,6 +60,9 @@
 
 <%}%>
 
+<p></p>
+<div id="error_messages"></div>
+
 <script type='text/javascript'>
 
     $("#registration").submit(function (event) {
@@ -82,7 +85,9 @@
 
         }).fail(function (data) {
 
-            console.error(data);
+            console.log(data);
+            writeError(data.responseText);
+
         });
 
     });
@@ -103,10 +108,18 @@
 
         }).fail(function (data) {
 
-            console.error(data);
+            console.log(data);
+            writeError(data.responseText);
+
         });
 
     });
+
+    var messages = document.getElementById("error_messages");
+
+    function writeError(text){
+        messages.innerHTML += "<br/>" + text;
+    }
 
 </script>
 

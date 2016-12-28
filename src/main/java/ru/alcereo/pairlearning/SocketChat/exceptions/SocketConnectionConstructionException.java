@@ -1,4 +1,4 @@
-package ru.alcereo.pairlearning.SocketChat;
+package ru.alcereo.pairlearning.SocketChat.exceptions;
 
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 

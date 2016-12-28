@@ -168,7 +168,6 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         return result;
     }
 
-
     @Override
     public Set<Topic> getLearnTopicsByUser(User user) throws TopicRowDataError {
         Set<Topic> result=new HashSet<>();
@@ -209,7 +208,6 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
         return result;
     }
-
 
     @Override
     public Set<Topic> getTeachTopicsByUser(User user) throws TopicRowDataError {

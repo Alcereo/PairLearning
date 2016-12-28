@@ -2,11 +2,11 @@ package ru.alcereo.pairlearning.servlets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.Service.models.TopicPredicateSide;
 import ru.alcereo.pairlearning.Service.TopicService;
+import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
+import ru.alcereo.pairlearning.Service.models.TopicPredicateSide;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class TopicServlet extends HttpServlet {
 //    private final SessionService sessionService = new SessionService();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 
         log.debug("Запрос с параметрами: {}", req.getParameterMap());
 
@@ -52,16 +52,36 @@ public class TopicServlet extends HttpServlet {
                     resp.setStatus(400);
                 }
 
-                if (TopicService.setTopicRow(
-                        user,
-                        id,
-                        side,
-                        predicate
-                ))
+                try {
+                    TopicService.setTopicRow(
+                            user,
+                            id,
+                            side,
+                            predicate
+                    );
+
                     resp.setStatus(200);
+                } catch (TopicServiceException e) {
+                    try {
+                        resp.setCharacterEncoding("utf-16");
+                        resp.getWriter().write("Ошибка сервиса тем ");
+                        resp.setStatus(400);
+                    } catch (IOException e1) {
+                        log.warn(e1.getLocalizedMessage());
+                        resp.setStatus(400);
+                    }
+                }
+
                 break;
             default:
-                resp.setStatus(400);
+                try {
+                    resp.setCharacterEncoding("utf-16");
+                    resp.getWriter().write("Не распознано действие action");
+                    resp.setStatus(400);
+                } catch (IOException e) {
+                    log.warn(e.getLocalizedMessage());
+                    resp.setStatus(400);
+                }
         }
 
     }

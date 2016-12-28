@@ -43,11 +43,11 @@ public class SessionService {
                 "Ошибка авторизации, некорректные данные. Пустой логин.",
                 new NullPointerException("login == null"));
 
-        if (password != null) throw new AuthorizationException(
+        if (password == null) throw new AuthorizationException(
                 "Ошибка авторизации, некорректные данные. Пустой пароль.",
                 new NullPointerException("password != null"));
 
-        if (sessionId != null) throw new AuthorizationException(
+        if (sessionId == null) throw new AuthorizationException(
                 "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
                 new NullPointerException("sessionId != null"));
 

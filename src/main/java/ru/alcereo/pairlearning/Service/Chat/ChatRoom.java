@@ -1,5 +1,6 @@
 package ru.alcereo.pairlearning.Service.Chat;
 
+import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.io.IOException;
@@ -16,8 +17,8 @@ public interface ChatRoom {
 
     void onClose(MessageHandler handler) throws IOException;
 
-    boolean tryToInvite(UserFront user, MessageHandler handler);
+    boolean tryToInvite(UserFront user, MessageHandler handler) throws ChatInviteException;
 
-    boolean canInvite(UserFront user);
+    boolean canInvite(UserFront user) throws ChatInviteException;
 
 }
