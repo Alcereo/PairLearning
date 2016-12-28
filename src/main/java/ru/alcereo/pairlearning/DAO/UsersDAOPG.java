@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
 
 import javax.naming.InitialContext;
@@ -66,7 +67,7 @@ public class UsersDAOPG implements UsersDAO {
 
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAll() throws UserDataError {
 
         List<User> result = new ArrayList<>();
 
@@ -80,15 +81,15 @@ public class UsersDAOPG implements UsersDAO {
                 result.add(userFromResultSet(resultSet));
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
         }
 
         return result;
     }
 
     @Override
-    public User findByUid(UUID uuid) {
+    public User findByUid(UUID uuid) throws UserDataError {
         User result = null;
 
         try(
@@ -106,15 +107,15 @@ public class UsersDAOPG implements UsersDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
         }
 
         return result;
     }
 
     @Override
-    public User findByLogin(String login) {
+    public User findByLogin(String login) throws UserDataError {
         User result = null;
 
         try(
@@ -132,15 +133,15 @@ public class UsersDAOPG implements UsersDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
         }
 
         return result;
     }
 
     @Override
-    public boolean addUser(User user) {
+    public boolean addUser(User user) throws UserDataError {
 
         boolean result = false;
 
@@ -159,8 +160,8 @@ public class UsersDAOPG implements UsersDAO {
 
             result = st.executeUpdate()==1;
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
         }
 
         return result;
@@ -168,7 +169,7 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
-    public boolean deleteUser(User user) {
+    public boolean deleteUser(User user) throws UserDataError {
 
         boolean result = false;
 
@@ -181,15 +182,15 @@ public class UsersDAOPG implements UsersDAO {
             result = st.executeUpdate()==1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
         }
 
         return result;
     }
 
     @Override
-    public User makeActive(User user) {
+    public User makeActive(User user) throws UserDataError {
         User result=null;
 
         try(
@@ -205,8 +206,8 @@ public class UsersDAOPG implements UsersDAO {
                 result = user.makeActive();
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
         }
 
         return result;

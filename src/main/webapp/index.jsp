@@ -1,4 +1,4 @@
-<%@ page import="ru.alcereo.pairlearning.Service.UserFront" %><%--
+<%@ page import="ru.alcereo.pairlearning.Service.models.UserFront" %><%--
   Created by IntelliJ IDEA.
   User: alcereo
   Date: 23.12.16

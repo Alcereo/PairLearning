@@ -2,10 +2,9 @@ package ru.alcereo.pairlearning.servlets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.TopicPredicateSide;
+import ru.alcereo.pairlearning.Service.models.TopicPredicateSide;
 import ru.alcereo.pairlearning.Service.TopicService;
-import ru.alcereo.pairlearning.Service.UserFront;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

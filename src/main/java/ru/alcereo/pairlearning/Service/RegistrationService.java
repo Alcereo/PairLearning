@@ -3,15 +3,21 @@ package ru.alcereo.pairlearning.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.DAO.*;
+import ru.alcereo.pairlearning.DAO.SessionDAO;
+import ru.alcereo.pairlearning.DAO.SessionDAOPG;
+import ru.alcereo.pairlearning.DAO.UsersDAO;
+import ru.alcereo.pairlearning.DAO.UsersDAOPG;
+import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
+import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static ru.alcereo.pairlearning.Service.RegistrationService.RegResult.*;
+import static ru.alcereo.pairlearning.Service.RegistrationService.RegResult.ERROR;
 
 public class RegistrationService {
 
@@ -50,20 +56,34 @@ public class RegistrationService {
             String name,
             String passwordHash,
             String email
-    ) {
+    ) throws RegistrationException {
 
-        RegResult result = ERROR;
+        RegResult result;
 
-        if (
-                sessionId       != null &
-                login           != null &
-                name            != null &
-                passwordHash    != null &
-                email           != null
-                )
-        {
+        if (sessionId == null) throw new RegistrationException(
+                "Ошибка регистрации, некоректные данные. Пустой номер сесии.",
+                new NullPointerException());
 
-            User user = new User(UUID.randomUUID(), login, passwordHash, name, email, false);
+        if (login == null) throw new RegistrationException(
+                "Ошибка регистрации, некоректные данные. Пустой логин.",
+                new NullPointerException());
+
+        if (name == null) throw new RegistrationException(
+                "Ошибка регистрации, некоректные данные. Пустое имя.",
+                new NullPointerException());
+
+        if (passwordHash == null) throw new RegistrationException(
+                "Ошибка регистрации, некоректные данные. Пустой пароль.",
+                new NullPointerException());
+
+        if (email == null) throw new RegistrationException(
+                "Ошибка регистрации, некоректные данные. Пустой почтовый ящик.",
+                new NullPointerException());
+
+
+        User user = new User(UUID.randomUUID(), login, passwordHash, name, email, false);
+
+        try {
 
             if (users.findByLogin(login) == null) {
                 users.addUser(user);
@@ -74,7 +94,7 @@ public class RegistrationService {
                 int confirmCode = (int) (1000 + Math.random() * (9999 - 1000));
 
                 //отправляем код на мыло!!!!
-                sendingService.send("Код подтверждения: "+confirmCode, user.getEmail());
+                sendingService.send("Код подтверждения: " + confirmCode, user.getEmail());
 
                 confirmCodes.put(confirmCode, user);
 
@@ -85,36 +105,49 @@ public class RegistrationService {
             } else
                 result = RegResult.LOGIN_IN_USE;
 
+        } catch (UserDataError | SessionDataError e) {
+            log.warn(e.getLocalizedMessage());
+            throw new RegistrationException("Ошибка регистрации при обращении к данным", e);
         }
 
         return result;
     }
 
-    public boolean confirmRegistration(String sessionId, Integer code) {
+    public boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
 
         boolean result = false;
 
-        if (sessionId != null) {
+        if (sessionId == null) throw new RegistrationException(
+                "Ошибка регистрации, некоректные данные",
+                new NullPointerException());
 
+        if (code == null) throw new RegistrationException(
+                "Ошибка регистрации, некоректные данные",
+                new NullPointerException());
+
+        try {
             Session session = sessions.getSessionById(sessionId);
             User user = confirmCodes.get(code);
 
-            if (session != null)
-                if (user != null)
-                    if (user.equals(session.getUser())) {
+            if (session != null && user != null)
+                if (user.equals(session.getUser())) {
 
-                        user = users.makeActive(user);
-                        if (user != null) {
+                    user = users.makeActive(user);
+                    if (user != null) {
 
-                            sessions.insertOrUpdateSession(new Session(sessionId, user));
-                            result = true;
+                        sessions.insertOrUpdateSession(new Session(sessionId, user));
+                        result = true;
 
-                            log.debug("Подтвердили регистрацию пользователя: {}", user);
-                        }
-                    } else {
-                        log.warn("С этой сессией уже зарегистрирован пользователь, и отправлен запрос" +
-                                "регистрации: текущий: {} из сессии: {}", user, session.getUser());
+                        log.debug("Подтвердили регистрацию пользователя: {}", user);
                     }
+                } else {
+                    log.warn("С этой сессией уже зарегистрирован пользователь, и отправлен запрос" +
+                            "регистрации: текущий: {} из сессии: {}", user, session.getUser());
+                }
+
+        }catch (UserDataError | SessionDataError e) {
+            log.warn(e.getLocalizedMessage());
+            throw new RegistrationException("Ошибка регистрации при обращении к данным", e);
         }
 
         return result;

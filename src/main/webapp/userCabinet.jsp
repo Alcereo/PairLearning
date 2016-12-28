@@ -1,6 +1,6 @@
 <%@ page import="ru.alcereo.pairlearning.Service.SessionService" %>
-<%@ page import="ru.alcereo.pairlearning.Service.UserFront" %>
-<%@ page import="ru.alcereo.pairlearning.Service.TopicRowFront" %>
+<%@ page import="ru.alcereo.pairlearning.Service.models.UserFront" %>
+<%@ page import="ru.alcereo.pairlearning.Service.models.TopicRowFront" %>
 <%@ page import="ru.alcereo.pairlearning.Service.TopicService" %><%--
   Created by IntelliJ IDEA.
   User: alcereo

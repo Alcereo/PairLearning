@@ -4,7 +4,8 @@ package ru.alcereo.pairlearning.servlets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.UserFront;
+import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -26,26 +27,33 @@ public class ValidationFilter implements Filter{
         String uri = req.getRequestURI();
         log.debug("Фильтрую запрос сеанса: {}", sessionId);
 
-        if (SessionService.validateSession(sessionId)) {
+        try {
+            if (SessionService.validateSession(sessionId)) {
 
-            UserFront user = SessionService.getCurrentUser(sessionId);
-            if (user != null)
-                req.setAttribute("user", user);
+                UserFront user = SessionService.getCurrentUser(sessionId);
+                if (user != null)
+                    req.setAttribute("user", user);
 
-            chain.doFilter(request, response);
+                chain.doFilter(request, response);
 
-        }else if (
-                uri.equals("/") |
-                        uri.equals("/registration") |
-                        uri.equals("/users/api") |
-                        uri.matches("/js/.+")
-                ) {
+            }else if (
+                    uri.equals("/") |
+                            uri.equals("/registration") |
+                            uri.equals("/users/api") |
+                            uri.matches("/js/.+") |
+                            uri.equals("/error")
+                    ) {
 
-            chain.doFilter(request, response);
+                chain.doFilter(request, response);
 
-        }else {
+            }else {
 
-            request.getRequestDispatcher("/authorization").forward(request, response);
+                request.getRequestDispatcher("/authorization").forward(request, response);
+            }
+        } catch (ValidateException e) {
+
+            req.setAttribute("errorDescription", e.getLocalizedMessage());
+            request.getRequestDispatcher("/error").forward(request, response);
         }
     }
 

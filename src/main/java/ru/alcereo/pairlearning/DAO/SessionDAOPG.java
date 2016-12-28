@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 
@@ -61,7 +62,7 @@ public class SessionDAOPG implements SessionDAO{
     }
 
 
-    public Session getSessionById(String id) {
+    public Session getSessionById(String id) throws SessionDataError {
 
         Session result=null;
 
@@ -81,12 +82,13 @@ public class SessionDAOPG implements SessionDAO{
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
+            throw new SessionDataError("Ошибка обращения к данным сессий",e);
         }
 
         return result;
     }
 
-    public Session getSessionByUser(User user) {
+    public Session getSessionByUser(User user) throws SessionDataError {
         Session result=null;
 
         try(
@@ -103,14 +105,14 @@ public class SessionDAOPG implements SessionDAO{
             }
 
         } catch (SQLException e) {
-//            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new SessionDataError("Ошибка обращения к данным сессий",e);
         }
 
         return result;
     }
 
-    public boolean insertOrUpdateSession(Session session) {
+    public boolean insertOrUpdateSession(Session session) throws SessionDataError {
 
         String upsertQuery =
                 "WITH upsert AS" +
@@ -142,15 +144,15 @@ public class SessionDAOPG implements SessionDAO{
             result = st.executeUpdate()==1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new SessionDataError("Ошибка обращения к данным сессий",e);
         }
 
         return result;
 
     }
 
-    public boolean deleteSessionById(String sessionId) {
+    public boolean deleteSessionById(String sessionId) throws SessionDataError {
 
         boolean result=false;
 
@@ -164,8 +166,8 @@ public class SessionDAOPG implements SessionDAO{
             result = st.executeUpdate()==1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new SessionDataError("Ошибка обращения к данным сессий",e);
         }
 
         return result;

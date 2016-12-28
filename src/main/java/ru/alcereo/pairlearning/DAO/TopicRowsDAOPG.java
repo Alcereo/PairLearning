@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.DAO.models.Topic;
 import ru.alcereo.pairlearning.DAO.models.User;
 
@@ -38,9 +39,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
 
     @Override
-    public boolean setLearnPredicate(Long id, User user, boolean predicate) {
-
-        boolean result=false;
+    public void setLearnPredicate(Long id, User user, boolean predicate) throws TopicRowDataError {
 
         try(
                 Connection conn = ds.getConnection();
@@ -75,19 +74,16 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
             log.debug("Выполнили запрос learn: id:{}, pred:{}, usermod:{}",id,predicate, user.getUid());
 
-            result = true;
-
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
         }
 
-        return result;
     }
 
     @Override
-    public boolean setTeachPredicate(Long id, User userModel, boolean predicate) {
-        boolean result=false;
+    public void setTeachPredicate(Long id, User userModel, boolean predicate) throws TopicRowDataError {
+
 
         try(
                 Connection conn = ds.getConnection();
@@ -122,18 +118,16 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
             log.debug("Выполнили запрос teach: id:{}, pred:{}, usermod:{}",id,predicate, userModel.getUid());
 
-            result = true;
 
         } catch (SQLException e) {
-//            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
         }
 
-        return result;
     }
 
     @Override
-    public List<TopicRow> getAllByUser(User userModel) {
+    public List<TopicRow> getAllByUser(User userModel) throws TopicRowDataError {
         List<TopicRow> result=new ArrayList<>();
 
         try(
@@ -167,8 +161,8 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
         }
 
         return result;
@@ -176,7 +170,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
 
     @Override
-    public Set<Topic> getLearnTopicsByUser(User user) {
+    public Set<Topic> getLearnTopicsByUser(User user) throws TopicRowDataError {
         Set<Topic> result=new HashSet<>();
 
         try(
@@ -209,8 +203,8 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
         }
 
         return result;
@@ -218,7 +212,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
 
     @Override
-    public Set<Topic> getTeachTopicsByUser(User user) {
+    public Set<Topic> getTeachTopicsByUser(User user) throws TopicRowDataError {
         Set<Topic> result=new HashSet<>();
 
         try(
@@ -251,14 +245,14 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
         }
 
         return result;
     }
 
-    public boolean addTopic(Topic topic){
+    public boolean addTopic(Topic topic) throws TopicRowDataError {
 
         boolean result=false;
 
@@ -275,8 +269,8 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
             result = st.executeUpdate()==1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             log.warn(e.getLocalizedMessage());
+            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
         }
 
         return result;

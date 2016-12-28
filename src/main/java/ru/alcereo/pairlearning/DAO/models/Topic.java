@@ -1,6 +1,6 @@
 package ru.alcereo.pairlearning.DAO.models;
 
-import ru.alcereo.pairlearning.Service.TopicFront;
+import ru.alcereo.pairlearning.Service.models.TopicFront;
 
 import java.util.UUID;
 

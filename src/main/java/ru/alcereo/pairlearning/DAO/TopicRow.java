@@ -2,7 +2,7 @@ package ru.alcereo.pairlearning.DAO;
 
 import ru.alcereo.pairlearning.DAO.models.Topic;
 import ru.alcereo.pairlearning.DAO.models.User;
-import ru.alcereo.pairlearning.Service.TopicRowFront;
+import ru.alcereo.pairlearning.Service.models.TopicRowFront;
 
 
 public class TopicRow implements TopicRowFront {

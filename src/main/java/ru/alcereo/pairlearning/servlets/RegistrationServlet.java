@@ -3,8 +3,8 @@ package ru.alcereo.pairlearning.servlets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.RegistrationService;
+import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class RegistrationServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 
         log.debug("Запрос с параметрами: {}", req.getParameterMap());
 
@@ -38,66 +38,119 @@ public class RegistrationServlet extends HttpServlet {
                 confirmation(req, resp);
                 break;
             default:
-                resp.setStatus(400);
+                try {
+                    resp.getWriter().write(
+                            "Действие action не распознано"
+                    );
+                    resp.setStatus(400);
+                } catch (IOException e1) {
+                    log.warn(e1.getLocalizedMessage());
+                    resp.setStatus(400);
+                }
         }
 
     }
 
-    private void registration(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void registration(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession();
 
-        switch (
-                registrationService.registration(
-                        session.getId(),
-                        req.getParameter("login"),
-                        req.getParameter("name"),
-                        req.getParameter("passwordHash"),
-                        req.getParameter("email")
-                ))
-        {
-            case SUCCESS:
-                resp.setStatus(200);
-                break;
-            case LOGIN_IN_USE:
+        try {
+            switch (
+                    registrationService.registration(
+                            session.getId(),
+                            req.getParameter("login"),
+                            req.getParameter("name"),
+                            req.getParameter("passwordHash"),
+                            req.getParameter("email")
+                    )) {
+                case SUCCESS:
+                    resp.setStatus(200);
+                    break;
+                case LOGIN_IN_USE:
+                    resp.getWriter().write(
+                            "Логин уже используется"
+                    );
+                    resp.setStatus(409);
+                    break;
+                case EMAIL_INCORRECT:
+                    resp.getWriter().write(
+                            "Почтовый адрес не корректен"
+                    );
+                    resp.setStatus(400);
+                    break;
+
+                // Теоретически недостежимо
+                default:
+                    resp.setStatus(400);
+            }
+        } catch (RegistrationException e) {
+            log.warn(e.getLocalizedMessage());
+            try {
                 resp.getWriter().write(
-                        "LOGIN_IN_USE"
-                );
-                resp.setStatus(409);
-                break;
-            case EMAIL_INCORRECT:
-                resp.getWriter().write(
-                        "EMAIL_INCORRECT"
+                        "Ошибка регистрации: "+e.getLocalizedMessage()
                 );
                 resp.setStatus(400);
-                break;
-            default:
+            } catch (IOException e1) {
+                log.warn(e.getLocalizedMessage());
                 resp.setStatus(400);
+            }
+        } catch (IOException e) {
+            log.warn(e.getLocalizedMessage());
+            resp.setStatus(400);
         }
+
     }
 
-    private void confirmation(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void confirmation(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession();
 
-        Integer code = null;
+        Integer code = 0;
 
         try {
             code = new Integer(req.getParameter("code"));
         }catch (NumberFormatException e){
-            resp.getWriter().write(
-                    "CODE_INCORRECT"
-            );
-            resp.setStatus(400);
+            try {
+                resp.getWriter().write(
+                        "Ошибка обработки кода"
+                );
+                resp.setStatus(400);
+            } catch (IOException e1) {
+                log.warn(e.getLocalizedMessage());
+                resp.setStatus(400);
+            }
         }
 
-        log.debug("Получили код подтверждения: {}", code);
+        if (code == 0) {
 
-        if(registrationService.confirmRegistration(
-                session.getId(),
-                code))
-            resp.setStatus(200);
-        else
-            resp.setStatus(400);
+            log.debug("Получили код подтверждения: {}", code);
 
+            try {
+                if (registrationService.confirmRegistration(
+                        session.getId(),
+                        code))
+                    resp.setStatus(200);
+                else
+                    try {
+                        resp.getWriter().write(
+                                "Код подтверждения не корректен"
+                        );
+                        resp.setStatus(400);
+                    } catch (IOException e) {
+                        log.warn(e.getLocalizedMessage());
+                        resp.setStatus(400);
+                    }
+            } catch (RegistrationException e) {
+                try {
+                    resp.getWriter().write(
+                            "Ошибка сервиса регистрации. "+e.getLocalizedMessage()
+                    );
+                    resp.setStatus(400);
+                } catch (IOException e1) {
+                    log.warn(e1.getLocalizedMessage());
+                    resp.setStatus(400);
+                }
+            }
+        }
     }
 
 }

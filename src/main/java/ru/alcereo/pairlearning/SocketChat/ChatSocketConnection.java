@@ -38,7 +38,20 @@ public class ChatSocketConnection {
         WsSession wsSession = (WsSession) session;
         log.debug("Новое содениение: {}", wsSession.getHttpSessionId());
 
-        SocketSessionProvider.addSocketSession(wsSession.getHttpSessionId(), session, this);
+        try {
+            SocketSessionProvider.addSocketSession(wsSession.getHttpSessionId(), session, this);
+
+        } catch (SocketConnectionConstructionException e) {
+
+            log.warn(e.getLocalizedMessage());
+            try {
+                session.getBasicRemote().sendText(e.getLocalizedMessage());
+                session.close();
+            } catch (IOException e1) {
+                log.error(e1.getLocalizedMessage());
+            }
+
+        }
 
     }
 

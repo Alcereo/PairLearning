@@ -1,4 +1,4 @@
-package ru.alcereo.pairlearning.Service;
+package ru.alcereo.pairlearning.Service.models;
 
 /**
  * Created by alcereo on 27.12.16.

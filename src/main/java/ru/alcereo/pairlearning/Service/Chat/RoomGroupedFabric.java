@@ -1,6 +1,6 @@
 package ru.alcereo.pairlearning.Service.Chat;
 
-import ru.alcereo.pairlearning.Service.UserFront;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 public class RoomGroupedFabric implements RoomFabric {
 
