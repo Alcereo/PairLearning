@@ -16,6 +16,7 @@ import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 public class SessionService {
@@ -55,14 +56,28 @@ public class SessionService {
 
             User user = users.findByLogin(login);
 
-            if (user != null
-                    && Objects.equals(user.getPasswordHash(), password)
-                    && user.isActive()) {
 
-                sessions.insertOrUpdateSession(new Session(sessionId, user));
+            if (user != null){
 
-                log.debug("User authorizate: {} session: {}", user, sessionId);
-                result = true;
+                String passwordHash;
+
+                try {
+                    passwordHash = CryptoService.cryptPass(password, user.getUid().toString());
+                } catch (NoSuchAlgorithmException e) {
+                    log.warn(e.getLocalizedMessage());
+                    throw new AuthorizationException(
+                            "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
+                            e);
+                }
+
+                if (Objects.equals(user.getPasswordHash(), passwordHash)
+                        && user.isActive()) {
+
+                    sessions.insertOrUpdateSession(new Session(sessionId, user));
+
+                    log.debug("User authorizate: {} session: {}", user, sessionId);
+                    result = true;
+                }
             }
 
         } catch (SessionDataError | UserDataError e) {

@@ -125,7 +125,7 @@ public class RegistrationServlet extends HttpServlet {
             }
         }
 
-        if (code == 0) {
+        if (code != 0) {
 
             log.debug("Получили код подтверждения: {}", code);
 

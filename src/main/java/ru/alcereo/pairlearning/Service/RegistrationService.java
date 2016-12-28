@@ -13,11 +13,12 @@ import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static ru.alcereo.pairlearning.Service.RegistrationService.RegResult.ERROR;
 
 public class RegistrationService {
 
@@ -54,7 +55,7 @@ public class RegistrationService {
             String sessionId,
             String login,
             String name,
-            String passwordHash,
+            String password,
             String email
     ) throws RegistrationException {
 
@@ -72,7 +73,7 @@ public class RegistrationService {
                 "Ошибка регистрации, некоректные данные. Пустое имя.",
                 new NullPointerException());
 
-        if (passwordHash == null) throw new RegistrationException(
+        if (password == null) throw new RegistrationException(
                 "Ошибка регистрации, некоректные данные. Пустой пароль.",
                 new NullPointerException());
 
@@ -80,8 +81,17 @@ public class RegistrationService {
                 "Ошибка регистрации, некоректные данные. Пустой почтовый ящик.",
                 new NullPointerException());
 
+        UUID newUUID = UUID.randomUUID();
+        String passwordHash;
 
-        User user = new User(UUID.randomUUID(), login, passwordHash, name, email, false);
+        try {
+            passwordHash = CryptoService.cryptPass(password, newUUID.toString());
+        } catch (NoSuchAlgorithmException e) {
+            log.warn(e.getLocalizedMessage());
+            throw new RegistrationException("Ошибка регистрации. Ошибка моудля хеширования.",e);
+        }
+
+        User user = new User(newUUID, login, passwordHash, name, email, false);
 
         try {
 

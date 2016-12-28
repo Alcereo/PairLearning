@@ -32,7 +32,7 @@ public class ValidationFilter implements Filter{
             if (SessionService.validateSession(sessionId)) {
 
                 UserFront user = SessionService.getCurrentUser(sessionId);
-                if (user != null)
+                if (user != null && user.isActive())
                     req.setAttribute("user", user);
 
                 chain.doFilter(request, response);
@@ -40,6 +40,7 @@ public class ValidationFilter implements Filter{
             }else if (
                     uri.equals("/") |
                             uri.equals("/registration") |
+                            uri.equals("/registration/api") |
                             uri.equals("/users/api") |
                             uri.matches("/js/.+") |
                             uri.equals("/error")
