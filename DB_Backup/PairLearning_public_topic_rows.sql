@@ -1,0 +1,9 @@
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('615f504f-13de-4685-bb6a-278b22f5f021', '7d29c12a-cc44-40d4-ada1-132260ff6cee', false, false);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('dc367c98-534e-4771-b1d6-e772504cc70b', '3c350dd7-e96c-4126-a4f5-daa7fcb4f227', false, true);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('dc367c98-534e-4771-b1d6-e772504cc70b', '7d29c12a-cc44-40d4-ada1-132260ff6cee', false, false);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('1750d770-4d45-4d1f-9144-ce3cbccaa508', '3c350dd7-e96c-4126-a4f5-daa7fcb4f227', false, false);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('615f504f-13de-4685-bb6a-278b22f5f021', '3c350dd7-e96c-4126-a4f5-daa7fcb4f227', true, false);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('dc367c98-534e-4771-b1d6-e772504cc70b', '4dcda447-ed26-4e84-ad57-780f1d569c56', true, false);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('1750d770-4d45-4d1f-9144-ce3cbccaa508', '4dcda447-ed26-4e84-ad57-780f1d569c56', false, false);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('615f504f-13de-4685-bb6a-278b22f5f021', '4dcda447-ed26-4e84-ad57-780f1d569c56', false, true);
+INSERT INTO public.topic_rows (topic_uid, user_uid, learn, teach) VALUES ('1750d770-4d45-4d1f-9144-ce3cbccaa508', '7d29c12a-cc44-40d4-ada1-132260ff6cee', false, true);

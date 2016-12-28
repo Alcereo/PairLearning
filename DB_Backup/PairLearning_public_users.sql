@@ -1,0 +1,3 @@
+INSERT INTO public.users (uid, login, passwordhash, email, activae, name) VALUES ('3c350dd7-e96c-4126-a4f5-daa7fcb4f227', 'Ivan', '40bd001563085fc35165329ea1ff5c5ecbdbbeef', '', true, 'Иван');
+INSERT INTO public.users (uid, login, passwordhash, email, activae, name) VALUES ('7d29c12a-cc44-40d4-ada1-132260ff6cee', 'Alcereo', '40bd001563085fc35165329ea1ff5c5ecbdbbeef', 'sdffe', true, 'Александр');
+INSERT INTO public.users (uid, login, passwordhash, email, activae, name) VALUES ('4dcda447-ed26-4e84-ad57-780f1d569c56', 'qwe', '40bd001563085fc35165329ea1ff5c5ecbdbbeef', 'ad', true, 'Андрей');
