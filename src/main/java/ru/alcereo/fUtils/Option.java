@@ -5,15 +5,15 @@ package ru.alcereo.fUtils;
  * Монада для хранения значений
  * @param <T>
  */
-abstract class Option<T> {
+public abstract class Option<T> {
 
     public static final None NONE = new None();
 
-    public abstract <R> Option<R> map(Func<T,R> func);
+    public abstract <R, E extends Throwable> Option<R> map(Func<T,R,E> func) throws E;
 
-    public abstract <R> Option<R> flatMap(Func<T,Option<R>> func);
+    public abstract <R, E extends Throwable> Option<R> flatMap(Func<T,Option<R>,E> func) throws E;
 
-    public abstract Option<T> filter(Func<T, Boolean> filterPredicate);
+    public abstract <E extends Throwable> Option<T> filter(Func<T, Boolean, E> filterPredicate) throws E;
 
     public abstract T getOrElse(T valueElse);
 

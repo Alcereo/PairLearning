@@ -10,17 +10,17 @@ class Some<T> extends Option<T> {
     }
 
     @Override
-    public <R> Option<R> map(Func<T, R> func) {
+    public <R, E extends Throwable> Option<R> map(Func<T, R, E> func) throws E {
         return some(func.execute(value));
     }
 
     @Override
-    public <R> Option<R> flatMap(Func<T, Option<R>> func) {
+    public <R, E extends Throwable> Option<R> flatMap(Func<T, Option<R>, E> func) throws E {
         return func.execute(value);
     }
 
     @Override
-    public Option<T> filter(Func<T, Boolean> filterPredicate) {
+    public <E extends Throwable> Option<T> filter(Func<T, Boolean, E> filterPredicate) throws E {
         if (filterPredicate.execute(value))
             return this;
         else

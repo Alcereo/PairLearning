@@ -34,7 +34,7 @@ public class RegistrationService {
 
     private static final Map<Integer, User> confirmCodes = new HashMap<>();
 
-    private SendingService sendingService = new SendingServiceMock();
+    private static SendingService sendingService = new SendingServiceMock();
 
 
     public void setSendingService(SendingService sendingService) {
@@ -65,7 +65,7 @@ public class RegistrationService {
      * @return
      *  Результат регистрации
      */
-    public RegResult registration(
+    public static RegResult registration(
             String sessionId,
             String login,
             String name,
@@ -147,7 +147,7 @@ public class RegistrationService {
      * @return
      *  true - если регистрация завершилась успешно, false - иначе
      */
-    public boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
+    public static boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
 
         boolean result = false;
 

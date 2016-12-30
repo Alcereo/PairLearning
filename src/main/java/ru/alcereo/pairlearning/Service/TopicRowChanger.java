@@ -11,8 +11,8 @@ public interface TopicRowChanger {
 
     void setPredicate(TopicRowsDAO topicRows, User user) throws TopicServiceException;
 
-    void setPredicateValue(boolean predicate);
+    TopicRowChanger setPredicateValue(boolean predicate);
 
-    void setTopicId(Long id);
+    TopicRowChanger setTopicId(Long id);
 
 }

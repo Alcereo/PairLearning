@@ -1,7 +1,7 @@
-<%@ page import="ru.alcereo.pairlearning.Service.SessionService" %>
-<%@ page import="ru.alcereo.pairlearning.Service.models.UserFront" %>
+
+<%@ page import="ru.alcereo.pairlearning.Service.TopicService" %>
 <%@ page import="ru.alcereo.pairlearning.Service.models.TopicRowFront" %>
-<%@ page import="ru.alcereo.pairlearning.Service.TopicService" %><%--
+<%@ page import="ru.alcereo.pairlearning.Service.models.UserFront" %><%--
   Created by IntelliJ IDEA.
   User: alcereo
   Date: 23.12.16
@@ -44,8 +44,7 @@
 
 <a href="/chatroom">Чат</a>
 
-<form action="${pageContext.request.contextPath}/users/api" method="post">
-    <input name="action" value="exit" hidden>
+<form id="logout">
     <input type="submit" value="Выход">
 </form>
 
@@ -60,9 +59,8 @@
         var checker = $(this);
 
         $.post(
-            "/topic/api",
+            "/topic/api/concrete",
             {
-                action:"concrete",
                 id: this.id,
                 value: this.value,
                 predicate: checker.is(':checked')
@@ -83,13 +81,9 @@
 
     });
 
-    var messages = document.getElementById("error_messages");
-
-    function writeError(text){
-        messages.innerHTML += "<br/>" + text;
-    }
-
 </script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/logout.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/errorWrite.js"></script>
 
 </body>
 </html>

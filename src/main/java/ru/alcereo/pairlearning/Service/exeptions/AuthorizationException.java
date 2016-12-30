@@ -3,7 +3,8 @@ package ru.alcereo.pairlearning.Service.exeptions;
 /**
  * Created by alcereo on 28.12.16.
  */
-public class AuthorizationException extends Throwable {
+public class AuthorizationException extends Exception {
+
     public AuthorizationException() {
     }
 

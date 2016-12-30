@@ -32,11 +32,11 @@
 <p></p>
 Вы зашли, как: <%=((UserFront)request.getAttribute("user")).getName()%>
 <p></p>
-<form action="${pageContext.request.contextPath}/users/api" method="post">
-    <input name="action" value="exit" hidden>
+
+
+<form id="logout">
     <input type="submit" value="Выход">
 </form>
-
 
 <%}%>
 
@@ -49,7 +49,7 @@
 
         event.preventDefault();
         $.post(
-            "/users/api",
+            "/users/api/auth",
             {
                 action:"auth",
                 login: $('#login').val(),
@@ -67,14 +67,9 @@
         });
     });
 
-
-    var messages = document.getElementById("error_messages");
-
-    function writeError(text){
-        messages.innerHTML += "<br/>" + text;
-    }
-
 </script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/logout.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/errorWrite.js"></script>
 
 </body>
 </html>

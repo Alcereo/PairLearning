@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
 
@@ -120,7 +121,35 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
+    public Option<User> findByLoginOpt(String login) throws UserDataError {
+
+        Option<User> result = Option.NONE;
+
+        try(
+                Connection conn = ds.getConnection();
+                PreparedStatement st = conn.prepareStatement(
+                        "SELECT * FROM users WHERE login=?");
+        ){
+
+            st.setString(1, login);
+
+            try(ResultSet resultSet = st.executeQuery();){
+
+                while (resultSet.next())
+                    result = Option.asOption(userFromResultSet(resultSet));
+            }
+
+        } catch (SQLException e) {
+            log.warn(e.getLocalizedMessage());
+            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
+        }
+
+        return result;
+    }
+
+    @Override
     public User findByLogin(String login) throws UserDataError {
+
         User result = null;
 
         try(

@@ -44,13 +44,15 @@ public class TopicLearnPredicateChanger implements TopicRowChanger {
     }
 
     @Override
-    public void setPredicateValue(boolean value) {
+    public TopicRowChanger setPredicateValue(boolean value) {
         this.value = value;
+        return this;
     }
 
     @Override
-    public void setTopicId(Long id) {
+    public TopicRowChanger setTopicId(Long id) {
         this.id = id;
+        return this;
     }
 
 }

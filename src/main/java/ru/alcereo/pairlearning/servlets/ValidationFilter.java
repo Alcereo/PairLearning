@@ -39,9 +39,8 @@ public class ValidationFilter implements Filter{
 
             }else if (
                     uri.equals("/") |
-                            uri.equals("/registration") |
-                            uri.equals("/registration/api") |
-                            uri.equals("/users/api") |
+                            uri.matches("/registration.*") |
+                            uri.matches("/users.*") |
                             uri.matches("/js/.+") |
                             uri.equals("/error")
                     ) {

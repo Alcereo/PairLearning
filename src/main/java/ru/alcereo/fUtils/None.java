@@ -7,17 +7,17 @@ class None<T> extends Option<T>{
     }
 
     @Override
-    public <R> Option<R> map(Func<T, R> func) {
+    public <R,E extends Throwable> Option<R> map(Func<T, R, E> func) throws E {
         return none();
     }
 
     @Override
-    public <R> Option<R> flatMap(Func<T, Option<R>> func) {
+    public <R,E extends Throwable> Option<R> flatMap(Func<T, Option<R>,E> func) throws E {
         return none();
     }
 
     @Override
-    public Option<T> filter(Func<T, Boolean> filterPredicate) {
+    public <E extends Throwable> Option<T> filter(Func<T, Boolean, E> filterPredicate) throws E {
         return none();
     }
 
@@ -25,5 +25,6 @@ class None<T> extends Option<T>{
     public T getOrElse(T valueElse) {
         return valueElse;
     }
+
 }
 

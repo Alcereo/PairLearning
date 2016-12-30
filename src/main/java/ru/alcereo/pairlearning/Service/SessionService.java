@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.SessionDAOPG;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
@@ -67,34 +68,43 @@ public class SessionService {
                 new NullPointerException("sessionId != null"));
 
         try {
+            result = users
+                    .findByLoginOpt(login)
+                    .map(
+                            (User user) -> {
 
-            User user = users.findByLogin(login);
+                                String passwordHash;
+                                boolean lResult = false;
 
+                                try {
+                                    passwordHash = CryptoService.cryptPass(password, user.getUid().toString());
+                                } catch (NoSuchAlgorithmException e) {
+                                    log.warn(e.getLocalizedMessage());
+                                    throw new AuthorizationException(
+                                            "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
+                                            e);
+                                }
 
-            if (user != null){
+                                try {
+                                    if (Objects.equals(user.getPasswordHash(), passwordHash)
+                                            && user.isActive()) {
 
-                String passwordHash;
+                                        sessions.insertOrUpdateSession(new Session(sessionId, user));
+                                        log.debug("User authorizate: {} session: {}", user, sessionId);
+                                        lResult = true;
+                                    }
+                                } catch (SessionDataError e) {
+                                    log.warn(e.getLocalizedMessage());
+                                    throw new AuthorizationException(
+                                            "Ошибка авторизации. Ошибка при обращении к данным",
+                                            e);
+                                }
 
-                try {
-                    passwordHash = CryptoService.cryptPass(password, user.getUid().toString());
-                } catch (NoSuchAlgorithmException e) {
-                    log.warn(e.getLocalizedMessage());
-                    throw new AuthorizationException(
-                            "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
-                            e);
-                }
+                                return lResult;
 
-                if (Objects.equals(user.getPasswordHash(), passwordHash)
-                        && user.isActive()) {
+                            }).getOrElse(false);
 
-                    sessions.insertOrUpdateSession(new Session(sessionId, user));
-
-                    log.debug("User authorizate: {} session: {}", user, sessionId);
-                    result = true;
-                }
-            }
-
-        } catch (SessionDataError | UserDataError e) {
+        } catch (UserDataError e) {
             log.warn(e.getLocalizedMessage());
             throw new AuthorizationException(
                     "Ошибка авторизации. Ошибка при обращении к данным",
@@ -102,6 +112,7 @@ public class SessionService {
         }
 
         return result;
+
     }
 
 

@@ -31,7 +31,7 @@
 
         event.preventDefault();
         $.post(
-            "/users/api",
+            "/users/api/auth",
             {
                 action:"auth",
                 login: $('#login').val(),

@@ -3,6 +3,8 @@ package ru.alcereo.pairlearning.DAO;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
 
+import ru.alcereo.fUtils.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +43,8 @@ public interface UsersDAO {
      *  Пользователь с указанным логином, либо null, если не наиден
      */
     User findByLogin(String login) throws UserDataError;
+
+    Option<User> findByLoginOpt(String login) throws UserDataError;
 
 
     /**

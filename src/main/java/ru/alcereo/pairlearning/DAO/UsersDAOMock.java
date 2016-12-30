@@ -1,5 +1,7 @@
 package ru.alcereo.pairlearning.DAO;
 
+import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
 
 import java.util.ArrayList;
@@ -54,6 +56,11 @@ public class UsersDAOMock implements UsersDAO {
                 resultUser = user;
 
         return resultUser;
+    }
+
+    @Override
+    public Option<User> findByLoginOpt(String login) throws UserDataError {
+        throw new UserDataError("NOT IMPLEMENTED!!!");
     }
 
     @Override

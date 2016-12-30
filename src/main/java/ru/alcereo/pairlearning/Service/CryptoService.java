@@ -1,5 +1,7 @@
 package ru.alcereo.pairlearning.Service;
 
+import ru.alcereo.pairlearning.DAO.models.User;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -27,6 +29,12 @@ public class CryptoService {
         md.update(first.getBytes());
 
         return String.format("%064x", new java.math.BigInteger(1, md.digest()));
+    }
+
+    public static boolean validateUserPassword(User user){
+
+        return true;
+
     }
 
 }
