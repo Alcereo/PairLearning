@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static ru.alcereo.pairlearning.servlets.ServletUtil.respError;
+
 @WebServlet("/registration/api")
 public class RegistrationServlet extends HttpServlet {
 
@@ -38,16 +40,7 @@ public class RegistrationServlet extends HttpServlet {
                 confirmation(req, resp);
                 break;
             default:
-                try {
-                    resp.setCharacterEncoding("utf-16");
-                    resp.getWriter().write(
-                            "Действие action не распознано"
-                    );
-                    resp.setStatus(400);
-                } catch (IOException e1) {
-                    log.warn(e1.getLocalizedMessage());
-                    resp.setStatus(400);
-                }
+                respError(resp,"Действие action не распознано", 400);
         }
 
     }
@@ -68,18 +61,10 @@ public class RegistrationServlet extends HttpServlet {
                     resp.setStatus(200);
                     break;
                 case LOGIN_IN_USE:
-                    resp.setCharacterEncoding("utf-16");
-                    resp.getWriter().write(
-                            "Логин уже используется"
-                    );
-                    resp.setStatus(409);
+                    respError(resp,"Логин уже используется", 409);
                     break;
                 case EMAIL_INCORRECT:
-                    resp.setCharacterEncoding("utf-16");
-                    resp.getWriter().write(
-                            "Почтовый адрес не корректен"
-                    );
-                    resp.setStatus(400);
+                    respError(resp,"Почтовый адрес не корректен", 400);
                     break;
 
                 // Теоретически недостежимо
@@ -87,20 +72,7 @@ public class RegistrationServlet extends HttpServlet {
                     resp.setStatus(400);
             }
         } catch (RegistrationException e) {
-            log.warn(e.getLocalizedMessage());
-            try {
-                resp.setCharacterEncoding("utf-16");
-                resp.getWriter().write(
-                        "Ошибка регистрации: "+e.getLocalizedMessage()
-                );
-                resp.setStatus(400);
-            } catch (IOException e1) {
-                log.warn(e.getLocalizedMessage());
-                resp.setStatus(400);
-            }
-        } catch (IOException e) {
-            log.warn(e.getLocalizedMessage());
-            resp.setStatus(400);
+            respError(resp, "Ошибка регистрации: " + e.getLocalizedMessage(), 400);
         }
 
     }
@@ -113,16 +85,7 @@ public class RegistrationServlet extends HttpServlet {
         try {
             code = new Integer(req.getParameter("code"));
         }catch (NumberFormatException e){
-            try {
-                resp.setCharacterEncoding("utf-16");
-                resp.getWriter().write(
-                        "Ошибка обработки кода"
-                );
-                resp.setStatus(400);
-            } catch (IOException e1) {
-                log.warn(e.getLocalizedMessage());
-                resp.setStatus(400);
-            }
+            respError(resp, "Ошибка обработки кода" + e.getLocalizedMessage(), 400);
         }
 
         if (code != 0) {
@@ -135,27 +98,11 @@ public class RegistrationServlet extends HttpServlet {
                         code))
                     resp.setStatus(200);
                 else
-                    try {
-                        resp.setCharacterEncoding("utf-16");
-                        resp.getWriter().write(
-                                "Код подтверждения не корректен"
-                        );
-                        resp.setStatus(400);
-                    } catch (IOException e) {
-                        log.warn(e.getLocalizedMessage());
-                        resp.setStatus(400);
-                    }
+                    respError(resp, "Код подтверждения не корректен", 400);
+
             } catch (RegistrationException e) {
-                try {
-                    resp.setCharacterEncoding("utf-16");
-                    resp.getWriter().write(
-                            "Ошибка сервиса регистрации. "+e.getLocalizedMessage()
-                    );
-                    resp.setStatus(400);
-                } catch (IOException e1) {
-                    log.warn(e1.getLocalizedMessage());
-                    resp.setStatus(400);
-                }
+
+                respError(resp, "Ошибка сервиса регистрации. "+e.getLocalizedMessage(), 400);
             }
         }
     }

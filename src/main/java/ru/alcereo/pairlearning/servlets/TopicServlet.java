@@ -13,12 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ru.alcereo.pairlearning.servlets.ServletUtil.respError;
+
 @WebServlet("/topic/api")
 public class TopicServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(TopicServlet.class);
 
-//    private final SessionService sessionService = new SessionService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
@@ -48,8 +49,7 @@ public class TopicServlet extends HttpServlet {
                 try {
                     id = new Long(req.getParameter("id"));
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    resp.setStatus(400);
+                    respError(resp,"Параметр ID задан не верно", 400);
                 }
 
                 try {
@@ -62,26 +62,14 @@ public class TopicServlet extends HttpServlet {
 
                     resp.setStatus(200);
                 } catch (TopicServiceException e) {
-                    try {
-                        resp.setCharacterEncoding("utf-16");
-                        resp.getWriter().write("Ошибка сервиса тем ");
-                        resp.setStatus(400);
-                    } catch (IOException e1) {
-                        log.warn(e1.getLocalizedMessage());
-                        resp.setStatus(400);
-                    }
+
+                    respError(resp,"Ошибка сервиса тем", 400);
                 }
 
                 break;
             default:
-                try {
-                    resp.setCharacterEncoding("utf-16");
-                    resp.getWriter().write("Не распознано действие action");
-                    resp.setStatus(400);
-                } catch (IOException e) {
-                    log.warn(e.getLocalizedMessage());
-                    resp.setStatus(400);
-                }
+                respError(resp,"Не распознано действие action", 400);
+
         }
 
     }
