@@ -1,8 +1,9 @@
 
 Будет удалено gradle/
 Будет удалено src/test/resources/
-/dev/
-/build/
-/.idea/
-/.gradle/
-/gradle/
+/dev/*
+/build/*
+/.idea/*
+/.gradle/*
+/gradle/*
+
