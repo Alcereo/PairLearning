@@ -2,13 +2,15 @@ package ru.alcereo.pairlearning.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.DAO.*;
+import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
+import ru.alcereo.pairlearning.DAO.TopicRowsDAOPG;
+import ru.alcereo.pairlearning.DAO.UsersDAO;
+import ru.alcereo.pairlearning.DAO.UsersDAOPG;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.Topic;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
-import ru.alcereo.pairlearning.Service.models.TopicPredicateSide;
 import ru.alcereo.pairlearning.Service.models.TopicRowFront;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
@@ -46,12 +48,24 @@ public class TopicService {
             );
 
         try{
-            User userModel = users.findByLogin(user.getLogin());
 
-            if (userModel != null)
-                for (TopicRow topicRow : topicRows.getAllByUser(userModel))
-                    result.add(topicRow);
-        } catch (UserDataError | TopicRowDataError e) {
+            users
+                    .findByLoginOpt(user.getLogin())
+                    .map(
+                            userModel -> {
+                                try {
+                                    topicRows.getAllByUser(userModel).forEach(result::add);
+                                } catch (TopicRowDataError e) {
+                                    log.warn(e.getLocalizedMessage());
+                                    throw new TopicServiceException(
+                                            "Ошибка сервиса тем изучения. Ошибка доступа к данным.",
+                                            e);
+                                }
+                                return null;
+                            }
+                    );
+
+        } catch (UserDataError e) {
             log.warn(e.getLocalizedMessage());
             throw new TopicServiceException(
                     "Ошибка сервиса тем изучения. Ошибка доступа к данным.",
@@ -114,7 +128,6 @@ public class TopicService {
         if (usersList.size()==2){
 
             try {
-
 
                 User user1 = users.findByLogin(usersList.get(0).getLogin());
                 User user2 = users.findByLogin(usersList.get(1).getLogin());

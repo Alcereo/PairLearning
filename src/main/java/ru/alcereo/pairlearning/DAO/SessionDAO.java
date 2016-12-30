@@ -1,5 +1,6 @@
 package ru.alcereo.pairlearning.DAO;
 
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
@@ -22,6 +23,8 @@ public interface SessionDAO {
      *  Ошибка доступа к данным о сессиях
      */
     Session getSessionById(String SessionId) throws SessionDataError;
+
+    Option<Session> getSessionOptById(String SessionId) throws SessionDataError;
 
     /**
      * Получение объекта сессии по пользователю

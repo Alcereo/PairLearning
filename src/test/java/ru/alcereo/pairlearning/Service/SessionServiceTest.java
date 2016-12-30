@@ -97,13 +97,13 @@ public class SessionServiceTest {
 
         assertEquals(
                 "Вернул не того пользователя",
-                sessionService.getCurrentUser("SessionId"),
+                sessionService.getCurrentUserOpt("SessionId"),
                 user
                 );
 
         assertEquals(
                 "Вернул не нулевой возврат",
-                sessionService.getCurrentUser(null),
+                sessionService.getCurrentUserOpt(null),
                 null
         );
 

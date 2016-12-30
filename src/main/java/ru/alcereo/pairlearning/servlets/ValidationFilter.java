@@ -31,9 +31,15 @@ public class ValidationFilter implements Filter{
         try {
             if (SessionService.validateSession(sessionId)) {
 
-                UserFront user = SessionService.getCurrentUser(sessionId);
-                if (user != null && user.isActive())
-                    req.setAttribute("user", user);
+                SessionService
+                        .getCurrentUserOpt(sessionId)
+                        .map(
+                                (UserFront userFront) ->{
+                                    if (userFront.isActive())
+                                        req.setAttribute("user", userFront);
+                                    return null;
+                                }
+                        );
 
                 chain.doFilter(request, response);
 

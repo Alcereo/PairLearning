@@ -1,7 +1,10 @@
 package ru.alcereo.pairlearning.DAO;
 
+import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +23,11 @@ public class SessionDAOMock implements SessionDAO {
                 resultS = session;
 
         return resultS;
+    }
+
+    @Override
+    public Option<Session> getSessionOptById(String SessionId) throws SessionDataError {
+        throw new NotImplementedException();
     }
 
     @Override

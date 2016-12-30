@@ -2,14 +2,13 @@ package ru.alcereo.pairlearning.SocketChat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.Service.*;
 import ru.alcereo.pairlearning.Service.Chat.ChatRoom;
 import ru.alcereo.pairlearning.Service.Chat.RoomFabric;
 import ru.alcereo.pairlearning.Service.Chat.RoomGroupedFabric;
 import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
+import ru.alcereo.pairlearning.Service.SessionService;
 import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
-import ru.alcereo.pairlearning.Service.models.UserFront;
 import ru.alcereo.pairlearning.SocketChat.exceptions.SocketConnectionConstructionException;
 
 import javax.websocket.Session;
@@ -34,35 +33,44 @@ public class SocketSessionProvider{
             try {
                 if (SessionService.validateSession(SessionId)) {
 
-                    UserFront user = SessionService.getCurrentUser(SessionId);
+                    if (!SessionService
+                            .getCurrentUserOpt(SessionId)
+                            .map(
+                                    user ->
+                        {
+                            for (ChatRoom chatRoom : rooms) {
+                                chatRoom.getLock().lock();
+                                try {
+                                    if (chatRoom.tryToInvite(user, new SessionDecorator(session)))
+                                        chatSocketConnection.setChatRoom(chatRoom);
+                                } catch (ChatInviteException e) {
+                                    log.warn(e.getLocalizedMessage());
+                                    throw new SocketConnectionConstructionException("Ошибка при подключении к сервисам комнат", e);
+                                } finally {
+                                    chatRoom.getLock().unlock();
+                                }
+                            }
 
-                    for(ChatRoom chatRoom: rooms){
-                        chatRoom.getLock().lock();
-                        try{
-                            if (chatRoom.tryToInvite(user, new SessionDecorator(session)))
+                            if (chatSocketConnection.notConnectedToRoom()) {
+                                ChatRoom chatRoom = null;
+                                try {
+                                    chatRoom = roomFabric.newRoom(
+                                            user,
+                                            new SessionDecorator(session));
+                                } catch (ChatInviteException e) {
+                                    log.warn(e.getLocalizedMessage());
+                                    throw new SocketConnectionConstructionException("Ошибка подключении к сервисам комнат", e);
+                                }
+
                                 chatSocketConnection.setChatRoom(chatRoom);
-                        } catch (ChatInviteException e) {
-                            log.warn(e.getLocalizedMessage());
-                            throw new SocketConnectionConstructionException("Ошибка при подключении к сервисам комнат",e);
-                        } finally {
-                            chatRoom.getLock().unlock();
-                        }
-                    }
+                                rooms.add(chatRoom);
+                            }
 
-                    if (chatSocketConnection.notConnectedToRoom()){
-                        ChatRoom chatRoom = null;
-                        try {
-                            chatRoom = roomFabric.newRoom(
-                                    user,
-                                    new SessionDecorator(session));
-                        } catch (ChatInviteException e) {
-                            log.warn(e.getLocalizedMessage());
-                            throw new SocketConnectionConstructionException("Ошибка подключении к сервисам комнат",e);
-                        }
+                            return true;
 
-                        chatSocketConnection.setChatRoom(chatRoom);
-                        rooms.add(chatRoom);
-                    }
+                        }).getOrElse(false)
+                    )
+                    throw new SocketConnectionConstructionException("Сессия валидирована, но пользователь не наиден");
 
                 }else{
 

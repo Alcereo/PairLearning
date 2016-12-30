@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.DAO;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
@@ -42,7 +43,7 @@ public class SessionDAOPG implements SessionDAO{
     }
 
 
-    public static void setDs(DataSource ds) {
+    static void setDs(DataSource ds) {
         SessionDAOPG.ds = ds;
     }
 
@@ -74,7 +75,7 @@ public class SessionDAOPG implements SessionDAO{
         try(
                 Connection conn = ds.getConnection();
                 PreparedStatement st = conn.prepareStatement(
-                        "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE sessions.id=?");
+                        "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE sessions.id=?")
         ){
 
             st.setString(1,id);
@@ -93,6 +94,33 @@ public class SessionDAOPG implements SessionDAO{
         return result;
     }
 
+    @Override
+    public Option<Session> getSessionOptById(String SessionId) throws SessionDataError {
+
+        Option<Session> result=Option.NONE;
+
+        try(
+                Connection conn = ds.getConnection();
+                PreparedStatement st = conn.prepareStatement(
+                        "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE sessions.id=?")
+        ){
+
+            st.setString(1,SessionId);
+
+            try(ResultSet resultSet = st.executeQuery()){
+
+                while (resultSet.next())
+                    result = Option.asOption(sessionFromResultSet(resultSet));
+            }
+
+        } catch (SQLException e) {
+            log.warn(e.getLocalizedMessage());
+            throw new SessionDataError("Ошибка обращения к данным сессий",e);
+        }
+
+        return result;
+    }
+
     public Session getSessionByUser(User user) throws SessionDataError {
         Session result=null;
 
@@ -100,7 +128,7 @@ public class SessionDAOPG implements SessionDAO{
             try (
                     Connection conn = ds.getConnection();
                     PreparedStatement st = conn.prepareStatement(
-                            "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE users.uid=?");
+                            "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE users.uid=?")
             ) {
 
                 st.setObject(1, user.getUid());
@@ -137,11 +165,11 @@ public class SessionDAOPG implements SessionDAO{
                 "  (SELECT *" +
                 "   FROM upsert)";
 
-        boolean result=false;
+        boolean result;
 
         try(
                 Connection conn = ds.getConnection();
-                PreparedStatement st = conn.prepareStatement(upsertQuery);
+                PreparedStatement st = conn.prepareStatement(upsertQuery)
         ){
 
             st.setObject(1, session.getUser().getUid());
@@ -163,11 +191,11 @@ public class SessionDAOPG implements SessionDAO{
 
     public boolean deleteSessionById(String sessionId) throws SessionDataError {
 
-        boolean result=false;
+        boolean result;
 
         try(
                 Connection conn = ds.getConnection();
-                PreparedStatement st = conn.prepareStatement("DELETE FROM sessions WHERE id = ?");
+                PreparedStatement st = conn.prepareStatement("DELETE FROM sessions WHERE id = ?")
         ){
 
             st.setString(1, sessionId);

@@ -132,7 +132,11 @@ public class SessionService {
                 new NullPointerException("SessionId == null"));
 
         try {
-            result = (sessions.getSessionById(SessionId) != null);
+            result = sessions
+                    .getSessionOptById(SessionId)
+                    .map(s -> true)
+                    .getOrElse(false);
+
         } catch (SessionDataError e) {
             log.warn(e.getLocalizedMessage());
             throw new ValidateException("Ошибка базы данных при валидации.", e);
@@ -149,18 +153,16 @@ public class SessionService {
      * @return
      *  Данные о пользователе, либо null, если отсутствует таковой
      */
-    public static UserFront getCurrentUser(String SessionId) throws SessionServiceException {
-        UserFront result = null;
+    public static Option<UserFront> getCurrentUserOpt(String SessionId) throws SessionServiceException {
 
         if (SessionId == null) throw new SessionServiceException(
                 "Ошибка обработки, переданы некорректные данные.",
                 new NullPointerException("SessionId == null"));
         try {
 
-            Session session = sessions.getSessionById(SessionId);
-
-            if (session != null)
-                result = session.getUser();
+            return sessions
+                    .getSessionOptById(SessionId)
+                    .map(Session::getUser);
 
         } catch (SessionDataError e) {
             log.warn(e.getLocalizedMessage());
@@ -168,7 +170,6 @@ public class SessionService {
                     "Не наидена сессия пользователя", e);
         }
 
-        return result;
     }
 
 

@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.SessionDAOPG;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
@@ -13,7 +14,6 @@ import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -149,8 +149,6 @@ public class RegistrationService {
      */
     public static boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
 
-        boolean result = false;
-
         if (sessionId == null) throw new RegistrationException(
                 "Ошибка регистрации, некоректные данные",
                 new NullPointerException());
@@ -160,31 +158,43 @@ public class RegistrationService {
                 new NullPointerException());
 
         try {
-            Session session = sessions.getSessionById(sessionId);
-            User user = confirmCodes.get(code);
 
-            if (session != null && user != null)
-                if (user.equals(session.getUser())) {
+            return sessions
+            .getSessionOptById(sessionId)
+            .flatMap(
+              session ->
+                      Option.asOption(confirmCodes.get(code)).map(
+                         user ->
+                         {
+                             try {
+                                 if (user.equals(session.getUser())) {
 
-                    user = users.makeActive(user);
-                    if (user != null) {
+                                     user = users.makeActive(user);
+                                     if (user != null) {
 
-                        sessions.insertOrUpdateSession(new Session(sessionId, user));
-                        result = true;
+                                         sessions.insertOrUpdateSession(new Session(sessionId, user));
 
-                        log.debug("Подтвердили регистрацию пользователя: {}", user);
-                    }
-                } else {
-                    log.warn("С этой сессией уже зарегистрирован пользователь, и отправлен запрос" +
-                            "регистрации: текущий: {} из сессии: {}", user, session.getUser());
-                }
+                                         log.debug("Подтвердили регистрацию пользователя: {}", user);
+                                     }
+                                 } else {
+                                     log.warn("С этой сессией уже зарегистрирован пользователь, и отправлен запрос" +
+                                             "регистрации: текущий: {} из сессии: {}", user, session.getUser());
+                                 }
+                             } catch (UserDataError | SessionDataError e) {
+                                 log.warn(e.getLocalizedMessage());
+                                 throw new RegistrationException("Ошибка регистрации при обращении к данным", e);
+                             }
 
-        }catch (UserDataError | SessionDataError e) {
+                             return true;
+                         }
+                      )
+            ).getOrElse(false);
+
+        }catch (SessionDataError e) {
             log.warn(e.getLocalizedMessage());
             throw new RegistrationException("Ошибка регистрации при обращении к данным", e);
         }
 
-        return result;
     }
 
 
