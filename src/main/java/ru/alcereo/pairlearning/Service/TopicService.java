@@ -64,58 +64,23 @@ public class TopicService {
 
 
     /**
-     * Изменение признака для темы и выбранного пользователя
+     * Изменение выбранного признака для темы
+     * @param changer
+     *  Объект изменяющий предикат
      * @param userFront
      *  Пользователь
-     * @param id
-     *  Идентификатор темы
-     * @param side
-     *  Признак того, какой признак устанавливается
-     * @param predicate
-     *  Значение предиката
      */
-    public static void setTopicRow(UserFront userFront, Long id, TopicPredicateSide side, boolean predicate) throws TopicServiceException {
-
-        if (userFront == null)
-            throw new TopicServiceException(
-                    "Ошибка сервиса тем. Некорректные данные. Не заполнен пользователь.",
-                    new IllegalArgumentException("userFront == null")
-            );
-
-        if (id == null)
-            throw new TopicServiceException(
-                    "Ошибка сервиса тем. Некорректные данные. Не заполнен идентификатор темы.",
-                    new IllegalArgumentException("id == null")
-            );
-
-        if (side == null)
-            throw new TopicServiceException(
-                    "Ошибка сервиса тем. Некорректные данные. Не заполнен признак.",
-                    new IllegalArgumentException("side == null")
-            );
-
+    public static void setTopicRow(TopicRowChanger changer, UserFront userFront) throws TopicServiceException {
 
         try {
             User user = users.findByUid(userFront.getUid());
-
-            switch (side) {
-                case LEARN:
-                    log.debug("Меняем LEARN на {} у id:{}", predicate, id);
-                    topicRows.setLearnPredicate(id, user, predicate);
-
-                    break;
-                case TEACH:
-                    log.debug("Меняем TEACH на {} у id:{}", predicate, id);
-                    topicRows.setTeachPredicate(id, user, predicate);
-                    break;
-            }
-        } catch (UserDataError | TopicRowDataError e) {
+            changer.setPredicate(topicRows, user);
+        } catch (UserDataError e) {
             log.warn(e.getLocalizedMessage());
             throw new TopicServiceException("Ошибка сервиса тем. Ошибка обращения к данным.", e);
         }
 
     }
-
 
     /**
      * Проверка на то, что пользователей есть пересечение в интересах по темам,

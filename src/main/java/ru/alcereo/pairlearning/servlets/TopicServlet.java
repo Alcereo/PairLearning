@@ -2,7 +2,10 @@ package ru.alcereo.pairlearning.servlets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.pairlearning.Service.TopicLearnPredicateChanger;
+import ru.alcereo.pairlearning.Service.TopicRowChanger;
 import ru.alcereo.pairlearning.Service.TopicService;
+import ru.alcereo.pairlearning.Service.TopicTeachPredicateChanger;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.TopicPredicateSide;
 import ru.alcereo.pairlearning.Service.models.UserFront;
@@ -32,17 +35,19 @@ public class TopicServlet extends HttpServlet {
         switch (action) {
             case "concrete":
 
-                TopicPredicateSide side = null;
+                TopicRowChanger changer = null;
 
                 switch (req.getParameter("value")) {
                     case "learn":
-                        side = TopicPredicateSide.LEARN;
+                        // new Factory - LEARN
+                        changer = new TopicLearnPredicateChanger();
                         break;
                     case "teach":
-                        side = TopicPredicateSide.TEACH;
+                        //new Factory - TEACH
+                        changer = new TopicTeachPredicateChanger();
                 }
 
-                boolean predicate = "true".equals(req.getParameter("predicate"));
+                changer.setPredicateValue("true".equals(req.getParameter("predicate")));
 
                 Long id = null;
 
@@ -52,13 +57,10 @@ public class TopicServlet extends HttpServlet {
                     respError(resp,"Параметр ID задан не верно", 400);
                 }
 
+                changer.setTopicId(id);
+
                 try {
-                    TopicService.setTopicRow(
-                            user,
-                            id,
-                            side,
-                            predicate
-                    );
+                    TopicService.setTopicRow(changer, user);
 
                     resp.setStatus(200);
                 } catch (TopicServiceException e) {
