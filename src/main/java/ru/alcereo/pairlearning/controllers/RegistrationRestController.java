@@ -19,6 +19,13 @@ public class RegistrationRestController {
 
     private final HttpServletRequest request;
 
+    private RegistrationService registrationService;
+
+    @Autowired
+    public void setRegistrationService(RegistrationService registrationService) {
+        this.registrationService = registrationService;
+    }
+
     @Autowired
     public RegistrationRestController(HttpServletRequest request) {
         this.request = request;
@@ -39,7 +46,7 @@ public class RegistrationRestController {
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
         try {
-            switch (RegistrationService.registration(
+            switch (registrationService.registration(
                             session.getId(),
                             login,
                             name,
@@ -89,7 +96,7 @@ public class RegistrationRestController {
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
         try {
-            if (RegistrationService
+            if (registrationService
                     .confirmRegistration(
                             session.getId(),
                             code))

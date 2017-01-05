@@ -13,11 +13,17 @@ public class TopicInviteChecker implements InviteChecker{
 
     private static final Logger log = LoggerFactory.getLogger(TopicInviteChecker.class);
 
+    private TopicService topicService;
+
+    public void setTopicService(TopicService topicService) {
+        this.topicService = topicService;
+    }
+
     @Override
     public boolean usersInvitable(List<UserFront> users) throws TopicServiceException {
 
         try {
-            return TopicService.usersHaveIntersectionTopics(users);
+            return topicService.usersHaveIntersectionTopics(users);
         } catch (TopicServiceException e) {
             log.warn(e.getLocalizedMessage());
             throw e;

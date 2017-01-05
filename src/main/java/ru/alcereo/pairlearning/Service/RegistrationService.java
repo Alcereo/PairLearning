@@ -27,26 +27,23 @@ public class RegistrationService {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
-
-    private static UsersDAO users = new UsersDAOPG();
-    private static SessionDAO sessions = new SessionDAOPG();
-
+    private UsersDAO users;
+    private SessionDAO sessions;
+    private SendingService sendingService;
 
     private static final Map<Integer, User> confirmCodes = new HashMap<>();
-
-    private static SendingService sendingService = new SendingServiceMock();
 
 
     public void setSendingService(SendingService sendingService) {
         this.sendingService = sendingService;
     }
 
-    public static void setUsers(UsersDAO users) {
-        RegistrationService.users = users;
+    public void setUsers(UsersDAO users) {
+        this.users = users;
     }
 
-    public static void setSessions(SessionDAO sessions) {
-        RegistrationService.sessions = sessions;
+    public void setSessions(SessionDAO sessions) {
+        this.sessions = sessions;
     }
 
 
@@ -65,7 +62,7 @@ public class RegistrationService {
      * @return
      *  Результат регистрации
      */
-    public static RegResult registration(
+    public RegResult registration(
             String sessionId,
             String login,
             String name,
@@ -147,7 +144,7 @@ public class RegistrationService {
      * @return
      *  true - если регистрация завершилась успешно, false - иначе
      */
-    public static boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
+    public boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
 
         if (sessionId == null) throw new RegistrationException(
                 "Ошибка регистрации, некоректные данные",

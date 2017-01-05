@@ -15,10 +15,14 @@ import java.io.IOException;
 public class ValidationFilter implements Filter{
 
     private static final Logger log = LoggerFactory.getLogger(ValidationFilter.class);
+    private SessionService sessionService;
+
+    public void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override
@@ -29,9 +33,9 @@ public class ValidationFilter implements Filter{
         log.debug("Фильтрую запрос сеанса: {}", sessionId);
 
         try {
-            if (SessionService.validateSession(sessionId)) {
+            if (sessionService.validateSession(sessionId)) {
 
-                SessionService
+                sessionService
                         .getCurrentUserOpt(sessionId)
                         .map(
                                 (UserFront userFront) ->{

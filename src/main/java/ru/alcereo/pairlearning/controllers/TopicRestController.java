@@ -26,6 +26,13 @@ public class TopicRestController {
 
     private final HttpServletRequest request;
 
+    private TopicService topicService;
+
+    @Autowired
+    public void setTopicService(TopicService topicService) {
+        this.topicService = topicService;
+    }
+
     @Autowired
     public TopicRestController(HttpServletRequest request) {
         this.request = request;
@@ -68,7 +75,7 @@ public class TopicRestController {
 
         try {
 
-            TopicService.setTopicRow(changer, (UserFront) request.getAttribute("user"));
+            topicService.setTopicRow(changer, (UserFront) request.getAttribute("user"));
             result = new ResponseEntity(HttpStatus.OK);
 
         } catch (TopicServiceException e) {

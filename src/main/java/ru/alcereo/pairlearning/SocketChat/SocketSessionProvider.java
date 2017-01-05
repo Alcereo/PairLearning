@@ -22,18 +22,28 @@ public class SocketSessionProvider{
 
     private static final List<ChatRoom> rooms = new ArrayList<>();
     private static final RoomFabric roomFabric = new RoomGroupedFabric();
+    private static SessionService sessionService;
 
-//    private static final SessionService sessionService = new SessionService();
+    private ChatRoom chatRoom;
 
-    static void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection)
+    public void setChatRoom(ChatRoom chatRoom) {
+        log.debug("New chat room: {}",chatRoom);
+        this.chatRoom = chatRoom;
+    }
+
+    public void setSessionService(SessionService sessionService) {
+        SocketSessionProvider.sessionService = sessionService;
+    }
+
+    void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection)
             throws SocketConnectionConstructionException {
 
         if (SessionId != null) {
 
             try {
-                if (SessionService.validateSession(SessionId)) {
+                if (sessionService.validateSession(SessionId)) {
 
-                    if (!SessionService
+                    if (!sessionService
                             .getCurrentUserOpt(SessionId)
                             .map(
                                     user ->
@@ -52,11 +62,13 @@ public class SocketSessionProvider{
                             }
 
                             if (chatSocketConnection.notConnectedToRoom()) {
-                                ChatRoom chatRoom = null;
+//                                ChatRoom chatRoom = null;
                                 try {
-                                    chatRoom = roomFabric.newRoom(
-                                            user,
+                                    chatRoom.tryToInvite(user,
                                             new SessionDecorator(session));
+//                                    chatRoom = roomFabric.newRoom(
+//                                            user,
+//                                            new SessionDecorator(session));
                                 } catch (ChatInviteException e) {
                                     log.warn(e.getLocalizedMessage());
                                     throw new SocketConnectionConstructionException("Ошибка подключении к сервисам комнат", e);

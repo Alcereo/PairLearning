@@ -31,8 +31,8 @@ public class RegistrationServiceTest {
         SendingService sendingService = mock(SendingService.class);
 
         RegistrationService registrationService = new RegistrationService();
-        RegistrationService.setSessions(sessionDAO);
-        RegistrationService.setUsers(users);
+        registrationService.setSessions(sessionDAO);
+        registrationService.setUsers(users);
         registrationService.setSendingService(sendingService);
 
         RegistrationService.RegResult result = registrationService.registration(
@@ -89,8 +89,8 @@ public class RegistrationServiceTest {
         SendingService  sendingService  = mock(SendingService.class);
 
         RegistrationService registrationService = new RegistrationService();
-        RegistrationService.setSessions(sessionDAO);
-        RegistrationService.setUsers(users);
+        registrationService.setSessions(sessionDAO);
+        registrationService.setUsers(users);
         registrationService.setSendingService(sendingService);
 
         class MyVoidAnswerWithString implements Answer<Void>{

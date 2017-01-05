@@ -11,12 +11,9 @@ import ru.alcereo.pairlearning.Service.models.UserFront;
 /**
  * Created by alcereo on 30.12.16.
  */
-public class TopicLearnPredicateChanger implements TopicRowChanger {
+public class TopicLearnPredicateChanger extends AbstractTopicPredicateChanger {
 
     private static final Logger log = LoggerFactory.getLogger(TopicLearnPredicateChanger.class);
-
-    private boolean value;
-    private long id = -1;
 
     @Override
     public void setPredicate(TopicRowsDAO topicRows, User user) throws TopicServiceException {
@@ -41,18 +38,6 @@ public class TopicLearnPredicateChanger implements TopicRowChanger {
             log.warn(e.getLocalizedMessage());
             throw new TopicServiceException("Ошибка сервиса тем. Ошибка обращения к данным.", e);
         }
-    }
-
-    @Override
-    public TopicRowChanger setPredicateValue(boolean value) {
-        this.value = value;
-        return this;
-    }
-
-    @Override
-    public TopicRowChanger setTopicId(Long id) {
-        this.id = id;
-        return this;
     }
 
 }

@@ -5,17 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
-import ru.alcereo.pairlearning.DAO.SessionDAOPG;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
-import ru.alcereo.pairlearning.DAO.UsersDAOPG;
-import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
-import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.Session;
-import ru.alcereo.pairlearning.DAO.models.User;
-import ru.alcereo.pairlearning.Service.exeptions.AuthorizationException;
-import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
-import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
-import ru.alcereo.pairlearning.Service.models.UserFront;
+import ru.alcereo.pairlearning.DAO.exceptions.*;
+import ru.alcereo.pairlearning.DAO.models.*;
+import ru.alcereo.pairlearning.Service.exeptions.*;
+import ru.alcereo.pairlearning.Service.models.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -28,15 +22,15 @@ public class SessionService {
     
     private static final Logger log = LoggerFactory.getLogger(SessionService.class);
 
-    private static UsersDAO users = new UsersDAOPG();
-    private static SessionDAO sessions = new SessionDAOPG();
+    private UsersDAO users;
+    private SessionDAO sessions;
 
-    public static void setUsers(UsersDAO users) {
-        SessionService.users = users;
+    public void setUsers(UsersDAO users) {
+        this.users = users;
     }
 
-    public static void setSessions(SessionDAO sessions) {
-        SessionService.sessions = sessions;
+    public void setSessions(SessionDAO sessions) {
+        this.sessions = sessions;
     }
 
 
@@ -51,7 +45,7 @@ public class SessionService {
      * @return
      *  true - если авторизация прошла успешно, false - иначе
      */
-    public static boolean userAuthorization(String login, String password, String sessionId) throws AuthorizationException {
+    public boolean userAuthorization(String login, String password, String sessionId) throws AuthorizationException {
 
         boolean result = false;
 
@@ -123,7 +117,7 @@ public class SessionService {
      * @return
      *  true - если текущая сессия присутствует в программе, false - иначе
      */
-    public static boolean validateSession(String SessionId) throws ValidateException {
+    public boolean validateSession(String SessionId) throws ValidateException {
 
         boolean result = false;
 
@@ -153,7 +147,7 @@ public class SessionService {
      * @return
      *  Данные о пользователе, либо null, если отсутствует таковой
      */
-    public static Option<UserFront> getCurrentUserOpt(String SessionId) throws SessionServiceException {
+    public Option<UserFront> getCurrentUserOpt(String SessionId) throws SessionServiceException {
 
         if (SessionId == null) throw new SessionServiceException(
                 "Ошибка обработки, переданы некорректные данные.",
@@ -178,7 +172,7 @@ public class SessionService {
      * @param SessionId
      *  Идентификатор удаляемой сессии
      */
-    public static void deleteSession(String SessionId) throws SessionServiceException {
+    public void deleteSession(String SessionId) throws SessionServiceException {
 
         try {
             sessions.deleteSessionById(SessionId);

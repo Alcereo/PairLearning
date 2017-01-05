@@ -3,16 +3,11 @@ package ru.alcereo.pairlearning.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
-import ru.alcereo.pairlearning.DAO.TopicRowsDAOPG;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
-import ru.alcereo.pairlearning.DAO.UsersDAOPG;
-import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
-import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.Topic;
-import ru.alcereo.pairlearning.DAO.models.User;
-import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
-import ru.alcereo.pairlearning.Service.models.TopicRowFront;
-import ru.alcereo.pairlearning.Service.models.UserFront;
+import ru.alcereo.pairlearning.DAO.exceptions.*;
+import ru.alcereo.pairlearning.DAO.models.*;
+import ru.alcereo.pairlearning.Service.exeptions.*;
+import ru.alcereo.pairlearning.Service.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +21,17 @@ public class TopicService {
 
     private static final Logger log = LoggerFactory.getLogger(TopicService.class);
 
-    private static final UsersDAO users = new UsersDAOPG();
-    private static TopicRowsDAO topicRows = new TopicRowsDAOPG();
+    private UsersDAO users;
+    private TopicRowsDAO topicRows;
+
+    public void setUsersDAO(UsersDAO usersDAO) {
+        this.users = usersDAO;
+    }
+
+    public void setTopicRows(TopicRowsDAO topicRows) {
+        this.topicRows = topicRows;
+    }
+
 
 
     /**
@@ -37,7 +41,7 @@ public class TopicService {
      * @return
      *  Список строк таблицы с темами и признаками для данного пользователя
      */
-    public static List<TopicRowFront> getUserTopic(UserFront user) throws TopicServiceException {
+    public List<TopicRowFront> getUserTopic(UserFront user) throws TopicServiceException {
 
         List<TopicRowFront> result = new ArrayList<>();
 
@@ -84,7 +88,7 @@ public class TopicService {
      * @param userFront
      *  Пользователь
      */
-    public static void setTopicRow(TopicRowChanger changer, UserFront userFront) throws TopicServiceException {
+    public void setTopicRow(TopicRowChanger changer, UserFront userFront) throws TopicServiceException {
 
         try {
             User user = users.findByUid(userFront.getUid());
@@ -116,7 +120,7 @@ public class TopicService {
      * false - если обратное
      *
      */
-    public static boolean usersHaveIntersectionTopics(List<UserFront> usersList) throws TopicServiceException {
+    public boolean usersHaveIntersectionTopics(List<UserFront> usersList) throws TopicServiceException {
 
         boolean result=false;
 

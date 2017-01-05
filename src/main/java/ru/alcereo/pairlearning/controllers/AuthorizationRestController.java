@@ -25,6 +25,14 @@ public class AuthorizationRestController {
 
     private final HttpServletRequest request;
 
+    private SessionService sessionService;
+
+    @Autowired
+    public void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
+
+
     @Autowired
     public AuthorizationRestController(HttpServletRequest request) {
         this.request = request;
@@ -44,7 +52,7 @@ public class AuthorizationRestController {
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
         try {
-            if (SessionService.userAuthorization(
+            if (sessionService.userAuthorization(
                     login,
                     password,
                     session.getId())) {
@@ -83,7 +91,7 @@ public class AuthorizationRestController {
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
         try {
-            SessionService.deleteSession(session.getId());
+            sessionService.deleteSession(session.getId());
             result = new ResponseEntity(HttpStatus.OK);
 
         } catch (SessionServiceException e) {

@@ -22,8 +22,8 @@ public class SessionServiceTest {
         SessionDAO sessionDAO = mock(SessionDAO.class);
 
         SessionService sessionService = new SessionService();
-        SessionService.setUsers(users);
-        SessionService.setSessions(sessionDAO);
+        sessionService.setUsers(users);
+        sessionService.setSessions(sessionDAO);
 
         User user = mock(User.class);
         when(user.isActive()).then(invocation -> true);
@@ -60,15 +60,15 @@ public class SessionServiceTest {
         SessionDAO sessionDAO = mock(SessionDAO.class);
 
         SessionService sessionService = new SessionService();
-        SessionService.setUsers(users);
-        SessionService.setSessions(sessionDAO);
+        sessionService.setUsers(users);
+        sessionService.setSessions(sessionDAO);
 
         when(sessionDAO.getSessionById(any())).then(
                 invocation -> new Session(null, null));
 
         assertTrue(
                 "Не прошла валидация пользователя",
-                SessionService.validateSession("SessionId")
+                sessionService.validateSession("SessionId")
         );
 
 //        assertFalse(
@@ -92,8 +92,8 @@ public class SessionServiceTest {
         when(sessionDAO.getSessionById(any())).then(invocation -> session);
 
         SessionService sessionService = new SessionService();
-        SessionService.setUsers(users);
-        SessionService.setSessions(sessionDAO);
+        sessionService.setUsers(users);
+        sessionService.setSessions(sessionDAO);
 
         assertEquals(
                 "Вернул не того пользователя",

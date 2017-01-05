@@ -24,6 +24,12 @@ public class ChatSocketConnection {
     }
 
     private ChatRoom chatRoom;
+    private SocketSessionProvider socketSessionProvider;
+
+    public void setSocketSessionProvider(SocketSessionProvider socketSessionProvider) {
+        this.socketSessionProvider = socketSessionProvider;
+    }
+
 
     public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
@@ -40,7 +46,7 @@ public class ChatSocketConnection {
         log.debug("Новое содениение: {}", wsSession.getHttpSessionId());
 
         try {
-            SocketSessionProvider.addSocketSession(wsSession.getHttpSessionId(), session, this);
+            socketSessionProvider.addSocketSession(wsSession.getHttpSessionId(), session, this);
 
         } catch (SocketConnectionConstructionException e) {
 

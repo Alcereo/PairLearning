@@ -9,12 +9,9 @@ import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 
-public class TopicTeachPredicateChanger implements TopicRowChanger {
+public class TopicTeachPredicateChanger extends AbstractTopicPredicateChanger {
 
     private static final Logger log = LoggerFactory.getLogger(TopicTeachPredicateChanger.class);
-
-    private boolean value;
-    private long id;
 
     @Override
     public void setPredicate(TopicRowsDAO topicRows, User user) throws TopicServiceException {
@@ -40,15 +37,4 @@ public class TopicTeachPredicateChanger implements TopicRowChanger {
         }
     }
 
-    @Override
-    public TopicRowChanger setPredicateValue(boolean value) {
-        this.value = value;
-        return this;
-    }
-
-    @Override
-    public TopicRowChanger setTopicId(Long id) {
-        this.id = id;
-        return this;
-    }
 }

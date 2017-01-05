@@ -19,17 +19,17 @@ public class ChatRoomGrouped implements ChatRoom {
 
     private static final Logger log = LoggerFactory.getLogger(ChatRoomGrouped.class);
 
+    private InviteChecker inviteChecker;
+
     private final Map<MessageHandler, UserFront> sessionMap = new HashMap<>();
-
-    private final InviteChecker inviteChecker = new TopicInviteChecker();
-
-    private volatile boolean roomIsEmpty = true;
-
     private final Lock lock = new ReentrantLock();
 
+    public void setInviteChecker(InviteChecker inviteChecker) {
+        this.inviteChecker = inviteChecker;
+    }
 
     public boolean canInvite(UserFront user) throws ChatInviteException {
-        boolean result = false;
+        boolean result;
 
         List<UserFront> users = new ArrayList<>(sessionMap.values());
         users.add(user);
@@ -88,7 +88,6 @@ public class ChatRoomGrouped implements ChatRoom {
                 }
 
             sessionMap.clear();
-            roomIsEmpty = true;
         } finally {
             lock.unlock();
         }
@@ -123,6 +122,17 @@ public class ChatRoomGrouped implements ChatRoom {
 
         return result;
 
+    }
+
+
+    static class ChatRoomFactory implements RoomFabric{
+
+        @Override
+        public ChatRoom newRoom(UserFront user, MessageHandler handler) throws ChatInviteException {
+            ChatRoom newRoom = new ChatRoomGrouped();
+            newRoom.tryToInvite(user, handler);
+            return newRoom;
+        }
     }
 
 }
