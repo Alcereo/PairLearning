@@ -1,6 +1,3 @@
-
-<%@ page import="ru.alcereo.pairlearning.Service.TopicService" %>
-<%@ page import="ru.alcereo.pairlearning.Service.models.TopicRowFront" %>
 <%@ page import="ru.alcereo.pairlearning.Service.models.UserFront" %><%--
   Created by IntelliJ IDEA.
   User: alcereo
@@ -9,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
     <title>Личный кабинет пользователя</title>
@@ -28,14 +26,13 @@
         <tr>
             <td> Наименование темы </td> <td> Изучить </td> <td> Рассказать </td>
         </tr>
-
-        <% for (TopicRowFront topicRow: TopicService.getUserTopic((UserFront)request.getAttribute("user"))) { %>
+        <c:forEach items="${topicRows}" var="row">
             <tr>
-                <td> <%=topicRow.getTopic().getTitle()%> </td>
-                <td> <input type="checkbox" class="checker" id="<%=topicRow.getTopic().getId()%>" <%=(topicRow.isLearn() ? "checked" : "")%> value="learn"> </td>
-                <td> <input type="checkbox" class="checker" id="<%=topicRow.getTopic().getId()%>" <%=(topicRow.isTeach() ? "checked" : "")%> value="teach"> </td>
+            <td> ${row.topic.title} </td>
+            <td> <input type="checkbox" class="checker" id="${row.topic.id}" <c:if test="${row.learn}">checked</c:if> value="learn"> </td>
+            <td> <input type="checkbox" class="checker" id="${row.topic.id}" <c:if test="${row.teach}">checked</c:if> value="teach"> </td>
             </tr>
-        <%}%>
+        </c:forEach>
     </table>
 <p></p>
 
