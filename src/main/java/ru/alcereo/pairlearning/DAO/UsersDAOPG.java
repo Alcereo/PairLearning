@@ -121,9 +121,9 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
-    public Option<User> findByLoginOpt(String login) throws UserDataError {
+    public Option<User, UserDataError> findByLoginOpt(String login) {
 
-        Option<User> result = Option.NONE;
+        Option<User, UserDataError> result = Option.NONE;
 
         try(
                 Connection conn = ds.getConnection();
@@ -141,7 +141,10 @@ public class UsersDAOPG implements UsersDAO {
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
+            result = Option.exceptOpt(
+                    new UserDataError(
+                            "Ошибка обращения к данным по пользователям",
+                            e));
         }
 
         return result;
@@ -233,7 +236,7 @@ public class UsersDAOPG implements UsersDAO {
                 Connection conn = ds.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "UPDATE users SET activae=TRUE WHERE uid=?"
-                );
+                )
         ){
 
             st.setObject(1,user.getUid());

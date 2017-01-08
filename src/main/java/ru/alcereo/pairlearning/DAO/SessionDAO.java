@@ -5,8 +5,6 @@ import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 
-import java.sql.SQLException;
-
 /**
  * Класс доступа к данным сессий
  */
@@ -24,7 +22,7 @@ public interface SessionDAO {
      */
     Session getSessionById(String SessionId) throws SessionDataError;
 
-    Option<Session> getSessionOptById(String SessionId) throws SessionDataError;
+    Option<Session, SessionDataError> getSessionOptById(String SessionId);
 
     /**
      * Получение объекта сессии по пользователю

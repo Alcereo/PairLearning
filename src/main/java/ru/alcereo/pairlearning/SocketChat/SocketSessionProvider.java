@@ -7,7 +7,6 @@ import ru.alcereo.pairlearning.Service.Chat.RoomFabric;
 import ru.alcereo.pairlearning.Service.Chat.RoomGroupedFabric;
 import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
 import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 import ru.alcereo.pairlearning.SocketChat.exceptions.SocketConnectionConstructionException;
 
@@ -94,7 +93,7 @@ public class SocketSessionProvider{
                         e.printStackTrace();
                     }
                 }
-            } catch (ValidateException | SessionServiceException e) {
+            } catch (ValidateException e) {
                 log.warn(e.getLocalizedMessage());
                 throw new SocketConnectionConstructionException("Не удалось установить соединение",e);
             }

@@ -95,9 +95,9 @@ public class SessionDAOPG implements SessionDAO{
     }
 
     @Override
-    public Option<Session> getSessionOptById(String SessionId) throws SessionDataError {
+    public Option<Session, SessionDataError> getSessionOptById(String SessionId){
 
-        Option<Session> result=Option.NONE;
+        Option<Session, SessionDataError> result=Option.NONE;
 
         try(
                 Connection conn = ds.getConnection();
@@ -115,7 +115,7 @@ public class SessionDAOPG implements SessionDAO{
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            throw new SessionDataError("Ошибка обращения к данным сессий",e);
+            result = Option.exceptOpt(new SessionDataError("Ошибка обращения к данным сессий",e));
         }
 
         return result;

@@ -4,10 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
-import ru.alcereo.pairlearning.DAO.exceptions.*;
-import ru.alcereo.pairlearning.DAO.models.*;
-import ru.alcereo.pairlearning.Service.exeptions.*;
-import ru.alcereo.pairlearning.Service.models.*;
+import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
+import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
+import ru.alcereo.pairlearning.DAO.models.Topic;
+import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
+import ru.alcereo.pairlearning.Service.models.TopicRowFront;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,30 +54,18 @@ public class TopicService {
                     new IllegalArgumentException("user == null")
             );
 
-        try{
 
-            users
-                    .findByLoginOpt(user.getLogin())
-                    .map(
-                            userModel -> {
-                                try {
-                                    topicRows.getAllByUser(userModel).forEach(result::add);
-                                } catch (TopicRowDataError e) {
-                                    log.warn(e.getLocalizedMessage());
-                                    throw new TopicServiceException(
-                                            "Ошибка сервиса тем изучения. Ошибка доступа к данным.",
-                                            e);
-                                }
-                                return null;
-                            }
-                    );
-
-        } catch (UserDataError e) {
-            log.warn(e.getLocalizedMessage());
-            throw new TopicServiceException(
-                    "Ошибка сервиса тем изучения. Ошибка доступа к данным.",
-                    e);
-        }
+        users
+                .findByLoginOpt(user.getLogin())
+                .map(
+                        userModel -> {
+                            topicRows.getAllByUser(userModel).forEach(result::add);
+                            return null;
+                        })
+                ._wrapAndTrowException(cause ->
+                        new TopicServiceException(
+                                "Ошибка сервиса тем изучения. Ошибка доступа к данным.",
+                                cause));
 
         return result;
 

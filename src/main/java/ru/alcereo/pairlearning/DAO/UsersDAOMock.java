@@ -59,8 +59,8 @@ public class UsersDAOMock implements UsersDAO {
     }
 
     @Override
-    public Option<User> findByLoginOpt(String login) throws UserDataError {
-        throw new UserDataError("NOT IMPLEMENTED!!!");
+    public Option<User, UserDataError> findByLoginOpt(String login) {
+        return Option.exceptOpt(new UserDataError("NOT IMPLEMENTED!!!"));
     }
 
     @Override

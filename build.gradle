@@ -14,7 +14,7 @@ plugins {
 }
 
 group 'ru.alcereo'
-version '1.0-SNAPSHOT'
+version '0.1.1'
 
 apply plugin: 'java'
 apply plugin: 'war'

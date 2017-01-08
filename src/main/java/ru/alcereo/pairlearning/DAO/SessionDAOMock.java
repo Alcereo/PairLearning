@@ -26,7 +26,7 @@ public class SessionDAOMock implements SessionDAO {
     }
 
     @Override
-    public Option<Session> getSessionOptById(String SessionId) throws SessionDataError {
+    public Option<Session, SessionDataError> getSessionOptById(String SessionId){
         throw new NotImplementedException();
     }
 

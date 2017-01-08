@@ -6,10 +6,13 @@ import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
-import ru.alcereo.pairlearning.DAO.exceptions.*;
-import ru.alcereo.pairlearning.DAO.models.*;
-import ru.alcereo.pairlearning.Service.exeptions.*;
-import ru.alcereo.pairlearning.Service.models.*;
+import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
+import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
+import ru.alcereo.pairlearning.DAO.models.Session;
+import ru.alcereo.pairlearning.Service.exeptions.AuthorizationException;
+import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
+import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -61,51 +64,37 @@ public class SessionService {
                 "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
                 new NullPointerException("sessionId != null"));
 
-        try {
-            result = users
-                    .findByLoginOpt(login)
-                    .map(
-                            (User user) -> {
+        return users
+                .findByLoginOpt(login)
+                .flatMap(
+                        user -> Option.asOption("")
+                                .map(value -> CryptoService.cryptPass(password, user.getUid().toString()))
+                                .filter(passwordHash ->
+                                        Objects.equals(user.getPasswordHash(), passwordHash)
+                                                && user.isActive())
+                                .map(passwordHash -> {
+                                    sessions.insertOrUpdateSession(new Session(sessionId, user));
+                                    log.debug("User authorizate: {} session: {}", user, sessionId);
+                                    return true;
+                                })
+                )
+                ._wrapAndTrowException(e -> {
+                    if (e instanceof NoSuchAlgorithmException)
+                        return new AuthorizationException(
+                                "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
+                                e);
 
-                                String passwordHash;
-                                boolean lResult = false;
+                    if (e instanceof SessionDataError
+                            || e instanceof UserDataError)
+                        return new AuthorizationException(
+                                "Ошибка авторизации. Ошибка при обращении к данным",
+                                e);
 
-                                try {
-                                    passwordHash = CryptoService.cryptPass(password, user.getUid().toString());
-                                } catch (NoSuchAlgorithmException e) {
-                                    log.warn(e.getLocalizedMessage());
-                                    throw new AuthorizationException(
-                                            "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
-                                            e);
-                                }
-
-                                try {
-                                    if (Objects.equals(user.getPasswordHash(), passwordHash)
-                                            && user.isActive()) {
-
-                                        sessions.insertOrUpdateSession(new Session(sessionId, user));
-                                        log.debug("User authorizate: {} session: {}", user, sessionId);
-                                        lResult = true;
-                                    }
-                                } catch (SessionDataError e) {
-                                    log.warn(e.getLocalizedMessage());
-                                    throw new AuthorizationException(
-                                            "Ошибка авторизации. Ошибка при обращении к данным",
-                                            e);
-                                }
-
-                                return lResult;
-
-                            }).getOrElse(false);
-
-        } catch (UserDataError e) {
-            log.warn(e.getLocalizedMessage());
-            throw new AuthorizationException(
-                    "Ошибка авторизации. Ошибка при обращении к данным",
-                    e);
-        }
-
-        return result;
+                    return new AuthorizationException(
+                            "Ошибка авторизации.",
+                            e);
+                })
+                .getOrElse(false);
 
     }
 
@@ -125,16 +114,14 @@ public class SessionService {
                 "Ошибка валидации, переданы некорректные данные.",
                 new NullPointerException("SessionId == null"));
 
-        try {
-            result = sessions
-                    .getSessionOptById(SessionId)
-                    .map(s -> true)
-                    .getOrElse(false);
-
-        } catch (SessionDataError e) {
-            log.warn(e.getLocalizedMessage());
-            throw new ValidateException("Ошибка базы данных при валидации.", e);
-        }
+        result = sessions
+                .getSessionOptById(SessionId)
+                .map(s -> true)
+                ._wrapAndTrowException(e -> {
+                    log.warn(e.getLocalizedMessage());
+                    return new ValidateException("Ошибка базы данных при валидации.", e);
+                })
+                .getOrElse(false);
 
         return result;
     }
@@ -147,22 +134,19 @@ public class SessionService {
      * @return
      *  Данные о пользователе, либо null, если отсутствует таковой
      */
-    public Option<UserFront> getCurrentUserOpt(String SessionId) throws SessionServiceException {
+    public Option<UserFront, SessionServiceException> getCurrentUserOpt(String SessionId) {
 
-        if (SessionId == null) throw new SessionServiceException(
-                "Ошибка обработки, переданы некорректные данные.",
-                new NullPointerException("SessionId == null"));
-        try {
+        if (SessionId == null)
+            return Option.exceptOpt(
+                    new SessionServiceException(
+                            "Ошибка обработки, переданы некорректные данные.",
+                            new NullPointerException("SessionId == null")));
 
-            return sessions
-                    .getSessionOptById(SessionId)
-                    .map(Session::getUser);
-
-        } catch (SessionDataError e) {
-            log.warn(e.getLocalizedMessage());
-            throw new SessionServiceException(
-                    "Не наидена сессия пользователя", e);
-        }
+        return sessions
+                .getSessionOptById(SessionId)
+                ._wrapException(cause -> new SessionServiceException(
+                        "Не наидена сессия пользователя", cause))
+                .map(Session::getUser);
 
     }
 

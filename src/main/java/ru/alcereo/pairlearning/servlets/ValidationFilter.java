@@ -4,7 +4,6 @@ package ru.alcereo.pairlearning.servlets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
@@ -61,7 +60,7 @@ public class ValidationFilter implements Filter{
 
                 request.getRequestDispatcher("/authorization").forward(request, response);
             }
-        } catch (ValidateException | SessionServiceException e) {
+        } catch (ValidateException e) {
 
             req.setAttribute("errorDescription", e.getLocalizedMessage());
             request.getRequestDispatcher("/error").forward(request, response);
