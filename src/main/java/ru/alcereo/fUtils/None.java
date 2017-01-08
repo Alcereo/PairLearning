@@ -5,17 +5,17 @@ class None<T, Es extends Exception> extends Option<T, Es> {
 
     @Override
     public Option map(Func func){
-        return none();
+        return this;
     }
 
     @Override
     public Option flatMap(Func func) {
-        return none();
+        return this;
     }
 
     @Override
     public Option filter(Func filterPredicate) {
-        return none();
+        return this;
     }
 
     @Override

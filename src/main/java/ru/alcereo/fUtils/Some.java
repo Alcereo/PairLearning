@@ -19,18 +19,27 @@ class Some<T, Es extends Exception> extends Option<T,Es> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <R, E extends Exception> Option<R,E> flatMap(Func<T,Option<R,E>,E> func) throws E {
-        return func.execute(value);
+    public <R, E extends Exception> Option<R,E> flatMap(Func<T,Option<R,E>,E> func){
+        try {
+            return func.execute(value);
+        } catch (Throwable e) {
+            return new ExcOpt<>((E)e);
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E extends Exception> Option<T,E> filter(Func<T, Boolean, E> filterPredicate) throws E {
-        if (filterPredicate.execute(value))
-            return (Option<T, E>) this;
-        else
-            return none();
+    public <E extends Exception> Option<T,E> filter(Func<T, Boolean, E> filterPredicate){
+        try {
+            if (filterPredicate.execute(value))
+                return (Option<T, E>) this;
+            else
+                return none();
+        } catch (Throwable e) {
+            return new ExcOpt<>((E)e);
+        }
     }
 
     @Override

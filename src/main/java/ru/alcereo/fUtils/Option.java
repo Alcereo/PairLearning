@@ -11,9 +11,9 @@ public abstract class Option<T, Es extends Exception> {
 
     public abstract <R, E extends Exception> Option<R,E> map(Func<T,R,E> func);
 
-    public abstract <R, E extends Exception> Option<R,E> flatMap(Func<T,Option<R,E>,E> func) throws E;
+    public abstract <R, E extends Exception> Option<R,E> flatMap(Func<T,Option<R,E>,E> func);
 
-    public abstract <E extends Exception> Option<T,E> filter(Func<T, Boolean, E> filterPredicate) throws E;
+    public abstract <E extends Exception> Option<T,E> filter(Func<T, Boolean, E> filterPredicate);
 
     public abstract T getOrElse(T valueElse);
 
