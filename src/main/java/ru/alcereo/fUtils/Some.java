@@ -1,7 +1,7 @@
 package ru.alcereo.fUtils;
 
 
-class Some<T> extends Option<T> {
+class Some<T, Es extends Exception> extends Option<T,Es> {
 
     private final T value;
 
@@ -9,20 +9,26 @@ class Some<T> extends Option<T> {
         this.value = value;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <R, E extends Throwable> Option<R> map(Func<T, R, E> func) throws E {
-        return some(func.execute(value));
+    public <R, E extends Exception> Option<R,E> map(Func<T, R, E> func){
+        try {
+            return some(func.execute(value));
+        } catch (Throwable e) {
+            return new ExcOpt<>((E)e);
+        }
     }
 
     @Override
-    public <R, E extends Throwable> Option<R> flatMap(Func<T, Option<R>, E> func) throws E {
+    public <R, E extends Exception> Option<R,E> flatMap(Func<T,Option<R,E>,E> func) throws E {
         return func.execute(value);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <E extends Throwable> Option<T> filter(Func<T, Boolean, E> filterPredicate) throws E {
+    public <E extends Exception> Option<T,E> filter(Func<T, Boolean, E> filterPredicate) throws E {
         if (filterPredicate.execute(value))
-            return this;
+            return (Option<T, E>) this;
         else
             return none();
     }
@@ -30,6 +36,31 @@ class Some<T> extends Option<T> {
     @Override
     public T getOrElse(T valueElse) {
         return value;
+    }
+
+    @Override
+    public Option _throwCausedException(){
+        return this;
+    }
+
+    @Override
+    public boolean isException() {
+        return false;
+    }
+
+    @Override
+    public String getExceptionMessage() {
+        return "";
+    }
+
+    @Override
+    public Option _wrapAndTrowException(Exceptioned exceptioned){
+        return this;
+    }
+
+    @Override
+    public Option _wrapException(Exceptioned exceptioned) {
+        return this;
     }
 }
 

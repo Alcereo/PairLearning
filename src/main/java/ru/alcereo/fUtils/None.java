@@ -1,23 +1,20 @@
 package ru.alcereo.fUtils;
 
 
-class None<T> extends Option<T>{
-
-    public None() {
-    }
+class None<T, Es extends Exception> extends Option<T, Es> {
 
     @Override
-    public <R,E extends Throwable> Option<R> map(Func<T, R, E> func) throws E {
+    public Option map(Func func){
         return none();
     }
 
     @Override
-    public <R,E extends Throwable> Option<R> flatMap(Func<T, Option<R>,E> func) throws E {
+    public Option flatMap(Func func) {
         return none();
     }
 
     @Override
-    public <E extends Throwable> Option<T> filter(Func<T, Boolean, E> filterPredicate) throws E {
+    public Option filter(Func filterPredicate) {
         return none();
     }
 
@@ -26,5 +23,29 @@ class None<T> extends Option<T>{
         return valueElse;
     }
 
+    @Override
+    public Option _throwCausedException(){
+        return this;
+    }
+
+    @Override
+    public boolean isException() {
+        return false;
+    }
+
+    @Override
+    public String getExceptionMessage() {
+        return "";
+    }
+
+    @Override
+    public Option _wrapAndTrowException(Exceptioned exceptioned){
+        return this;
+    }
+
+    @Override
+    public Option _wrapException(Exceptioned exceptioned) {
+        return this;
+    }
 }
 
