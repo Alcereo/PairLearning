@@ -151,6 +151,36 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
+    public Option<Boolean, UserDataError> loginInUse(String login) {
+
+        Option<Boolean, UserDataError> result = Option.NONE;
+
+        try(
+                Connection conn = ds.getConnection();
+                PreparedStatement st = conn.prepareStatement(
+                        "SELECT * FROM users WHERE login=?");
+        ){
+
+            st.setString(1, login);
+
+            try(ResultSet resultSet = st.executeQuery()){
+                if (resultSet.next())
+                    result = Option.asOption(true);
+            }
+
+        } catch (SQLException e) {
+            log.warn(e.getLocalizedMessage());
+            result = Option.exceptOpt(
+                    new UserDataError(
+                            "Ошибка обращения к данным по пользователям",
+                            e)
+            );
+        }
+
+        return result;
+    }
+
+    @Override
     public User findByLogin(String login) throws UserDataError {
 
         User result = null;
@@ -208,6 +238,29 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
+    public Option<Boolean, UserDataError> addUser_Opt(User user_n) {
+
+        return Option.asOption(() -> Objects.requireNonNull(user_n, "Передан пользователь с сылкой null"))
+                .map(user -> {
+                    try (
+                            Connection conn = ds.getConnection();
+                            PreparedStatement st = conn.prepareStatement(addQuery);
+                    ) {
+
+                        st.setObject(1, user.getUid());
+                        st.setString(2, user.getLogin());
+                        st.setString(3, user.getPasswordHash());
+                        st.setString(4, user.getEmail());
+                        st.setBoolean(5, user.isActive());
+                        st.setString(6, user.getName());
+
+                        return st.executeUpdate() == 1;
+                    }
+                })
+                ._wrapException(UsersDAOPG::userDataErrorWrapper);
+    }
+
+    @Override
     public boolean deleteUser(User user) throws UserDataError {
 
         boolean result = false;
@@ -251,5 +304,14 @@ public class UsersDAOPG implements UsersDAO {
 
         return result;
     }
+
+    private static UserDataError userDataErrorWrapper(Throwable cause) {
+        log.warn(cause.getMessage());
+
+        return new UserDataError(
+                "Ошибка доступа к данным пользователей",
+                cause);
+    }
+
 
 }

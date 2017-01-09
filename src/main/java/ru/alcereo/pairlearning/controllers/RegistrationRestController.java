@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.RegistrationService;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
@@ -46,39 +47,42 @@ public class RegistrationRestController {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
-        try {
-            switch (registrationService.registration(
-                    new RegistrationData(
-                            session.getId(),
-                            login,
-                            name,
-                            passwordHash,
-                            email
-                    ))) {
-                case SUCCESS:
-                    result = new ResponseEntity(HttpStatus.OK);
-                    break;
+        Option<RegistrationService.RegResult,?> regResultOpt = registrationService.registration(
+                new RegistrationData(
+                        session.getId(),
+                        login,
+                        name,
+                        passwordHash,
+                        email
+                ));
 
-                case LOGIN_IN_USE:
-                    result = new ResponseEntity<>("Логин уже используется",
-                            requestHeaders,
-                            HttpStatus.CONFLICT);
-                    break;
+        if (!regResultOpt.isException()) {
 
-                case EMAIL_INCORRECT:
-                    result = new ResponseEntity<>("Почтовый адрес не корректен",
-                            requestHeaders,
-                            HttpStatus.BAD_REQUEST);
-                    break;
+                switch (regResultOpt.getOrElse(RegistrationService.RegResult.ERROR)) {
+                    case SUCCESS:
+                        result = new ResponseEntity(HttpStatus.OK);
+                        break;
 
-                // Теоретически недостежимо
-                default:
-                    result = new ResponseEntity<>(requestHeaders,
-                            HttpStatus.BAD_REQUEST);
-            }
-        } catch (RegistrationException e) {
+                    case LOGIN_IN_USE:
+                        result = new ResponseEntity<>("Логин уже используется",
+                                requestHeaders,
+                                HttpStatus.CONFLICT);
+                        break;
+
+                    case EMAIL_INCORRECT:
+                        result = new ResponseEntity<>("Почтовый адрес не корректен",
+                                requestHeaders,
+                                HttpStatus.BAD_REQUEST);
+                        break;
+
+                    // Теоретически недостежимо
+                    default:
+                        result = new ResponseEntity<>(requestHeaders,
+                                HttpStatus.BAD_REQUEST);
+                }
+        }else{
             result = new ResponseEntity<>(
-                    "Ошибка регистрации: " + e.getLocalizedMessage(),
+                    "Ошибка регистрации: " + regResultOpt.getExceptionMessage(),
                     requestHeaders,
                     HttpStatus.BAD_REQUEST);
         }

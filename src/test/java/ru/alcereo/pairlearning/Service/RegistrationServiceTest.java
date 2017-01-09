@@ -37,7 +37,7 @@ public class RegistrationServiceTest {
                         "name",
                         "passHash",
                         "mail"
-                ));
+                )).getOrElse(null);
 
         assertEquals(
                 "Регистрация не прошла",
@@ -130,7 +130,7 @@ public class RegistrationServiceTest {
                         "name",
                         "passHash",
                         "mail"
-                ));
+                )).getOrElse(null);
 
         Matcher matcher = Pattern.compile("\\d\\d\\d\\d").matcher(codeSendingAnswer.mockMessage);
         matcher.find();

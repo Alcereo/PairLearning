@@ -3,6 +3,7 @@ package ru.alcereo.pairlearning.DAO;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,13 +61,23 @@ public class UsersDAOMock implements UsersDAO {
 
     @Override
     public Option<User, UserDataError> findByLoginOpt(String login) {
-        return Option.exceptOpt(new UserDataError("NOT IMPLEMENTED!!!"));
+        return Option.exceptOpt(new UserDataError(new NotImplementedException()));
+    }
+
+    @Override
+    public Option<Boolean, UserDataError> loginInUse(String login) {
+        return Option.exceptOpt(new UserDataError(new NotImplementedException()));
     }
 
     @Override
     public boolean addUser(User user) {
         users.add(user);
         return true;
+    }
+
+    @Override
+    public Option<Boolean, UserDataError> addUser_Opt(User user) {
+        return Option.exceptOpt(new UserDataError(new NotImplementedException()));
     }
 
     @Override

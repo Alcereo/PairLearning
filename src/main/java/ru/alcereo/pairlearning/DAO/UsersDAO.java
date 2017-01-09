@@ -45,6 +45,7 @@ public interface UsersDAO {
 
     Option<User, UserDataError> findByLoginOpt(String login);
 
+    Option<Boolean, UserDataError> loginInUse(String login);
 
     /**
      * Добавление в список пользователя
@@ -56,6 +57,8 @@ public interface UsersDAO {
      *  Ошибка обращения к данным
      */
     boolean addUser(User user) throws UserDataError;
+
+    Option<Boolean, UserDataError> addUser_Opt(User user);
 
 
     /**

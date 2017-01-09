@@ -15,6 +15,7 @@ import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -46,55 +47,55 @@ public class RegistrationService {
 
     /**
      * Регистрация нового пользователя
-     * @param regData
+     * @param regDataNullable
      *  Данные регистрации
      * @return
      *  Результат регистрации
      */
-    public RegResult registration(RegistrationData regData) throws RegistrationException {
+    public Option<RegResult, RegistrationException> registration(RegistrationData regDataNullable){
 
-        RegResult result;
+        return Option.asOption(() -> Objects.requireNonNull(regDataNullable, "regData == null"))
+        .flatMap(regData ->
+            users
+            .loginInUse(regData.getLogin())
+            .flatMap( inUse -> {
+                if (inUse)
+                    return Option.asOption(RegResult.LOGIN_IN_USE);
+                else {
+                    UUID newUUID = UUID.randomUUID();
+                    return CryptoService
+                            .cryptPass(regData.getPassword(), newUUID.toString())
+                            .map(passwordHash -> new User(
+                                    newUUID,
+                                    regData.getLogin(),
+                                    passwordHash,
+                                    regData.getName(),
+                                    regData.getEmail(),
+                                    false))
+                            .flatMap(
+                                    newUser ->
+                                            users.addUser_Opt(newUser)
 
-        UUID newUUID = UUID.randomUUID();
-        String passwordHash;
+                                            .map(result -> sessions
+                                                    .insertOrUpdateSession(new Session(regData.getSessionId(), newUser)))
 
-            passwordHash = CryptoService
-                    .cryptPass(regData.getPassword(), newUUID.toString())
-                    ._wrapAndTrowException(cause ->
-                            new RegistrationException("Ошибка регистрации. Ошибка моудля хеширования.",
-                                    cause))
-                    .getOrElse("");
+                                            .map(result -> (int) (1000 + Math.random() * (9999 - 1000)))
 
-        User user = new User(newUUID, regData.getLogin(), passwordHash, regData.getName(), regData.getEmail(), false);
+                                            .map(confirmCode -> {
+                                                sendingService.send("Код подтверждения: " + confirmCode, newUser.getEmail());
+                                                return confirmCode;
+                                            })
 
-        try {
+                                            .map(confirmCode -> {
+                                                confirmCodes.put(confirmCode, newUser);
+                                                return RegResult.SUCCESS;
+                                            })
+                            );
+                }
+            })
+        )
+        ._wrapException(RegistrationService::registrationExceptionWrapper);
 
-            if (users.findByLogin(regData.getLogin()) == null) {
-                users.addUser(user);
-
-                sessions.insertOrUpdateSession(new Session(regData.getSessionId(), user));
-
-                // Код подтверждения - 4 цифры - int от 1000 о 9999
-                int confirmCode = (int) (1000 + Math.random() * (9999 - 1000));
-
-                //отправляем код на мыло!!!!
-                sendingService.send("Код подтверждения: " + confirmCode, user.getEmail());
-
-                confirmCodes.put(confirmCode, user);
-
-                log.debug("Зарегистрирвоали пользователя: {}, {}", user, confirmCode);
-
-                result = RegResult.SUCCESS;
-
-            } else
-                result = RegResult.LOGIN_IN_USE;
-
-        } catch (UserDataError | SessionDataError e) {
-            log.warn(e.getLocalizedMessage());
-            throw new RegistrationException("Ошибка регистрации при обращении к данным", e);
-        }
-
-        return result;
     }
 
 
@@ -150,6 +151,20 @@ public class RegistrationService {
         LOGIN_IN_USE,
         EMAIL_INCORRECT,
         ERROR
+    }
+
+    private static RegistrationException registrationExceptionWrapper(Throwable cause) {
+        log.warn(cause.getMessage());
+
+        if (cause instanceof SessionDataError
+                || cause instanceof UserDataError)
+            return new RegistrationException(
+                    "Ошибка регистрации. Ошибка при обращении к данным",
+                    cause);
+
+        return new RegistrationException(
+                "Ошибка регистрации.",
+                cause);
     }
 
 }
