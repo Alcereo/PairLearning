@@ -3,22 +3,17 @@ package ru.alcereo.pairlearning.Service;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.postgresql.ds.PGSimpleDataSource;
-import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
-import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
+import ru.alcereo.pairlearning.DAO.models.Session;
+import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.directory.InitialDirContext;
-import java.util.Hashtable;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class RegistrationServiceTest {
@@ -36,11 +31,13 @@ public class RegistrationServiceTest {
         registrationService.setSendingService(sendingService);
 
         RegistrationService.RegResult result = registrationService.registration(
-                "SessionId",
-                "login",
-                "name",
-                "passHash",
-                "mail");
+                new RegistrationData(
+                        "SessionId",
+                        "login",
+                        "name",
+                        "passHash",
+                        "mail"
+                ));
 
         assertEquals(
                 "Регистрация не прошла",
@@ -52,31 +49,37 @@ public class RegistrationServiceTest {
                 "Регистрация прошла с некорректными даными",
                 RegistrationService.RegResult.ERROR,
                 registrationService.registration(
-                        null,
-                        "login",
-                        "name",
-                        "passHash",
-                        "mail"));
+                       new RegistrationData(
+                               null,
+                               "login",
+                               "name",
+                               "passHash",
+                               "mail"
+                       )));
 
         assertEquals(
                 "Регистрация прошла с некорректными даными",
                 RegistrationService.RegResult.ERROR,
                 registrationService.registration(
-                        "SessionId",
-                        null,
-                        "name",
-                        "passHash",
-                        "mail"));
+                        new RegistrationData(
+                                "SessionId",
+                                null,
+                                "name",
+                                "passHash",
+                                "mail"
+                        )));
 
         assertEquals(
                 "Регистрация прошла с некорректными даными",
                 RegistrationService.RegResult.ERROR,
                 registrationService.registration(
-                        "SessionId",
-                        "login",
-                        "name",
-                        null,
-                        "mail"));
+                        new RegistrationData(
+                                "SessionId",
+                                "login",
+                                "name",
+                                null,
+                                "mail"
+                        )));
 
 
     }
@@ -121,11 +124,13 @@ public class RegistrationServiceTest {
         doAnswer(myVoidAnswerWithUser).when(users).addUser(any());
 
         RegistrationService.RegResult result = registrationService.registration(
-                "SessionId",
-                "login",
-                "name",
-                "passHash",
-                "mail");
+                new RegistrationData(
+                        "SessionId",
+                        "login",
+                        "name",
+                        "passHash",
+                        "mail"
+                ));
 
         Matcher matcher = Pattern.compile("\\d\\d\\d\\d").matcher(codeSendingAnswer.mockMessage);
         matcher.find();

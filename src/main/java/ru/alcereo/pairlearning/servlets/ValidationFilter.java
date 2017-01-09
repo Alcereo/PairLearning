@@ -4,8 +4,7 @@ package ru.alcereo.pairlearning.servlets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
-import ru.alcereo.pairlearning.Service.models.UserFront;
+import ru.alcereo.pairlearning.Service.models.SessionData;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -31,39 +30,33 @@ public class ValidationFilter implements Filter{
         String uri = req.getRequestURI();
         log.debug("Фильтрую запрос сеанса: {}", sessionId);
 
-        try {
-            if (sessionService.validateSession(sessionId)) {
+        if (sessionService.validateSession(new SessionData(sessionId)).getOrElse(false)) {
 
-                sessionService
-                        .getCurrentUserOpt(sessionId)
-                        .map(
-                                (UserFront userFront) ->{
-                                    if (userFront.isActive())
-                                        req.setAttribute("user", userFront);
-                                    return null;
-                                }
-                        );
+            sessionService
+                    .getCurrentUserOpt(new SessionData(sessionId))
+                    .map(
+                            userFront -> {
+                                if (userFront.isActive())
+                                    req.setAttribute("user", userFront);
+                                return null;
+                            }
+                    );
 
-                chain.doFilter(request, response);
+            chain.doFilter(request, response);
 
-            }else if (
-                    uri.equals("/") |
-                            uri.matches("/registration.*") |
-                            uri.matches("/users.*") |
-                            uri.matches("/js/.+") |
-                            uri.equals("/error")
-                    ) {
+        } else if (
+                uri.equals("/") |
+                        uri.matches("/registration.*") |
+                        uri.matches("/users.*") |
+                        uri.matches("/js/.+") |
+                        uri.equals("/error")
+                ) {
 
-                chain.doFilter(request, response);
+            chain.doFilter(request, response);
 
-            }else {
+        } else {
 
-                request.getRequestDispatcher("/authorization").forward(request, response);
-            }
-        } catch (ValidateException e) {
-
-            req.setAttribute("errorDescription", e.getLocalizedMessage());
-            request.getRequestDispatcher("/error").forward(request, response);
+            request.getRequestDispatcher("/authorization").forward(request, response);
         }
     }
 

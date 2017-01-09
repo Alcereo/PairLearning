@@ -8,6 +8,7 @@ import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;
+import ru.alcereo.pairlearning.Service.models.SessionData;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -77,7 +78,7 @@ public class SessionServiceTest {
 
         assertTrue(
                 "Не прошла валидация пользователя",
-                sessionService.validateSession("SessionId")
+                sessionService.validateSession(new SessionData("SessionId")).getOrElse(false)
         );
 
 //        assertFalse(
@@ -98,7 +99,7 @@ public class SessionServiceTest {
 
         when(session.getUser()).then(invocation -> user);
 
-        when(sessionDAO.getSessionById(any())).then(invocation -> session);
+        when(sessionDAO.getSessionOptById(any())).then(invocation -> Option.asOption(session));
 
         SessionService sessionService = new SessionService();
         sessionService.setUsers(users);
@@ -106,13 +107,13 @@ public class SessionServiceTest {
 
         assertEquals(
                 "Вернул не того пользователя",
-                sessionService.getCurrentUserOpt("SessionId"),
+                sessionService.getCurrentUserOpt(new SessionData("SessionId")).getOrElse(null),
                 user
                 );
 
         assertEquals(
                 "Вернул не нулевой возврат",
-                sessionService.getCurrentUserOpt(null),
+                sessionService.getCurrentUserOpt(null).getOrElse(null),
                 null
         );
 

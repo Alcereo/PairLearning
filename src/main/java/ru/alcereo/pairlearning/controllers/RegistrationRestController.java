@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.alcereo.pairlearning.Service.RegistrationService;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
+import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -47,12 +48,13 @@ public class RegistrationRestController {
 
         try {
             switch (registrationService.registration(
+                    new RegistrationData(
                             session.getId(),
                             login,
                             name,
                             passwordHash,
                             email
-                    )) {
+                    ))) {
                 case SUCCESS:
                     result = new ResponseEntity(HttpStatus.OK);
                     break;

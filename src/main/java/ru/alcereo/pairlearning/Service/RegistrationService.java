@@ -11,6 +11,7 @@ import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
+import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,67 +46,33 @@ public class RegistrationService {
 
     /**
      * Регистрация нового пользователя
-     * @param sessionId
-     *  Идентификатор сессиии
-     * @param login
-     *  Логин
-     * @param name
-     *  Имя
-     * @param password
-     *  Пароль
-     * @param email
-     *  Почтовый адрес
+     * @param regData
+     *  Данные регистрации
      * @return
      *  Результат регистрации
      */
-    public RegResult registration(
-            String sessionId,
-            String login,
-            String name,
-            String password,
-            String email
-    ) throws RegistrationException {
+    public RegResult registration(RegistrationData regData) throws RegistrationException {
 
         RegResult result;
-
-        if (sessionId == null) throw new RegistrationException(
-                "Ошибка регистрации, некоректные данные. Пустой номер сесии.",
-                new NullPointerException());
-
-        if (login == null) throw new RegistrationException(
-                "Ошибка регистрации, некоректные данные. Пустой логин.",
-                new NullPointerException());
-
-        if (name == null) throw new RegistrationException(
-                "Ошибка регистрации, некоректные данные. Пустое имя.",
-                new NullPointerException());
-
-        if (password == null) throw new RegistrationException(
-                "Ошибка регистрации, некоректные данные. Пустой пароль.",
-                new NullPointerException());
-
-        if (email == null) throw new RegistrationException(
-                "Ошибка регистрации, некоректные данные. Пустой почтовый ящик.",
-                new NullPointerException());
 
         UUID newUUID = UUID.randomUUID();
         String passwordHash;
 
             passwordHash = CryptoService
-                    .cryptPass(password, newUUID.toString())
+                    .cryptPass(regData.getPassword(), newUUID.toString())
                     ._wrapAndTrowException(cause ->
                             new RegistrationException("Ошибка регистрации. Ошибка моудля хеширования.",
                                     cause))
                     .getOrElse("");
 
-        User user = new User(newUUID, login, passwordHash, name, email, false);
+        User user = new User(newUUID, regData.getLogin(), passwordHash, regData.getName(), regData.getEmail(), false);
 
         try {
 
-            if (users.findByLogin(login) == null) {
+            if (users.findByLogin(regData.getLogin()) == null) {
                 users.addUser(user);
 
-                sessions.insertOrUpdateSession(new Session(sessionId, user));
+                sessions.insertOrUpdateSession(new Session(regData.getSessionId(), user));
 
                 // Код подтверждения - 4 цифры - int от 1000 о 9999
                 int confirmCode = (int) (1000 + Math.random() * (9999 - 1000));

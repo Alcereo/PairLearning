@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;
+import ru.alcereo.pairlearning.Service.models.SessionData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,16 +96,14 @@ public class AuthorizationRestController {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
-        try {
-            sessionService.deleteSession(session.getId());
-            result = new ResponseEntity(HttpStatus.OK);
+        Option<Boolean,?> delResult = sessionService.deleteSession(new SessionData(session.getId()));
 
-        } catch (SessionServiceException e) {
-            result = new ResponseEntity<>("Ошибка сервиса сессий. "+e.getLocalizedMessage(),
+        if (!delResult.isException())
+            result = new ResponseEntity(HttpStatus.OK);
+        else
+            result = new ResponseEntity<>("Ошибка сервиса сессий. "+delResult.getExceptionMessage(),
                     requestHeaders,
                     HttpStatus.UNAUTHORIZED);
-
-        }
 
         return result;
     }
