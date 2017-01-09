@@ -145,7 +145,7 @@ public class RegistrationServiceTest {
 
         assertTrue(
                 "Не выполнилось подстверждение после регистрации",
-                registrationService.confirmRegistration(new ConfirmationData("SessionId",code))
+                registrationService.confirmRegistration(new ConfirmationData("SessionId",code)).getOrElse(false)
         );
 
 //        assertFalse(

@@ -101,33 +101,31 @@ public class RegistrationService {
 
     /**
      * Подтверждение регистрации
-     * @param confirmationData
+     * @param confirmationData_n
      *  Данные подтверждения
      * @return
      *  true - если регистрация завершилась успешно, false - иначе
      */
-    public boolean confirmRegistration(ConfirmationData confirmationData) throws RegistrationException {
+    public Option<Boolean, RegistrationException> confirmRegistration(ConfirmationData confirmationData_n){
 
-        return sessions
-                .getSessionOptById(confirmationData.getSessionId())
-                .flatMap(
-                        session -> Option
-                                .asOption(confirmCodes.get(confirmationData.getCode()))
-                                .filter(user -> user.equals(session.getUser()))
-                )
-                .map(users::makeActive)
-                .map(
-                        user -> {
-                            sessions.insertOrUpdateSession(new Session(confirmationData.getSessionId(), user));
-                            log.debug("Подтвердили регистрацию пользователя: {}", user);
-                            return true;
-                        })
-                ._wrapAndTrowException(cause ->
-                        new RegistrationException(
-                                "Ошибка регистрации при обращении к данным",
-                                cause)
-                )
-                .getOrElse(false);
+        return Option.asNotNullWithExcetionOption(confirmationData_n)
+                .flatMap( confirmationData ->
+                    sessions
+                    .getSessionOptById(confirmationData.getSessionId())
+                    .flatMap(
+                            session -> Option
+                                    .asOption(confirmCodes.get(confirmationData.getCode()))
+                                    .filter(user -> user.equals(session.getUser()))
+                    )
+                    .map(users::makeActive)
+                    .map(
+                            user -> {
+                                sessions.insertOrUpdateSession(new Session(confirmationData.getSessionId(), user));
+                                log.debug("Подтвердили регистрацию пользователя: {}", user);
+                                return true;
+                            })
+                    ._wrapException(RegistrationService::registrationExceptionWrapper)
+                );
 
     }
 

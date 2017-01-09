@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.RegistrationService;
-import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 import ru.alcereo.pairlearning.Service.models.ConfirmationData;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
@@ -102,13 +101,15 @@ public class RegistrationRestController {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
-        try {
-            if (registrationService
-                    .confirmRegistration(
-                            new ConfirmationData(
-                                    session.getId(),
-                                    code
-                            )))
+        Option<Boolean,?> confirmRes = registrationService
+                .confirmRegistration(
+                        new ConfirmationData(
+                                session.getId(),
+                                code
+                        ));
+
+        if (!confirmRes.isException()){
+            if (confirmRes.getOrElse(false))
 
                 result = new ResponseEntity(HttpStatus.OK);
 
@@ -118,9 +119,9 @@ public class RegistrationRestController {
                         requestHeaders,
                         HttpStatus.BAD_REQUEST);
 
-        } catch (RegistrationException e) {
+        }else {
             result = new ResponseEntity<>(
-                    "Ошибка сервиса регистрации. "+e.getLocalizedMessage(),
+                    "Ошибка сервиса регистрации. "+confirmRes.getExceptionMessage(),
                     requestHeaders,
                     HttpStatus.BAD_REQUEST);
 
