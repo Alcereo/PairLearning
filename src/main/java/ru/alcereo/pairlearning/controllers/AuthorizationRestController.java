@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.SessionService;
 import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
+import ru.alcereo.pairlearning.Service.models.AuthorizationData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,10 +52,12 @@ public class AuthorizationRestController {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
-        Option<Boolean,?> authResultOpt = sessionService.userAuthorization(
-                login,
-                password,
-                session.getId()
+        Option<Boolean, ?> authResultOpt = sessionService.userAuthorization(
+                new AuthorizationData(
+                        login,
+                        password,
+                        session.getId()
+                )
         );
 
         if (!authResultOpt.isException()){

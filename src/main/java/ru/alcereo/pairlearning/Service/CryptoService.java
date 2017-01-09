@@ -1,5 +1,6 @@
 package ru.alcereo.pairlearning.Service;
 
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.models.User;
 
 import java.security.MessageDigest;
@@ -21,14 +22,14 @@ public class CryptoService {
      * @return
      *  Строка = SHA256( SHA256(password)+sole )
      */
-    public static String cryptPass(String password, String sole) throws NoSuchAlgorithmException {
-
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(password.getBytes());
-        String first = String.format("%064x", new java.math.BigInteger(1, md.digest()))+sole;
-        md.update(first.getBytes());
-
-        return String.format("%064x", new java.math.BigInteger(1, md.digest()));
+    public static Option<String, NoSuchAlgorithmException> cryptPass(String password, String sole) {
+        return Option.asOption(() -> MessageDigest.getInstance("SHA-256"))
+                .map(md -> {
+                    md.update(password.getBytes());
+                    String first = String.format("%064x", new java.math.BigInteger(1, md.digest()))+sole;
+                    md.update(first.getBytes());
+                    return String.format("%064x", new java.math.BigInteger(1, md.digest()));
+                });
     }
 
     public static boolean validateUserPassword(User user){

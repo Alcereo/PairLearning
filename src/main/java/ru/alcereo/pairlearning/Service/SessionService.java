@@ -12,6 +12,7 @@ import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.Service.exeptions.AuthorizationException;
 import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
+import ru.alcereo.pairlearning.Service.models.AuthorizationData;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.security.NoSuchAlgorithmException;
@@ -39,60 +40,26 @@ public class SessionService {
 
     /**
      * Попытка авторизации пользователя
-     * @param loginNullable
-     *  Логин пользователя
-     * @param passwordNullable
-     *  Пароль пользователя
-     * @param sessionIdNullable
-     *  Идентификатор сессии
+     * @param authData
+     *  Данные авторизации
      * @return
      *  true - если авторизация прошла успешно, false - иначе
      */
-    public Option<Boolean, AuthorizationException> userAuthorization(String loginNullable, String passwordNullable, String sessionIdNullable){
+    public Option<Boolean, AuthorizationException> userAuthorization(AuthorizationData authData){
 
-        return Option.asOption(loginNullable)
-                    ._wrapNoneWithException(cause -> new AuthorizationException(
-                            "Ошибка авторизации, некорректные данные. Пустой логин.", cause))
-                .flatMap( login ->
-                Option.asOption(passwordNullable)
-                        ._wrapNoneWithException(cause -> new AuthorizationException(
-                                "Ошибка авторизации, некорректные данные. Пустой пароль.", cause))
-                .flatMap( password ->
-                Option.asOption(sessionIdNullable)
-                        ._wrapNoneWithException(cause -> new AuthorizationException(
-                                "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
-                                cause))
-                .flatMap( sessionId ->
-                        users
-                        .findByLoginOpt(login)
-                        .flatMap(
-                                user -> Option.asOption("")
-                                        .map(value -> CryptoService.cryptPass(password, user.getUid().toString()))
-                                        .filter(passwordHash ->
-                                                Objects.equals(user.getPasswordHash(), passwordHash)
-                                                        && user.isActive())
-                                        .map(passwordHash -> {
-                                            sessions.insertOrUpdateSession(new Session(sessionId, user));
-                                            log.debug("User authorizate: {} session: {}", user, sessionId);
-                                            return true;
-                                        })
-                        )
-                        ._wrapException(e -> {
-                            if (e instanceof NoSuchAlgorithmException)
-                                return new AuthorizationException(
-                                        "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
-                                        e);
-
-                            if (e instanceof SessionDataError
-                                    || e instanceof UserDataError)
-                                return new AuthorizationException(
-                                        "Ошибка авторизации. Ошибка при обращении к данным",
-                                        e);
-
-                            return new AuthorizationException(
-                                    "Ошибка авторизации.",
-                                    e);
-                }))));
+        return users
+                .findByLoginOpt(authData.getLogin())
+                .flatMap(
+                        user -> CryptoService.cryptPass(authData.getPassHash(), user.getUid().toString())
+                                .filter(passwordHash ->
+                                        Objects.equals(user.getPasswordHash(), passwordHash)
+                                                && user.isActive())
+                                .map(passwordHash -> {
+                                    sessions.insertOrUpdateSession(new Session(authData.getSessionId(), user));
+                                    log.debug("User authorizate: {} session: {}", user, authData.getSessionId());
+                                    return true;
+                                })
+                )._wrapException(SessionService::sessionServiceExceptionWrapper);
     }
 
 
@@ -164,4 +131,22 @@ public class SessionService {
         }
 
     }
+
+    private static AuthorizationException sessionServiceExceptionWrapper(Throwable cause) {
+        if (cause instanceof NoSuchAlgorithmException)
+            return new AuthorizationException(
+                    "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
+                    cause);
+
+        if (cause instanceof SessionDataError
+                || cause instanceof UserDataError)
+            return new AuthorizationException(
+                    "Ошибка авторизации. Ошибка при обращении к данным",
+                    cause);
+
+        return new AuthorizationException(
+                "Ошибка авторизации.",
+                cause);
+    }
+
 }

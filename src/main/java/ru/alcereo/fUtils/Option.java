@@ -41,6 +41,15 @@ public abstract class Option<T, Es extends Exception> {
             return some(value);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <R, E extends Exception> Option<R,E> asOption(Supplier<R,E> func){
+        try{
+            return some(func.get());
+        } catch (Exception e) {
+            return new ExcOpt<R, E>((E)e);
+        }
+    }
+
     public abstract Option<T,Es> _throwCausedException() throws Es;
 
     public abstract <W extends Throwable> Option<T,Es> _wrapAndTrowException(Exceptioned<W> exceptioned) throws W;

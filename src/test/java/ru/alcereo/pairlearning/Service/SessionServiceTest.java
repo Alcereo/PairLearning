@@ -7,6 +7,7 @@ import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
+import ru.alcereo.pairlearning.Service.models.AuthorizationData;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -32,12 +33,13 @@ public class SessionServiceTest {
 
         when(users.findByLoginOpt(any())).then(invocation -> Option.asOption(user));
 
-        Option<Boolean,?> resultOpt = sessionService
+        Option<Boolean, ?> resultOpt = sessionService
                 .userAuthorization(
-                        "Login",
-                        "PasswordHash",
-                        "SessionId")
-                ._throwCausedException();
+                        new AuthorizationData(
+                                "Login",
+                                "PasswordHash",
+                                "SessionId")
+                )._throwCausedException();
 
         assertTrue(
                 "Авторизация не прошла!",

@@ -12,7 +12,6 @@ import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -92,12 +91,12 @@ public class RegistrationService {
         UUID newUUID = UUID.randomUUID();
         String passwordHash;
 
-        try {
-            passwordHash = CryptoService.cryptPass(password, newUUID.toString());
-        } catch (NoSuchAlgorithmException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new RegistrationException("Ошибка регистрации. Ошибка моудля хеширования.",e);
-        }
+            passwordHash = CryptoService
+                    .cryptPass(password, newUUID.toString())
+                    ._wrapAndTrowException(cause ->
+                            new RegistrationException("Ошибка регистрации. Ошибка моудля хеширования.",
+                                    cause))
+                    .getOrElse("");
 
         User user = new User(newUUID, login, passwordHash, name, email, false);
 
