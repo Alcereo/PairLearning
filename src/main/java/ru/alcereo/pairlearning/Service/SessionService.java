@@ -51,47 +51,47 @@ public class SessionService {
     public Option<Boolean, AuthorizationException> userAuthorization(String loginNullable, String passwordNullable, String sessionIdNullable){
 
         return Option.asOption(loginNullable)
-                ._wrapNoneWithException(cause -> new AuthorizationException(
-                        "Ошибка авторизации, некорректные данные. Пустой логин.", cause))
+                    ._wrapNoneWithException(cause -> new AuthorizationException(
+                            "Ошибка авторизации, некорректные данные. Пустой логин.", cause))
                 .flatMap( login ->
                 Option.asOption(passwordNullable)
                         ._wrapNoneWithException(cause -> new AuthorizationException(
                                 "Ошибка авторизации, некорректные данные. Пустой пароль.", cause))
                 .flatMap( password ->
                 Option.asOption(sessionIdNullable)
-                ._wrapNoneWithException(cause -> new AuthorizationException(
-                        "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
-                        cause))
+                        ._wrapNoneWithException(cause -> new AuthorizationException(
+                                "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
+                                cause))
                 .flatMap( sessionId ->
-                users
-                .findByLoginOpt(login)
-                .flatMap(
-                        user -> Option.asOption("")
-                                .map(value -> CryptoService.cryptPass(password, user.getUid().toString()))
-                                .filter(passwordHash ->
-                                        Objects.equals(user.getPasswordHash(), passwordHash)
-                                                && user.isActive())
-                                .map(passwordHash -> {
-                                    sessions.insertOrUpdateSession(new Session(sessionId, user));
-                                    log.debug("User authorizate: {} session: {}", user, sessionId);
-                                    return true;
-                                })
-                )
-                ._wrapException(e -> {
-                    if (e instanceof NoSuchAlgorithmException)
-                        return new AuthorizationException(
-                                "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
-                                e);
+                        users
+                        .findByLoginOpt(login)
+                        .flatMap(
+                                user -> Option.asOption("")
+                                        .map(value -> CryptoService.cryptPass(password, user.getUid().toString()))
+                                        .filter(passwordHash ->
+                                                Objects.equals(user.getPasswordHash(), passwordHash)
+                                                        && user.isActive())
+                                        .map(passwordHash -> {
+                                            sessions.insertOrUpdateSession(new Session(sessionId, user));
+                                            log.debug("User authorizate: {} session: {}", user, sessionId);
+                                            return true;
+                                        })
+                        )
+                        ._wrapException(e -> {
+                            if (e instanceof NoSuchAlgorithmException)
+                                return new AuthorizationException(
+                                        "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
+                                        e);
 
-                    if (e instanceof SessionDataError
-                            || e instanceof UserDataError)
-                        return new AuthorizationException(
-                                "Ошибка авторизации. Ошибка при обращении к данным",
-                                e);
+                            if (e instanceof SessionDataError
+                                    || e instanceof UserDataError)
+                                return new AuthorizationException(
+                                        "Ошибка авторизации. Ошибка при обращении к данным",
+                                        e);
 
-                    return new AuthorizationException(
-                            "Ошибка авторизации.",
-                            e);
+                            return new AuthorizationException(
+                                    "Ошибка авторизации.",
+                                    e);
                 }))));
     }
 
