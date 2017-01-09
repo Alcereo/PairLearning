@@ -39,36 +39,31 @@ public class SessionService {
 
     /**
      * Попытка авторизации пользователя
-     * @param login
+     * @param loginNullable
      *  Логин пользователя
-     * @param password
+     * @param passwordNullable
      *  Пароль пользователя
-     * @param sessionId
+     * @param sessionIdNullable
      *  Идентификатор сессии
      * @return
      *  true - если авторизация прошла успешно, false - иначе
      */
-    public Option<Boolean, AuthorizationException> userAuthorization(String login, String password, String sessionId){
+    public Option<Boolean, AuthorizationException> userAuthorization(String loginNullable, String passwordNullable, String sessionIdNullable){
 
-        if (login == null)
-            return Option.exceptOpt(
-                new AuthorizationException(
-                        "Ошибка авторизации, некорректные данные. Пустой логин.",
-                        new NullPointerException("login == null")));
-
-        if (password == null)
-            return Option.exceptOpt(
-                    new AuthorizationException(
-                            "Ошибка авторизации, некорректные данные. Пустой пароль.",
-                            new NullPointerException("password != null")));
-
-        if (sessionId == null)
-            return Option.exceptOpt(
-                    new AuthorizationException(
-                            "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
-                            new NullPointerException("sessionId != null")));
-
-        return users
+        return Option.asOption(loginNullable)
+                ._wrapNoneWithException(cause -> new AuthorizationException(
+                        "Ошибка авторизации, некорректные данные. Пустой логин.", cause))
+                .flatMap( login ->
+                Option.asOption(passwordNullable)
+                        ._wrapNoneWithException(cause -> new AuthorizationException(
+                                "Ошибка авторизации, некорректные данные. Пустой пароль.", cause))
+                .flatMap( password ->
+                Option.asOption(sessionIdNullable)
+                ._wrapNoneWithException(cause -> new AuthorizationException(
+                        "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
+                        cause))
+                .flatMap( sessionId ->
+                users
                 .findByLoginOpt(login)
                 .flatMap(
                         user -> Option.asOption("")
@@ -97,7 +92,7 @@ public class SessionService {
                     return new AuthorizationException(
                             "Ошибка авторизации.",
                             e);
-                });
+                }))));
     }
 
 

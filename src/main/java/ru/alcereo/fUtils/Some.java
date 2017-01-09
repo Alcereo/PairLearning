@@ -53,6 +53,11 @@ class Some<T, Es extends Exception> extends Option<T,Es> {
     }
 
     @Override
+    public Option _wrapNoneWithException(Exceptioned exceptioned) {
+        return this;
+    }
+
+    @Override
     public boolean isException() {
         return false;
     }

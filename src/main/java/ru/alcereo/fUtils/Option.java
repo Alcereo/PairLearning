@@ -47,6 +47,8 @@ public abstract class Option<T, Es extends Exception> {
 
     public abstract <W extends Exception> Option<T,W> _wrapException(Exceptioned<W> exceptioned);
 
+    public abstract <W extends Exception> Option<T,W> _wrapNoneWithException(Exceptioned<W> exceptioned);
+
     public abstract boolean isException();
 
     public abstract String getExceptionMessage();

@@ -64,6 +64,11 @@ public class ExcOpt<T, E extends Exception> extends Option<T,E> {
     }
 
     @Override
+    public Option _wrapNoneWithException(Exceptioned exceptioned) {
+        return this;
+    }
+
+    @Override
     public boolean isException() {
         return true;
     }
