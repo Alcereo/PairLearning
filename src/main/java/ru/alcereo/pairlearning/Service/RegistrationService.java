@@ -11,6 +11,7 @@ import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
+import ru.alcereo.pairlearning.Service.models.ConfirmationData;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import java.util.HashMap;
@@ -100,34 +101,24 @@ public class RegistrationService {
 
     /**
      * Подтверждение регистрации
-     * @param sessionId
-     *  Идентификатор сессиии
-     * @param code
-     *  Код подтверждения
+     * @param confirmationData
+     *  Данные подтверждения
      * @return
      *  true - если регистрация завершилась успешно, false - иначе
      */
-    public boolean confirmRegistration(String sessionId, Integer code) throws RegistrationException {
-
-        if (sessionId == null) throw new RegistrationException(
-                "Ошибка регистрации, некоректные данные",
-                new NullPointerException());
-
-        if (code == null) throw new RegistrationException(
-                "Ошибка регистрации, некоректные данные",
-                new NullPointerException());
+    public boolean confirmRegistration(ConfirmationData confirmationData) throws RegistrationException {
 
         return sessions
-                .getSessionOptById(sessionId)
+                .getSessionOptById(confirmationData.getSessionId())
                 .flatMap(
                         session -> Option
-                                .asOption(confirmCodes.get(code))
+                                .asOption(confirmCodes.get(confirmationData.getCode()))
                                 .filter(user -> user.equals(session.getUser()))
                 )
                 .map(users::makeActive)
                 .map(
                         user -> {
-                            sessions.insertOrUpdateSession(new Session(sessionId, user));
+                            sessions.insertOrUpdateSession(new Session(confirmationData.getSessionId(), user));
                             log.debug("Подтвердили регистрацию пользователя: {}", user);
                             return true;
                         })

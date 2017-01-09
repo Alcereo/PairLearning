@@ -7,6 +7,7 @@ import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.ConfirmationData;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import java.util.regex.Matcher;
@@ -144,7 +145,7 @@ public class RegistrationServiceTest {
 
         assertTrue(
                 "Не выполнилось подстверждение после регистрации",
-                registrationService.confirmRegistration("SessionId",code)
+                registrationService.confirmRegistration(new ConfirmationData("SessionId",code))
         );
 
 //        assertFalse(

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.RegistrationService;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
+import ru.alcereo.pairlearning.Service.models.ConfirmationData;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,8 +105,10 @@ public class RegistrationRestController {
         try {
             if (registrationService
                     .confirmRegistration(
-                            session.getId(),
-                            code))
+                            new ConfirmationData(
+                                    session.getId(),
+                                    code
+                            )))
 
                 result = new ResponseEntity(HttpStatus.OK);
 
