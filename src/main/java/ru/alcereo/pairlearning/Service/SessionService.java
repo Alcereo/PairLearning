@@ -48,21 +48,25 @@ public class SessionService {
      * @return
      *  true - если авторизация прошла успешно, false - иначе
      */
-    public boolean userAuthorization(String login, String password, String sessionId) throws AuthorizationException {
+    public Option<Boolean, AuthorizationException> userAuthorization(String login, String password, String sessionId){
 
-        boolean result = false;
+        if (login == null)
+            return Option.exceptOpt(
+                new AuthorizationException(
+                        "Ошибка авторизации, некорректные данные. Пустой логин.",
+                        new NullPointerException("login == null")));
 
-        if (login == null) throw new AuthorizationException(
-                "Ошибка авторизации, некорректные данные. Пустой логин.",
-                new NullPointerException("login == null"));
+        if (password == null)
+            return Option.exceptOpt(
+                    new AuthorizationException(
+                            "Ошибка авторизации, некорректные данные. Пустой пароль.",
+                            new NullPointerException("password != null")));
 
-        if (password == null) throw new AuthorizationException(
-                "Ошибка авторизации, некорректные данные. Пустой пароль.",
-                new NullPointerException("password != null"));
-
-        if (sessionId == null) throw new AuthorizationException(
-                "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
-                new NullPointerException("sessionId != null"));
+        if (sessionId == null)
+            return Option.exceptOpt(
+                    new AuthorizationException(
+                            "Ошибка авторизации, некорректные данные. Пустой номер сесии.",
+                            new NullPointerException("sessionId != null")));
 
         return users
                 .findByLoginOpt(login)
@@ -78,7 +82,7 @@ public class SessionService {
                                     return true;
                                 })
                 )
-                ._wrapAndTrowException(e -> {
+                ._wrapException(e -> {
                     if (e instanceof NoSuchAlgorithmException)
                         return new AuthorizationException(
                                 "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
@@ -93,9 +97,7 @@ public class SessionService {
                     return new AuthorizationException(
                             "Ошибка авторизации.",
                             e);
-                })
-                .getOrElse(false);
-
+                });
     }
 
 

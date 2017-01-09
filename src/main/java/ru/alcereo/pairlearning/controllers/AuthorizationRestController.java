@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.exeptions.AuthorizationException;
 import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,11 +51,14 @@ public class AuthorizationRestController {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
-        try {
-            if (sessionService.userAuthorization(
-                    login,
-                    password,
-                    session.getId())) {
+        Option<Boolean,?> authResultOpt = sessionService.userAuthorization(
+                login,
+                password,
+                session.getId()
+        );
+
+        if (!authResultOpt.isException()){
+            if (authResultOpt.getOrElse(false)) {
 
                 log.debug("Пользователь авторизовался: {}, {}", login, session.getId());
 
@@ -68,11 +71,11 @@ public class AuthorizationRestController {
                         HttpStatus.UNAUTHORIZED);
 
             }
-        } catch (AuthorizationException e) {
+        } else {
 
-            log.warn(e.getLocalizedMessage());
+            log.warn(authResultOpt.getExceptionMessage());
 
-            result = new ResponseEntity<>("Ошибка сервиса авторизации. "+e.getLocalizedMessage(),
+            result = new ResponseEntity<>("Ошибка сервиса авторизации. "+authResultOpt.getExceptionMessage(),
                     requestHeaders,
                     HttpStatus.UNAUTHORIZED);
 
