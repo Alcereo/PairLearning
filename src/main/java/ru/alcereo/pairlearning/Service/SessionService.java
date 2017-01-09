@@ -10,11 +10,9 @@ import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
-import ru.alcereo.pairlearning.Service.exeptions.AuthorizationException;
 import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;
 import ru.alcereo.pairlearning.Service.models.SessionData;
-import sun.security.validator.ValidatorException;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -41,15 +39,15 @@ public class SessionService {
 
     /**
      * Попытка авторизации пользователя
-     * @param authData
+     * @param authData_n
      *  Данные авторизации
      * @return
      *  true - если авторизация прошла успешно, false - иначе
      */
-    public Option<Boolean, AuthorizationException> userAuthorization(AuthorizationData authData){
+    public Option<Boolean, SessionServiceException> userAuthorization(AuthorizationData authData_n){
 
-        return Option.asOption(() -> Objects.requireNonNull(authData, "authData == null"))
-                .flatMap( value ->
+        return Option.asNotNullWithExcetionOption(authData_n)
+                .flatMap( authData ->
                     users
                     .findByLoginOpt(authData.getLogin())
                     .flatMap(
@@ -62,39 +60,39 @@ public class SessionService {
                                         log.debug("User authorizate: {} session: {}", user, authData.getSessionId());
                                         return true;
                                     }))
-                    ._wrapException(SessionService::authorizationExceptionWrapper));
+                    ._wrapException(SessionService::sessionServiceExceptionWrapper));
     }
 
 
     /**
      * Получение признака того, что сессия зарегистрирована в системе
-     * @param sessionData
+     * @param sessionData_n
      *  Данные сессии
      * @return
      *  true - если текущая сессия присутствует в программе, false - иначе
      */
-    public Option<Boolean, ValidatorException> validateSession(SessionData sessionData){
+    public Option<Boolean, SessionServiceException> validateSession(SessionData sessionData_n){
 
-        return Option.asOption(() -> Objects.requireNonNull(sessionData, "sessionData == null"))
-                .flatMap( value ->
+        return Option.asNotNullWithExcetionOption(sessionData_n)
+                .flatMap( sessionData ->
                     sessions
                     .getSessionOptById(sessionData.getSessionId())
-                    .map(s -> true)
-                    ._wrapException(SessionService::validationExceptionWrapper));
+                    .map(session -> true)
+                    ._wrapException(SessionService::sessionServiceExceptionWrapper));
     }
 
 
     /**
      * Возвращает информаци о пользователе по идентификатору сессии
-     * @param sessionData
+     * @param sessionData_n
      *  Данные сессии
      * @return
      *  Данные о пользователе, либо null, если отсутствует таковой
      */
-    public Option<User, SessionServiceException> getCurrentUserOpt(SessionData sessionData) {
+    public Option<User, SessionServiceException> getCurrentUserOpt(SessionData sessionData_n) {
 
-        return Option.asOption(() -> Objects.requireNonNull(sessionData, "sessionData == null"))
-                .flatMap( value ->
+        return Option.asNotNullWithExcetionOption(sessionData_n)
+                .flatMap( sessionData ->
                     sessions
                     .getSessionOptById(sessionData.getSessionId())
                     .map(Session::getUser)
@@ -104,56 +102,18 @@ public class SessionService {
 
     /**
      * Удаление сессии
-     * @param sessionData
+     * @param sessionData_n
      *  Данные сессии
      */
-    public Option<Boolean, SessionServiceException> deleteSession(SessionData sessionData){
+    public Option<Boolean, SessionServiceException> deleteSession(SessionData sessionData_n){
 
-        return Option.asOption(() -> Objects.requireNonNull(sessionData, "sessionData == null"))
-                .flatMap(value ->
+        return Option.asNotNullWithExcetionOption(sessionData_n)
+                .flatMap(sessionData ->
                         Option.asOption(() -> {
                             sessions.deleteSessionById(sessionData.getSessionId());
                             return true;
                         })
                 ._wrapException(SessionService::sessionServiceExceptionWrapper));
-    }
-
-    private static AuthorizationException authorizationExceptionWrapper(Throwable cause) {
-        log.warn(cause.getMessage());
-
-        if (cause instanceof NoSuchAlgorithmException)
-            return new AuthorizationException(
-                    "Ошибка авторизации. Ошибка при обращении к сервису хеширования",
-                    cause);
-
-        if (cause instanceof SessionDataError
-                || cause instanceof UserDataError)
-            return new AuthorizationException(
-                    "Ошибка авторизации. Ошибка при обращении к данным",
-                    cause);
-
-        return new AuthorizationException(
-                "Ошибка авторизации.",
-                cause);
-    }
-
-    private static ValidatorException validationExceptionWrapper(Throwable cause) {
-        log.warn(cause.getMessage());
-
-        if (cause instanceof NoSuchAlgorithmException)
-            return new ValidatorException(
-                    "Ошибка валидации. Ошибка при обращении к сервису хеширования",
-                    cause);
-
-        if (cause instanceof SessionDataError
-                || cause instanceof UserDataError)
-            return new ValidatorException(
-                    "Ошибка валидации. Ошибка при обращении к данным",
-                    cause);
-
-        return new ValidatorException(
-                "Ошибка валидации.",
-                cause);
     }
 
     private static SessionServiceException sessionServiceExceptionWrapper(Throwable cause) {

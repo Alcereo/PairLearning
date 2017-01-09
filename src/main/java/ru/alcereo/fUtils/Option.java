@@ -50,6 +50,13 @@ public abstract class Option<T, Es extends Exception> {
         }
     }
 
+    public static <R> Option<R, NullPointerException> asNotNullWithExcetionOption(R value){
+        if (value == null)
+            return new ExcOpt<R, NullPointerException>(new NullPointerException());
+        else
+            return some(value);
+    }
+
     public abstract Option<T,Es> _throwCausedException() throws Es;
 
     public abstract <W extends Throwable> Option<T,Es> _wrapAndTrowException(Exceptioned<W> exceptioned) throws W;

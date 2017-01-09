@@ -15,7 +15,6 @@ import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -54,7 +53,7 @@ public class RegistrationService {
      */
     public Option<RegResult, RegistrationException> registration(RegistrationData regDataNullable){
 
-        return Option.asOption(() -> Objects.requireNonNull(regDataNullable, "regData == null"))
+        return Option.asNotNullWithExcetionOption(regDataNullable)
         .flatMap(regData ->
             users
             .loginInUse(regData.getLogin())
