@@ -48,12 +48,12 @@ class Some<T, Es extends Exception> extends Option<T,Es> {
     }
 
     @Override
-    public Option _throwCausedException(){
+    public Option throwException(){
         return this;
     }
 
     @Override
-    public Option _wrapNoneWithException(Exceptioned exceptioned) {
+    public Option wrapNoneWithException(Exceptioned exceptioned) {
         return this;
     }
 
@@ -68,12 +68,12 @@ class Some<T, Es extends Exception> extends Option<T,Es> {
     }
 
     @Override
-    public Option _wrapAndTrowException(Exceptioned exceptioned){
+    public Option wrapAndTrowException(Exceptioned exceptioned){
         return this;
     }
 
     @Override
-    public Option _wrapException(Exceptioned exceptioned) {
+    public Option wrapException(Exceptioned exceptioned) {
         return this;
     }
 }

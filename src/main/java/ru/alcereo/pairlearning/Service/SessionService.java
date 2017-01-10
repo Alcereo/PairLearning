@@ -46,7 +46,7 @@ public class SessionService {
      */
     public Option<Boolean, SessionServiceException> userAuthorization(AuthorizationData authData_n){
 
-        return Option.asNotNullWithExcetionOption(authData_n)
+        return Option.asNotNullWithExceptionOption(authData_n)
                 .flatMap( authData ->
                     users
                     .findByLoginOpt(authData.getLogin())
@@ -60,7 +60,7 @@ public class SessionService {
                                         log.debug("User authorizate: {} session: {}", user, authData.getSessionId());
                                         return true;
                                     }))
-                    ._wrapException(SessionService::sessionServiceExceptionWrapper));
+                    .wrapException(SessionService::sessionServiceExceptionWrapper));
     }
 
 
@@ -73,12 +73,12 @@ public class SessionService {
      */
     public Option<Boolean, SessionServiceException> validateSession(SessionData sessionData_n){
 
-        return Option.asNotNullWithExcetionOption(sessionData_n)
+        return Option.asNotNullWithExceptionOption(sessionData_n)
                 .flatMap( sessionData ->
                     sessions
                     .getSessionOptById(sessionData.getSessionId())
                     .map(session -> true)
-                    ._wrapException(SessionService::sessionServiceExceptionWrapper));
+                    .wrapException(SessionService::sessionServiceExceptionWrapper));
     }
 
 
@@ -91,12 +91,12 @@ public class SessionService {
      */
     public Option<User, SessionServiceException> getCurrentUserOpt(SessionData sessionData_n) {
 
-        return Option.asNotNullWithExcetionOption(sessionData_n)
+        return Option.asNotNullWithExceptionOption(sessionData_n)
                 .flatMap( sessionData ->
                     sessions
                     .getSessionOptById(sessionData.getSessionId())
                     .map(Session::getUser)
-                    ._wrapException(SessionService::sessionServiceExceptionWrapper));
+                    .wrapException(SessionService::sessionServiceExceptionWrapper));
     }
 
 
@@ -107,13 +107,13 @@ public class SessionService {
      */
     public Option<Boolean, SessionServiceException> deleteSession(SessionData sessionData_n){
 
-        return Option.asNotNullWithExcetionOption(sessionData_n)
+        return Option.asNotNullWithExceptionOption(sessionData_n)
                 .flatMap(sessionData ->
                         Option.asOption(() -> {
                             sessions.deleteSessionById(sessionData.getSessionId());
                             return true;
                         })
-                ._wrapException(SessionService::sessionServiceExceptionWrapper));
+                .wrapException(SessionService::sessionServiceExceptionWrapper));
     }
 
     private static SessionServiceException sessionServiceExceptionWrapper(Throwable cause) {

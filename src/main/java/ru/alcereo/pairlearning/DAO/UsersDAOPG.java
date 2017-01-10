@@ -257,7 +257,7 @@ public class UsersDAOPG implements UsersDAO {
                         return st.executeUpdate() == 1;
                     }
                 })
-                ._wrapException(UsersDAOPG::userDataErrorWrapper);
+                .wrapException(UsersDAOPG::userDataErrorWrapper);
     }
 
     @Override

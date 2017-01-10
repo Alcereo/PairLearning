@@ -54,7 +54,7 @@ public class RegistrationService {
      */
     public Option<RegResult, RegistrationException> registration(RegistrationData regDataNullable){
 
-        return Option.asNotNullWithExcetionOption(regDataNullable)
+        return Option.asNotNullWithExceptionOption(regDataNullable)
         .flatMap(regData ->
             users
             .loginInUse(regData.getLogin())
@@ -94,7 +94,7 @@ public class RegistrationService {
                 }
             })
         )
-        ._wrapException(RegistrationService::registrationExceptionWrapper);
+        .wrapException(RegistrationService::registrationExceptionWrapper);
 
     }
 
@@ -108,7 +108,7 @@ public class RegistrationService {
      */
     public Option<Boolean, RegistrationException> confirmRegistration(ConfirmationData confirmationData_n){
 
-        return Option.asNotNullWithExcetionOption(confirmationData_n)
+        return Option.asNotNullWithExceptionOption(confirmationData_n)
                 .flatMap( confirmationData ->
                     sessions
                     .getSessionOptById(confirmationData.getSessionId())
@@ -124,7 +124,7 @@ public class RegistrationService {
                                 log.debug("Подтвердили регистрацию пользователя: {}", user);
                                 return true;
                             })
-                    ._wrapException(RegistrationService::registrationExceptionWrapper)
+                    .wrapException(RegistrationService::registrationExceptionWrapper)
                 );
 
     }

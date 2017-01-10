@@ -9,13 +9,26 @@ public abstract class Option<T, Es extends Exception> {
 
     public static final None NONE = new None();
 
-    public abstract <R, E extends Exception> Option<R,E> map(Func<T,R,E> func);
+    public abstract <R, E extends Exception> Option<R,E>    map(Func<T,R,E> func);
 
-    public abstract <R, E extends Exception> Option<R,E> flatMap(Func<T,Option<R,E>,E> func);
+    public abstract <R, E extends Exception> Option<R,E>    flatMap(Func<T,Option<R,E>,E> func);
 
-    public abstract <E extends Exception> Option<T,E> filter(Func<T, Boolean, E> filterPredicate);
+    public abstract <E extends Exception> Option<T,E>       filter(Func<T, Boolean, E> filterPredicate);
 
     public abstract T getOrElse(T valueElse);
+
+    public abstract Option<T,Es> throwException() throws Es;
+
+    public abstract <W extends Throwable> Option<T,Es> wrapAndTrowException(Exceptioned<W> exceptioned) throws W;
+
+    public abstract <W extends Exception> Option<T,W> wrapException(Exceptioned<W> exceptioned);
+
+    public abstract <W extends Exception> Option<T,W> wrapNoneWithException(Exceptioned<W> exceptioned);
+
+    public abstract boolean isException();
+
+    public abstract String getExceptionMessage();
+
 
     static <R,E extends Exception> Option<R,E> some(R value){
         if (value == null)
@@ -50,23 +63,11 @@ public abstract class Option<T, Es extends Exception> {
         }
     }
 
-    public static <R> Option<R, NullPointerException> asNotNullWithExcetionOption(R value){
+    public static <R> Option<R, NullPointerException> asNotNullWithExceptionOption(R value){
         if (value == null)
             return new ExcOpt<R, NullPointerException>(new NullPointerException());
         else
             return some(value);
     }
-
-    public abstract Option<T,Es> _throwCausedException() throws Es;
-
-    public abstract <W extends Throwable> Option<T,Es> _wrapAndTrowException(Exceptioned<W> exceptioned) throws W;
-
-    public abstract <W extends Exception> Option<T,W> _wrapException(Exceptioned<W> exceptioned);
-
-    public abstract <W extends Exception> Option<T,W> _wrapNoneWithException(Exceptioned<W> exceptioned);
-
-    public abstract boolean isException();
-
-    public abstract String getExceptionMessage();
 
 }

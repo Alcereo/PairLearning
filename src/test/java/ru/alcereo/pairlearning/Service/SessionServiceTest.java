@@ -40,7 +40,7 @@ public class SessionServiceTest {
                                 "Login",
                                 "PasswordHash",
                                 "SessionId")
-                )._throwCausedException();
+                ).throwException();
 
         assertTrue(
                 "Авторизация не прошла!",

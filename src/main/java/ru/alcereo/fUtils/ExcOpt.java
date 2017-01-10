@@ -33,12 +33,12 @@ public class ExcOpt<T, E extends Exception> extends Option<T,E> {
         this.e = e;
     }
 
-    public Option _throwCausedException() throws E {
+    public Option throwException() throws E {
         throw e;
     }
 
     @Override
-    public <W extends Throwable> Option<T, E> _wrapAndTrowException(Exceptioned<W> exceptioned) throws W {
+    public <W extends Throwable> Option<T, E> wrapAndTrowException(Exceptioned<W> exceptioned) throws W {
 
 //        try {
         W t = exceptioned.getNewException(e);
@@ -55,7 +55,7 @@ public class ExcOpt<T, E extends Exception> extends Option<T,E> {
     }
 
     @Override
-    public <W extends Exception> Option<T, W> _wrapException(Exceptioned<W> exceptioned) {
+    public <W extends Exception> Option<T, W> wrapException(Exceptioned<W> exceptioned) {
         W t = exceptioned.getNewException(e);
         StackTraceElement[] stackArr = t.getStackTrace();
         t.setStackTrace(Arrays.copyOfRange(stackArr,2,stackArr.length));
@@ -64,7 +64,7 @@ public class ExcOpt<T, E extends Exception> extends Option<T,E> {
     }
 
     @Override
-    public Option _wrapNoneWithException(Exceptioned exceptioned) {
+    public Option wrapNoneWithException(Exceptioned exceptioned) {
         return this;
     }
 

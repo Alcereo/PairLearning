@@ -24,12 +24,12 @@ class None<T, Es extends Exception> extends Option<T, Es> {
     }
 
     @Override
-    public Option _throwCausedException(){
+    public Option throwException(){
         return this;
     }
 
     @Override
-    public <W extends Exception> Option<T,W> _wrapNoneWithException(Exceptioned<W> exceptioned) {
+    public <W extends Exception> Option<T,W> wrapNoneWithException(Exceptioned<W> exceptioned) {
         return new ExcOpt<T,W>(exceptioned.getNewException(new NullPointerException()));
     }
 
@@ -44,12 +44,12 @@ class None<T, Es extends Exception> extends Option<T, Es> {
     }
 
     @Override
-    public Option _wrapAndTrowException(Exceptioned exceptioned){
+    public Option wrapAndTrowException(Exceptioned exceptioned){
         return this;
     }
 
     @Override
-    public Option _wrapException(Exceptioned exceptioned) {
+    public Option wrapException(Exceptioned exceptioned) {
         return this;
     }
 }

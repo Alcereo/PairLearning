@@ -62,7 +62,7 @@ public class TopicService {
                             topicRows.getAllByUser(userModel).forEach(result::add);
                             return null;
                         })
-                ._wrapAndTrowException(cause ->
+                .wrapAndTrowException(cause ->
                         new TopicServiceException(
                                 "Ошибка сервиса тем изучения. Ошибка доступа к данным.",
                                 cause));
