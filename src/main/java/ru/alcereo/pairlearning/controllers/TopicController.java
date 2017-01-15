@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.alcereo.pairlearning.Service.TopicLearnPredicateChanger;
-import ru.alcereo.pairlearning.Service.TopicRowChanger;
-import ru.alcereo.pairlearning.Service.TopicService;
-import ru.alcereo.pairlearning.Service.TopicTeachPredicateChanger;
+import ru.alcereo.pairlearning.Service.TopicService.TopicLearnPredicateChanger;
+import ru.alcereo.pairlearning.Service.TopicService.TopicRowChanger;
+import ru.alcereo.pairlearning.Service.TopicService.TopicService;
+import ru.alcereo.pairlearning.Service.TopicService.TopicTeachPredicateChanger;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 

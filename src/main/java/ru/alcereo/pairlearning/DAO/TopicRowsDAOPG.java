@@ -182,7 +182,14 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
     @Override
     public Set<Topic> getLearnTopicsByUser(User user) throws TopicRowDataError {
+        return getLearnTopicsByUserUID(user.getUid());
+    }
+
+    @Override
+    public Set<Topic> getLearnTopicsByUserUID(UUID uuid) throws TopicRowDataError {
         Set<Topic> result=new HashSet<>();
+
+        UUID userUid = uuid;
 
         try(
                 Connection conn = ds.getConnection();
@@ -200,7 +207,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
                                 "    topic_rows.learn");
         ){
 
-            st.setObject(1, user.getUid());
+            st.setObject(1, userUid);
 
             try(ResultSet resultSet = st.executeQuery()){
                 while (resultSet.next())
@@ -223,6 +230,11 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
     @Override
     public Set<Topic> getTeachTopicsByUser(User user) throws TopicRowDataError {
+        return getTeachTopicsByUserUID(user.getUid());
+    }
+
+    @Override
+    public Set<Topic> getTeachTopicsByUserUID(UUID uuid) throws TopicRowDataError {
         Set<Topic> result=new HashSet<>();
 
         try(
@@ -241,7 +253,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
                                 "    topic_rows.teach");
         ){
 
-            st.setObject(1, user.getUid());
+            st.setObject(1, uuid);
 
             try(ResultSet resultSet = st.executeQuery()){
                 while (resultSet.next())
@@ -261,6 +273,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
         return result;
     }
+
 
     public boolean addTopic(Topic topic) throws TopicRowDataError {
 

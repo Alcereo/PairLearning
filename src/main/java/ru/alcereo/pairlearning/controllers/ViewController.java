@@ -7,7 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.alcereo.pairlearning.Service.TopicService;
+import ru.alcereo.pairlearning.Service.TopicService.TopicService;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 

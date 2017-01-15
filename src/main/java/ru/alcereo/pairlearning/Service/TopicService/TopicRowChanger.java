@@ -1,11 +1,9 @@
-package ru.alcereo.pairlearning.Service;
+package ru.alcereo.pairlearning.Service.TopicService;
 
 
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
-import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
-import ru.alcereo.pairlearning.Service.models.UserFront;
 
 public interface TopicRowChanger {
 

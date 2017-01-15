@@ -4,7 +4,6 @@ package ru.alcereo.pairlearning.Service.Chat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
-import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.io.IOException;
@@ -34,10 +33,15 @@ public class ChatRoomGrouped implements ChatRoom {
         List<UserFront> users = new ArrayList<>(sessionMap.values());
         users.add(user);
 
+
         try {
             result = (!sessionMap.values().contains(user)
-                    && inviteChecker.usersInvitable(users));
-        } catch (TopicServiceException e) {
+                    &&
+                    inviteChecker.usersInvitable(users)
+                    .throwException()
+                    .getOrElse(false)
+            );
+        } catch (ChatInviteException e) {
             log.warn(e.getLocalizedMessage());
             throw new ChatInviteException("Ошибка проверки доступа в комнату. Ошибка сервиса тем. "+e.getLocalizedMessage());
         }

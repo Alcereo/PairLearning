@@ -7,6 +7,7 @@ import ru.alcereo.pairlearning.DAO.models.User;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 
 /**
@@ -67,6 +68,17 @@ public interface TopicRowsDAO {
     Set<Topic> getLearnTopicsByUser(User user) throws TopicRowDataError;
 
     /**
+     * Получение списока тем, которые пользователь выделил признаком Learn
+     * @param uuid
+     *  uid пользователя
+     * @return
+     *  Список тем
+     * @throws TopicRowDataError
+     *  Ошибка доступа к данным
+     */
+    Set<Topic> getLearnTopicsByUserUID(UUID uuid) throws TopicRowDataError;
+
+    /**
      * Получение списока тем, которые пользователь выделил признаком Teach
      * @param user
      *  Объект пользователя
@@ -76,5 +88,16 @@ public interface TopicRowsDAO {
      *  Ошибка доступа к данным
      */
     Set<Topic> getTeachTopicsByUser(User user) throws TopicRowDataError;
+
+    /**
+     * Получение списока тем, которые пользователь выделил признаком Teach
+     * @param uid
+     *  uid пользователя
+     * @return
+     *  Список тем
+     * @throws TopicRowDataError
+     *  Ошибка доступа к данным
+     */
+    Set<Topic> getTeachTopicsByUserUID(UUID uid) throws TopicRowDataError;
 
 }

@@ -1,10 +1,7 @@
-package ru.alcereo.pairlearning.Service;
+package ru.alcereo.pairlearning.Service.TopicService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
-import ru.alcereo.pairlearning.DAO.models.User;
-import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 
 
 abstract class AbstractTopicPredicateChanger implements TopicRowChanger{

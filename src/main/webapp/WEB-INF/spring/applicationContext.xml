@@ -27,7 +27,7 @@
     </bean>
 
     <bean id="topicService"
-          class="ru.alcereo.pairlearning.Service.TopicService" >
+          class="ru.alcereo.pairlearning.Service.TopicService.TopicService" >
         <property name="usersDAO" ref="usersDAO"/>
         <property name="topicRows" ref="topicRowsDAO"/>
     </bean>

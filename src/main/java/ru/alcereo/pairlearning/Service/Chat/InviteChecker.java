@@ -1,6 +1,7 @@
 package ru.alcereo.pairlearning.Service.Chat;
 
-import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
+import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.util.List;
@@ -18,5 +19,5 @@ public interface InviteChecker {
      * @return
      *  true - если все пользователи в списке могут подключиться к комнате
      */
-    boolean usersInvitable(List<UserFront> users) throws TopicServiceException;
+    Option<Boolean, ChatInviteException> usersInvitable(List<UserFront> users);
 }
