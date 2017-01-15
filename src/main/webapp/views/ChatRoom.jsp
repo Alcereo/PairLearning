@@ -20,7 +20,7 @@
 <h3>Чат с пользователем</h3>
 <p></p>
 
-Имя в чате: <%=((UserFront)request.getAttribute("user")).getName()%>
+Имя в чате: ${user.name}
 <p></p>
 <div>
     <input type="text" id="messageinput"/>

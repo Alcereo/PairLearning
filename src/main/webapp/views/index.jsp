@@ -16,29 +16,30 @@
 
 <h3>Главная страница сервиса парного обучения</h3>
 
-<% if (request.getAttribute("user")==null) {%>
 <p></p>
 <a href="/registration">Регистрация</a>
 
 <p></p>
 
-<form id="authorization">
-    <input placeholder="Логин" type="text" id="login">
-    <input placeholder="Пароль" type="text" id="password">
+<%--<form id="authorization">--%>
+    <%--<input placeholder="Логин" type="text" id="login">--%>
+    <%--<input placeholder="Пароль" type="text" id="password">--%>
+    <%--<input type="submit" value="Вход">--%>
+<%--</form>--%>
+<%--ВРЕМЯНОЧКА!!!--%>
+<form action="${pageContext.request.contextPath}/login" method="post">
+    <input placeholder="Логин" type="text" name="username">
+    <input placeholder="Пароль" type="text" name="password">
+    <input type="hidden"  name="_csrf"   value="123"/>
     <input type="submit" value="Вход">
 </form>
+<%--ВРЕМЯНКА!--%>
 
-<%}else{%>
-<p></p>
-Вы зашли, как: <%=((UserFront)request.getAttribute("user")).getName()%>
-<p></p>
-
-
-<form id="logout">
-    <input type="submit" value="Выход">
-</form>
-
-<%}%>
+<p>
+    <% if (request.getParameter("error")!=null){ %>
+    Ошибка аутентификации
+    <%};%>
+</p>
 
 <p></p>
 <div id="error_messages"></div>

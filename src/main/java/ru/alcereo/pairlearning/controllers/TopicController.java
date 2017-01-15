@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,11 +19,12 @@ import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 
 @RestController
-public class TopicRestController {
-    private static final Logger log = LoggerFactory.getLogger(TopicRestController.class);
+public class TopicController {
+    private static final Logger log = LoggerFactory.getLogger(TopicController.class);
 
     private final HttpServletRequest request;
 
@@ -34,7 +36,7 @@ public class TopicRestController {
     }
 
     @Autowired
-    public TopicRestController(HttpServletRequest request) {
+    public TopicController(HttpServletRequest request) {
         this.request = request;
     }
 
@@ -43,8 +45,11 @@ public class TopicRestController {
     public ResponseEntity setTopicPredicate(
             @RequestParam(value = "value") String value,
             @RequestParam(value = "predicate") boolean predicate,
-            @RequestParam(value = "id") long id
+            @RequestParam(value = "id") long id,
+            Principal principal
     ){
+
+        UserFront user = (UserFront)((UsernamePasswordAuthenticationToken) principal).getPrincipal();
 
         ResponseEntity result;
 
@@ -75,7 +80,7 @@ public class TopicRestController {
 
         try {
 
-            topicService.setTopicRow(changer, (UserFront) request.getAttribute("user"));
+            topicService.setTopicRow(changer, user);
             result = new ResponseEntity(HttpStatus.OK);
 
         } catch (TopicServiceException e) {

@@ -8,10 +8,8 @@ import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
-import ru.alcereo.pairlearning.Service.models.ConfirmationData;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import java.util.HashMap;
@@ -71,25 +69,11 @@ public class RegistrationService {
                                     passwordHash,
                                     regData.getName(),
                                     regData.getEmail(),
-                                    false))
+                                    true))
                             .flatMap(
                                     newUser ->
                                             users.addUser_Opt(newUser)
-
-                                            .map(result -> sessions
-                                                    .insertOrUpdateSession(new Session(regData.getSessionId(), newUser)))
-
-                                            .map(result -> (int) (1000 + Math.random() * (9999 - 1000)))
-
-                                            .map(confirmCode -> {
-                                                sendingService.send("Код подтверждения: " + confirmCode, newUser.getEmail());
-                                                return confirmCode;
-                                            })
-
-                                            .map(confirmCode -> {
-                                                confirmCodes.put(confirmCode, newUser);
-                                                return RegResult.SUCCESS;
-                                            })
+                                            .map(confirmCode -> RegResult.SUCCESS)
                             );
                 }
             })
@@ -97,38 +81,6 @@ public class RegistrationService {
         .wrapException(RegistrationService::registrationExceptionWrapper);
 
     }
-
-
-    /**
-     * Подтверждение регистрации
-     * @param confirmationData_n
-     *  Данные подтверждения
-     * @return
-     *  true - если регистрация завершилась успешно, false - иначе
-     */
-    public Option<Boolean, RegistrationException> confirmRegistration(ConfirmationData confirmationData_n){
-
-        return Option.asNotNullWithExceptionOption(confirmationData_n)
-                .flatMap( confirmationData ->
-                    sessions
-                    .getSessionOptById(confirmationData.getSessionId())
-                    .flatMap(
-                            session -> Option
-                                    .asOption(confirmCodes.get(confirmationData.getCode()))
-                                    .filter(user -> user.equals(session.getUser()))
-                    )
-                    .map(users::makeActive)
-                    .map(
-                            user -> {
-                                sessions.insertOrUpdateSession(new Session(confirmationData.getSessionId(), user));
-                                log.debug("Подтвердили регистрацию пользователя: {}", user);
-                                return true;
-                            })
-                    .wrapException(RegistrationService::registrationExceptionWrapper)
-                );
-
-    }
-
 
     /**
      * Перечисление отображающее результат

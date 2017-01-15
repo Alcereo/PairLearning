@@ -74,6 +74,11 @@ public class ExcOpt<T, E extends Exception> extends Option<T,E> {
     }
 
     @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
     public String getExceptionMessage() {
         return e.getMessage();
     }

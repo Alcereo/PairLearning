@@ -4,13 +4,9 @@ import org.junit.Test;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
-import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
-import ru.alcereo.pairlearning.Service.exeptions.ValidateException;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;
-import ru.alcereo.pairlearning.Service.models.SessionData;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -34,7 +30,7 @@ public class SessionServiceTest {
 
         when(users.findByLoginOpt(any())).then(invocation -> Option.asOption(user));
 
-        Option<Boolean, ?> resultOpt = sessionService
+        Option<User, ?> resultOpt = sessionService
                 .userAuthorization(
                         new AuthorizationData(
                                 "Login",
@@ -44,7 +40,7 @@ public class SessionServiceTest {
 
         assertTrue(
                 "Авторизация не прошла!",
-                resultOpt.getOrElse(false));
+                !resultOpt.isNone());
 
 //        assertFalse(
 //                "Прошла авторизация с некорректными даными",
@@ -60,62 +56,6 @@ public class SessionServiceTest {
 //                "Прошла авторизация с некорректными даными",
 //                sessionService.userAuthorization("Login", "PasswordHash", null)
 //        );
-
-    }
-
-    @Test
-    public void validateSession() throws Exception, ValidateException {
-
-        UsersDAO users = mock(UsersDAO.class);
-        SessionDAO sessionDAO = mock(SessionDAO.class);
-
-        SessionService sessionService = new SessionService();
-        sessionService.setUsers(users);
-        sessionService.setSessions(sessionDAO);
-
-        when(sessionDAO.getSessionById(any())).then(
-                invocation -> new Session(null, null));
-
-        assertTrue(
-                "Не прошла валидация пользователя",
-                sessionService.validateSession(new SessionData("SessionId")).getOrElse(false)
-        );
-
-//        assertFalse(
-//                "Прошла валидация с некорректными данными",
-//                sessionService.validateSession(null)
-//        );
-
-    }
-
-    @Test
-    public void getCurrentUser() throws Exception {
-
-        UsersDAO users = mock(UsersDAO.class);
-        SessionDAO sessionDAO = mock(SessionDAO.class);
-
-        User user = mock(User.class);
-        Session session = mock(Session.class);
-
-        when(session.getUser()).then(invocation -> user);
-
-        when(sessionDAO.getSessionOptById(any())).then(invocation -> Option.asOption(session));
-
-        SessionService sessionService = new SessionService();
-        sessionService.setUsers(users);
-        sessionService.setSessions(sessionDAO);
-
-        assertEquals(
-                "Вернул не того пользователя",
-                sessionService.getCurrentUserOpt(new SessionData("SessionId")).getOrElse(null),
-                user
-                );
-
-        assertEquals(
-                "Вернул не нулевой возврат",
-                sessionService.getCurrentUserOpt(null).getOrElse(null),
-                null
-        );
 
     }
 

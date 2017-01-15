@@ -16,7 +16,7 @@
 
     <h3>Личный кабинет пользователя</h3>
 
-    Привет, <%=((UserFront)request.getAttribute("user")).getName()%>!
+    Привет, ${user.name}!
 
 <p></p>
 
@@ -39,9 +39,9 @@
 
 <p></p>
 
-<a href="/chatroom">Чат</a>
-
-<form id="logout">
+<a href="${pageContext.request.contextPath}/chatroom">Чат</a>
+<p></p>
+<form id="logout" action="${pageContext.request.contextPath}/logout" method="post">
     <input type="submit" value="Выход">
 </form>
 
@@ -79,7 +79,7 @@
     });
 
 </script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/logout.js"></script>
+<%--<script type="text/javascript" src="<%=request.getContextPath()%>/js/logout.js"></script>--%>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/errorWrite.js"></script>
 
 </body>

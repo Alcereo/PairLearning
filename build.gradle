@@ -14,7 +14,7 @@ plugins {
 }
 
 group 'ru.alcereo'
-version '0.1.1'
+version '0.1.2'
 
 apply plugin: 'java'
 apply plugin: 'war'
@@ -49,6 +49,9 @@ dependencies {
 
 
     compile group: 'jstl', name: 'jstl', version: '1.2'
+
+    compile group: 'org.springframework.security', name: 'spring-security-web', version: '4.2.1.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: '4.2.1.RELEASE'
 
 }
 

@@ -7,11 +7,10 @@ import ru.alcereo.pairlearning.Service.Chat.RoomFabric;
 import ru.alcereo.pairlearning.Service.Chat.RoomGroupedFabric;
 import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
 import ru.alcereo.pairlearning.Service.SessionService;
-import ru.alcereo.pairlearning.Service.models.SessionData;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 import ru.alcereo.pairlearning.SocketChat.exceptions.SocketConnectionConstructionException;
 
 import javax.websocket.Session;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,65 +33,39 @@ public class SocketSessionProvider{
         SocketSessionProvider.sessionService = sessionService;
     }
 
-    void addSocketSession(String SessionId, Session session, ChatSocketConnection chatSocketConnection)
+    void addSocketSession(UserFront userFront, Session session, ChatSocketConnection chatSocketConnection)
             throws SocketConnectionConstructionException {
 
-        if (SessionId != null) {
+        for (ChatRoom chatRoom : rooms) {
+            chatRoom.getLock().lock();
+            try {
+                if (chatRoom.tryToInvite(userFront, new SessionDecorator(session)))
+                    chatSocketConnection.setChatRoom(chatRoom);
+            } catch (ChatInviteException e) {
+                log.warn(e.getLocalizedMessage());
+                throw new SocketConnectionConstructionException("Ошибка при подключении к сервисам комнат", e);
+            } finally {
+                chatRoom.getLock().unlock();
+            }
+        }
 
-            if (sessionService.validateSession(new SessionData(SessionId)).getOrElse(false)) {
-
-                if (!sessionService
-                        .getCurrentUserOpt(new SessionData(SessionId))
-                        .map(
-                                user ->
-                                {
-                                    for (ChatRoom chatRoom : rooms) {
-                                        chatRoom.getLock().lock();
-                                        try {
-                                            if (chatRoom.tryToInvite(user, new SessionDecorator(session)))
-                                                chatSocketConnection.setChatRoom(chatRoom);
-                                        } catch (ChatInviteException e) {
-                                            log.warn(e.getLocalizedMessage());
-                                            throw new SocketConnectionConstructionException("Ошибка при подключении к сервисам комнат", e);
-                                        } finally {
-                                            chatRoom.getLock().unlock();
-                                        }
-                                    }
-
-                                    if (chatSocketConnection.notConnectedToRoom()) {
+        if (chatSocketConnection.notConnectedToRoom()) {
 //                                ChatRoom chatRoom = null;
-                                        try {
-                                            chatRoom.tryToInvite(user,
-                                                    new SessionDecorator(session));
+            try {
+                chatRoom.tryToInvite(userFront,
+                        new SessionDecorator(session));
 //                                    chatRoom = roomFabric.newRoom(
 //                                            user,
 //                                            new SessionDecorator(session));
-                                        } catch (ChatInviteException e) {
-                                            log.warn(e.getLocalizedMessage());
-                                            throw new SocketConnectionConstructionException("Ошибка подключении к сервисам комнат", e);
-                                        }
-
-                                        chatSocketConnection.setChatRoom(chatRoom);
-                                        rooms.add(chatRoom);
-                                    }
-
-                                    return true;
-
-                                }).getOrElse(false)
-                        )
-                    throw new SocketConnectionConstructionException("Сессия валидирована, но пользователь не наиден");
-
-            } else {
-
-                log.debug("Не прошел авторизацию: {}", SessionId);
-                try {
-                    session.getBasicRemote().sendText("Требуется авторизация!");
-                    session.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (ChatInviteException e) {
+                log.warn(e.getLocalizedMessage());
+                throw new SocketConnectionConstructionException("Ошибка подключении к сервисам комнат", e);
             }
+
+            chatSocketConnection.setChatRoom(chatRoom);
+            rooms.add(chatRoom);
         }
+
     }
 
 }

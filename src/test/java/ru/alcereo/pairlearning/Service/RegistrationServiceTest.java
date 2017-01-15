@@ -1,21 +1,12 @@
 package ru.alcereo.pairlearning.Service;
 
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
-import ru.alcereo.pairlearning.DAO.models.Session;
-import ru.alcereo.pairlearning.DAO.models.User;
-import ru.alcereo.pairlearning.Service.models.ConfirmationData;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 public class RegistrationServiceTest {
 
@@ -82,76 +73,6 @@ public class RegistrationServiceTest {
                                 "mail"
                         )));
 
-
-    }
-
-    @Test
-    public void confirmRegistration() throws Exception {
-
-        UsersDAO        users           = mock(UsersDAO.class);
-        SessionDAO      sessionDAO      = mock(SessionDAO.class);
-        SendingService  sendingService  = mock(SendingService.class);
-
-        RegistrationService registrationService = new RegistrationService();
-        registrationService.setSessions(sessionDAO);
-        registrationService.setUsers(users);
-        registrationService.setSendingService(sendingService);
-
-        class MyVoidAnswerWithString implements Answer<Void>{
-
-            public String mockMessage;
-
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                mockMessage = invocation.getArgument(0);
-                return null;
-            }
-        }
-
-        class MyVoidAnswerWithUser implements Answer<Void>{
-            public User user;
-
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                user = invocation.getArgument(0);
-                return null;
-            }
-        }
-
-        MyVoidAnswerWithString codeSendingAnswer = new MyVoidAnswerWithString();
-        MyVoidAnswerWithUser myVoidAnswerWithUser = new MyVoidAnswerWithUser();
-
-        doAnswer(codeSendingAnswer).when(sendingService).send(anyString(), eq("mail"));
-        doAnswer(myVoidAnswerWithUser).when(users).addUser(any());
-
-        RegistrationService.RegResult result = registrationService.registration(
-                new RegistrationData(
-                        "SessionId",
-                        "login",
-                        "name",
-                        "passHash",
-                        "mail"
-                )).getOrElse(null);
-
-        Matcher matcher = Pattern.compile("\\d\\d\\d\\d").matcher(codeSendingAnswer.mockMessage);
-        matcher.find();
-        int code = new Integer(matcher.group());
-
-        when(sessionDAO.getSessionById(anyString())).then(
-                invocation -> new Session("SessionId",
-                        myVoidAnswerWithUser.user)
-        );
-        when(users.makeActive(any())).then(invocation -> myVoidAnswerWithUser.user);
-
-        assertTrue(
-                "Не выполнилось подстверждение после регистрации",
-                registrationService.confirmRegistration(new ConfirmationData("SessionId",code)).getOrElse(false)
-        );
-
-//        assertFalse(
-//                "Прошла регистрация с некорректными данными",
-//                registrationService.confirmRegistration(null,code)
-//        );
 
     }
 

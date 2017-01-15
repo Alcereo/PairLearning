@@ -4,8 +4,10 @@ import org.apache.tomcat.websocket.WsSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 import ru.alcereo.pairlearning.Service.Chat.ChatRoom;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 import ru.alcereo.pairlearning.SocketChat.exceptions.SocketConnectionConstructionException;
 
 import javax.websocket.OnClose;
@@ -45,11 +47,11 @@ public class ChatSocketConnection {
     @OnOpen
     public void onOpen(Session session){
 
-        WsSession wsSession = (WsSession) session;
-        log.debug("Новое содениение: {}", wsSession.getHttpSessionId());
+        UserFront userFront = (UserFront)((UsernamePasswordAuthenticationToken) session.getUserPrincipal()).getPrincipal();
+        log.debug("Новое содениение: {}", userFront.getLogin());
 
         try {
-            socketSessionProvider.addSocketSession(wsSession.getHttpSessionId(), session, this);
+            socketSessionProvider.addSocketSession(userFront, session, this);
 
         } catch (SocketConnectionConstructionException e) {
 

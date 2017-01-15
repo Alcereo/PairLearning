@@ -153,7 +153,7 @@ public class UsersDAOPG implements UsersDAO {
     @Override
     public Option<Boolean, UserDataError> loginInUse(String login) {
 
-        Option<Boolean, UserDataError> result = Option.NONE;
+        Boolean result = false;
 
         try(
                 Connection conn = ds.getConnection();
@@ -164,20 +164,19 @@ public class UsersDAOPG implements UsersDAO {
             st.setString(1, login);
 
             try(ResultSet resultSet = st.executeQuery()){
-                if (resultSet.next())
-                    result = Option.asOption(true);
+                result = resultSet.next();
             }
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            result = Option.exceptOpt(
+            return Option.exceptOpt(
                     new UserDataError(
                             "Ошибка обращения к данным по пользователям",
                             e)
             );
         }
 
-        return result;
+        return Option.asOption(result);
     }
 
     @Override

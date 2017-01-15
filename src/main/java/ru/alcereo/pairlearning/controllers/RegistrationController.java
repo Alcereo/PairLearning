@@ -9,15 +9,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.RegistrationService;
-import ru.alcereo.pairlearning.Service.models.ConfirmationData;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 @RestController
-public class RegistrationRestController {
+public class RegistrationController {
 
     private final HttpServletRequest request;
 
@@ -29,7 +30,7 @@ public class RegistrationRestController {
     }
 
     @Autowired
-    public RegistrationRestController(HttpServletRequest request) {
+    public RegistrationController(HttpServletRequest request) {
         this.request = request;
     }
 
@@ -47,14 +48,35 @@ public class RegistrationRestController {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
-        Option<RegistrationService.RegResult,?> regResultOpt = registrationService.registration(
-                new RegistrationData(
-                        session.getId(),
-                        login,
-                        name,
-                        passwordHash,
-                        email
-                ));
+        Option<RegistrationService.RegResult, ?> regResultOpt;
+
+        if (!login.isEmpty() & !name.isEmpty() & !passwordHash.isEmpty()) {
+
+            regResultOpt = registrationService.registration(
+                    new RegistrationData(
+                            session.getId(),
+                            login,
+                            name,
+                            passwordHash,
+                            email
+                    ));
+        }else {
+
+            regResultOpt = Option.exceptOpt(
+                    new Exception("не заполнены поля: " +
+                            String.join(",",
+                                    Arrays.stream(
+                                            new String[]{
+                                                    login.isEmpty()?" Логин":"",
+                                                    name.isEmpty()?" Имя":"",
+                                                    passwordHash.isEmpty()?" Пароль":""
+                                            })
+                                            .filter(s -> !s.isEmpty())
+                                            .collect(Collectors.toList())
+                            )
+                    )
+            );
+        }
 
         if (!regResultOpt.isException()) {
 
@@ -82,49 +104,9 @@ public class RegistrationRestController {
                 }
         }else{
             result = new ResponseEntity<>(
-                    "Ошибка регистрации: " + regResultOpt.getExceptionMessage(),
+                    regResultOpt.getExceptionMessage(),
                     requestHeaders,
                     HttpStatus.BAD_REQUEST);
-        }
-
-        return result;
-    }
-
-    @RequestMapping(value = "/registration/api/confirmation")
-    public ResponseEntity confirm(
-            @RequestParam(value = "code") int code
-    ){
-
-        HttpSession session = request.getSession();
-        ResponseEntity result;
-
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("Content-Type", "text/html; charset=utf-16");
-
-        Option<Boolean,?> confirmRes = registrationService
-                .confirmRegistration(
-                        new ConfirmationData(
-                                session.getId(),
-                                code
-                        ));
-
-        if (!confirmRes.isException()){
-            if (confirmRes.getOrElse(false))
-
-                result = new ResponseEntity(HttpStatus.OK);
-
-            else
-                result = new ResponseEntity<>(
-                        "Код подтверждения не корректен",
-                        requestHeaders,
-                        HttpStatus.BAD_REQUEST);
-
-        }else {
-            result = new ResponseEntity<>(
-                    "Ошибка сервиса регистрации. "+confirmRes.getExceptionMessage(),
-                    requestHeaders,
-                    HttpStatus.BAD_REQUEST);
-
         }
 
         return result;

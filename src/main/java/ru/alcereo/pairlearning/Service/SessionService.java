@@ -8,11 +8,9 @@ import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;
-import ru.alcereo.pairlearning.Service.models.SessionData;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -44,7 +42,7 @@ public class SessionService {
      * @return
      *  true - если авторизация прошла успешно, false - иначе
      */
-    public Option<Boolean, SessionServiceException> userAuthorization(AuthorizationData authData_n){
+    public Option<User, SessionServiceException> userAuthorization(AuthorizationData authData_n){
 
         return Option.asNotNullWithExceptionOption(authData_n)
                 .flatMap( authData ->
@@ -55,65 +53,9 @@ public class SessionService {
                                     .filter(passwordHash ->
                                             Objects.equals(user.getPasswordHash(), passwordHash)
                                                     && user.isActive())
-                                    .map(passwordHash -> {
-                                        sessions.insertOrUpdateSession(new Session(authData.getSessionId(), user));
-                                        log.debug("User authorizate: {} session: {}", user, authData.getSessionId());
-                                        return true;
-                                    }))
+                                    .map(passwordHash -> user)
+                    )
                     .wrapException(SessionService::sessionServiceExceptionWrapper));
-    }
-
-
-    /**
-     * Получение признака того, что сессия зарегистрирована в системе
-     * @param sessionData_n
-     *  Данные сессии
-     * @return
-     *  true - если текущая сессия присутствует в программе, false - иначе
-     */
-    public Option<Boolean, SessionServiceException> validateSession(SessionData sessionData_n){
-
-        return Option.asNotNullWithExceptionOption(sessionData_n)
-                .flatMap( sessionData ->
-                    sessions
-                    .getSessionOptById(sessionData.getSessionId())
-                    .map(session -> true)
-                    .wrapException(SessionService::sessionServiceExceptionWrapper));
-    }
-
-
-    /**
-     * Возвращает информаци о пользователе по идентификатору сессии
-     * @param sessionData_n
-     *  Данные сессии
-     * @return
-     *  Данные о пользователе, либо null, если отсутствует таковой
-     */
-    public Option<User, SessionServiceException> getCurrentUserOpt(SessionData sessionData_n) {
-
-        return Option.asNotNullWithExceptionOption(sessionData_n)
-                .flatMap( sessionData ->
-                    sessions
-                    .getSessionOptById(sessionData.getSessionId())
-                    .map(Session::getUser)
-                    .wrapException(SessionService::sessionServiceExceptionWrapper));
-    }
-
-
-    /**
-     * Удаление сессии
-     * @param sessionData_n
-     *  Данные сессии
-     */
-    public Option<Boolean, SessionServiceException> deleteSession(SessionData sessionData_n){
-
-        return Option.asNotNullWithExceptionOption(sessionData_n)
-                .flatMap(sessionData ->
-                        Option.asOption(() -> {
-                            sessions.deleteSessionById(sessionData.getSessionId());
-                            return true;
-                        })
-                .wrapException(SessionService::sessionServiceExceptionWrapper));
     }
 
     private static SessionServiceException sessionServiceExceptionWrapper(Throwable cause) {

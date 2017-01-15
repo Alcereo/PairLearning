@@ -39,6 +39,11 @@ class None<T, Es extends Exception> extends Option<T, Es> {
     }
 
     @Override
+    public boolean isNone() {
+        return true;
+    }
+
+    @Override
     public String getExceptionMessage() {
         return "";
     }

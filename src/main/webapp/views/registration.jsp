@@ -1,3 +1,4 @@
+<%--suppress ALL --%>
 <%@ page import="ru.alcereo.pairlearning.Service.models.UserFront" %><%--
   Created by IntelliJ IDEA.
   User: alcereo
@@ -74,18 +75,19 @@
                 action:"registration",
                 login: $('#login').val(),
                 name: $('#name').val(),
-                passwordHash: SHA1($('#password').val()),
+                passwordHash: $('#password').val(),
                 email: $('#mail').val()
             }
-        ).done(function (data) {
+        ).done(function () {
 
-            $('#registration').hide();
-            $('#confirmation').show();
+//            $('#registration').hide();
+//            $('#confirmation').show();
+            window.location.replace("/");
 
         }).fail(function (data) {
 
             console.log(data);
-            writeError(data.responseText);
+            writeError("Ошибка регистрации: "+data.responseText);
 
         });
 

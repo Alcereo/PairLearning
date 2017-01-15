@@ -27,6 +27,8 @@ public abstract class Option<T, Es extends Exception> {
 
     public abstract boolean isException();
 
+    public abstract boolean isNone();
+
     public abstract String getExceptionMessage();
 
 
