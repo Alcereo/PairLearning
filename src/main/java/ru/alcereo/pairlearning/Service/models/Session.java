@@ -1,4 +1,4 @@
-package ru.alcereo.pairlearning.DAO.models;
+package ru.alcereo.pairlearning.Service.models;
 
 public class Session {
 

@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
-import ru.alcereo.pairlearning.DAO.models.Session;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.Session;
+import ru.alcereo.pairlearning.Service.models.User;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

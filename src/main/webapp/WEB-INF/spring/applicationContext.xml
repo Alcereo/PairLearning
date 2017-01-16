@@ -27,34 +27,42 @@
           p:dataSource-ref="postgresDataSource"
     />
 
+    <bean id="usersDAOHibernate"
+          class="ru.alcereo.pairlearning.DAO.UsersDAOHibernate"
+          p:hibernateSessionFactory-ref="hibernateSessionFactory"/>
+
     <!--        HIBERNATE       -->
 
-    <!--<bean id="hibernateSessionFactory"-->
-          <!--class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"-->
-          <!--p:dataSource-ref="postgresDataSource"-->
-          <!--p:packagesToScan="ru.alcereo.pairlearning.DAO.Entity"-->
-          <!--p:hibernateProperties-ref="hibernateProperties"-->
-    <!--/>-->
+    <bean id="hibernateSessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+          p:dataSource-ref="postgresDataSource"
+          p:packagesToScan="ru.alcereo.pairlearning.DAO.Entities"
+          p:hibernateProperties-ref="hibernateProperties"
+    />
 
-    <!--<util:properties id="hibernateProperties">-->
-        <!--<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>-->
-        <!--<prop key="hibernate.show_sql">true</prop>-->
-    <!--</util:properties>-->
+    <util:properties id="hibernateProperties">
+        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>
+        <prop key="hibernate.show_sql">true</prop>
+    </util:properties>
 
     <!--        Services        -->
 
-    <bean id="sessionService"
-          class="ru.alcereo.pairlearning.Service.SessionService" >
+    <bean id="entityMapper"
+          class="ru.alcereo.pairlearning.Service.EntityMapper"
+          />
 
-        <property name="sessions" ref="sessionDAO"/>
-        <property name="users" ref="usersDAO"/>
-    </bean>
+    <bean id="sessionService"
+          class="ru.alcereo.pairlearning.Service.SessionService"
+          p:users-ref="usersDAOHibernate"
+          p:mapperFacade-ref="entityMapper"
+    />
 
     <bean id="topicService"
-          class="ru.alcereo.pairlearning.Service.TopicService.TopicService" >
-        <property name="usersDAO" ref="usersDAO"/>
-        <property name="topicRows" ref="topicRowsDAO"/>
-    </bean>
+          class="ru.alcereo.pairlearning.Service.TopicService.TopicService"
+          p:mapperFacade-ref="entityMapper"
+          p:topicRows-ref="topicRowsDAO"
+          p:usersDAO-ref="usersDAOHibernate"
+    />
 
     <bean id="registrationService"
           class="ru.alcereo.pairlearning.Service.RegistrationService" >

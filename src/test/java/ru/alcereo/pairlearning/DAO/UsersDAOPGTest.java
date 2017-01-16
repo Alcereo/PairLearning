@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.User;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

@@ -2,9 +2,8 @@ package ru.alcereo.pairlearning.Service;
 
 import org.junit.Test;
 import ru.alcereo.fUtils.Option;
-import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;
 
 import static org.junit.Assert.assertTrue;
@@ -17,11 +16,9 @@ public class SessionServiceTest {
     public void userAuthorization() throws Exception {
 
         UsersDAO users = mock(UsersDAO.class);
-        SessionDAO sessionDAO = mock(SessionDAO.class);
 
         SessionService sessionService = new SessionService();
         sessionService.setUsers(users);
-        sessionService.setSessions(sessionDAO);
 
         User user = mock(User.class);
         when(user.isActive()).then(invocation -> true);
