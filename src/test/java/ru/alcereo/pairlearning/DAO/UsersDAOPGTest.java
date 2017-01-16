@@ -9,9 +9,7 @@ import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
 
 import javax.sql.DataSource;
-
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
@@ -87,7 +85,7 @@ public class UsersDAOPGTest {
     public void getAll() throws Exception {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         assertEquals(
                 "Не верное количество строк",
@@ -101,7 +99,7 @@ public class UsersDAOPGTest {
     public void findByUid() throws Exception {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         assertEquals(
                 "Наиден не тот пользователь",
@@ -133,7 +131,7 @@ public class UsersDAOPGTest {
     public void findByLogin() throws Exception {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         assertEquals(
                 "Наиден не тот пользователь",
@@ -164,7 +162,7 @@ public class UsersDAOPGTest {
     public void addUser() throws UserDataError {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111118888"),
@@ -190,7 +188,7 @@ public class UsersDAOPGTest {
     public void addUserDuble() throws UserDataError {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111118888"),
@@ -210,14 +208,14 @@ public class UsersDAOPGTest {
     @Test(expected = NullPointerException.class)
     public void addNullUser() throws UserDataError {
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
         usersDAO.addUser(null);
     }
 
     @Test(expected = UserDataError.class)
     public void addUserLoginUses() throws UserDataError {
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111118888"),
@@ -233,7 +231,7 @@ public class UsersDAOPGTest {
     @Test
     public void deleteUser() throws Exception {
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -271,7 +269,7 @@ public class UsersDAOPGTest {
     public void makeActive() throws Exception {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDS(ds);
+        usersDAO.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),

@@ -1,14 +1,11 @@
 package ru.alcereo.pairlearning.DAO;
 
-import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.DAO.models.Topic;
 import ru.alcereo.pairlearning.DAO.models.User;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,24 +18,10 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
     private static final Logger log = LoggerFactory.getLogger(TopicRowsDAOPG.class);
 
-    private static DataSource ds;
-    static {
-        try {
-            ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
-        } catch (NamingException e) {
-            log.warn("DataSource не был загружен из контекста, используется PGSimpleDataSource");
+    private DataSource dataSource;
 
-            PGSimpleDataSource source = new PGSimpleDataSource();
-            source.setServerName("localhost");
-            source.setDatabaseName("PairLearning");
-            source.setUser("postgres");
-            source.setPassword("");
-            ds = source;
-        }
-    }
-
-    public static void setDs(DataSource ds){
-        TopicRowsDAOPG.ds = ds;
+    public void setDataSource(DataSource dataSource){
+        this.dataSource = dataSource;
     }
 
 
@@ -49,7 +32,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         Objects.requireNonNull(id, "User == null");
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "WITH upsert AS" +
                                 "(UPDATE topic_rows" +
@@ -96,7 +79,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "WITH upsert AS" +
                                 "(UPDATE topic_rows" +
@@ -143,7 +126,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         Objects.requireNonNull(user, "user == null");
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT\n" +
                                 "  uid,\n" +
@@ -192,7 +175,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         UUID userUid = uuid;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT\n" +
                                 "  topics.uid,\n" +
@@ -238,7 +221,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         Set<Topic> result=new HashSet<>();
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT\n" +
                                 "  topics.uid,\n" +
@@ -280,7 +263,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         boolean result=false;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "INSERT INTO topics VALUES (?,?,?)");
         ){

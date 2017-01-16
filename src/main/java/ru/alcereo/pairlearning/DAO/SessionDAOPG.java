@@ -1,6 +1,5 @@
 package ru.alcereo.pairlearning.DAO;
 
-import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
@@ -8,8 +7,6 @@ import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.models.Session;
 import ru.alcereo.pairlearning.DAO.models.User;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,26 +23,12 @@ public class SessionDAOPG implements SessionDAO{
 
     private static final Logger log = LoggerFactory.getLogger(SessionDAOPG.class);
 
-    private static DataSource ds;
-    static {
-        try {
-            ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
-        } catch (NamingException e) {
-            log.warn("DataSource не был загружен из контекста, используется PGSimpleDataSource");
+    private DataSource dataSource;
 
-            PGSimpleDataSource source = new PGSimpleDataSource();
-            source.setServerName("localhost");
-            source.setDatabaseName("PairLearning");
-            source.setUser("postgres");
-            source.setPassword("");
-            ds = source;
-        }
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-
-    static void setDs(DataSource ds) {
-        SessionDAOPG.ds = ds;
-    }
 
     private User userFromResultSet(ResultSet resultSet) throws SQLException {
 
@@ -73,7 +56,7 @@ public class SessionDAOPG implements SessionDAO{
         Session result=null;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE sessions.id=?")
         ){
@@ -100,7 +83,7 @@ public class SessionDAOPG implements SessionDAO{
         Option<Session, SessionDataError> result=Option.NONE;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE sessions.id=?")
         ){
@@ -126,7 +109,7 @@ public class SessionDAOPG implements SessionDAO{
 
         if (user!=null) {
             try (
-                    Connection conn = ds.getConnection();
+                    Connection conn = dataSource.getConnection();
                     PreparedStatement st = conn.prepareStatement(
                             "SELECT * FROM sessions LEFT JOIN users ON sessions.user_uid=users.uid WHERE users.uid=?")
             ) {
@@ -168,7 +151,7 @@ public class SessionDAOPG implements SessionDAO{
         boolean result;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(upsertQuery)
         ){
 
@@ -194,7 +177,7 @@ public class SessionDAOPG implements SessionDAO{
         boolean result;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement("DELETE FROM sessions WHERE id = ?")
         ){
 

@@ -8,7 +8,6 @@ import org.postgresql.ds.PGSimpleDataSource;
 import ru.alcereo.pairlearning.DAO.models.Topic;
 import ru.alcereo.pairlearning.DAO.models.User;
 
-import javax.jws.soap.SOAPBinding;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -144,7 +143,7 @@ public class TopicRowsDAOPGTest {
     public void setLearnPredicate() throws Exception {
 
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-        TopicRowsDAOPG.setDs(ds);
+        topicRowsDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -176,7 +175,7 @@ public class TopicRowsDAOPGTest {
     public void setTeachPredicate() throws Exception {
 
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-        TopicRowsDAOPG.setDs(ds);
+        topicRowsDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -205,7 +204,7 @@ public class TopicRowsDAOPGTest {
     public void getAllByUser() throws Exception {
 
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-        TopicRowsDAOPG.setDs(ds);
+        topicRowsDAOPG.setDataSource(ds);
 
 
         User user1 = new User(
@@ -241,7 +240,7 @@ public class TopicRowsDAOPGTest {
     public void getAllByUserNull() throws Exception {
 
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-        TopicRowsDAOPG.setDs(ds);
+        topicRowsDAOPG.setDataSource(ds);
 
         topicRowsDAOPG.getAllByUser(null);
 
@@ -250,7 +249,7 @@ public class TopicRowsDAOPGTest {
     @Test
     public void getLearnTopicsByUser() throws Exception {
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-        TopicRowsDAOPG.setDs(ds);
+        topicRowsDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -284,7 +283,7 @@ public class TopicRowsDAOPGTest {
     public void getTeachTopicsByUser() throws Exception {
 
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-        TopicRowsDAOPG.setDs(ds);
+        topicRowsDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),

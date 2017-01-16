@@ -1,21 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--        DAO             -->
 
+    <jee:jndi-lookup id="postgresDataSource"
+                     expected-type="javax.sql.DataSource"
+                     jndi-name="java:comp/env/jdbc/PairLearning" />
+
     <bean id="sessionDAO"
           class="ru.alcereo.pairlearning.DAO.SessionDAOPG"
+          p:dataSource-ref="postgresDataSource"
     />
 
     <bean id="usersDAO"
           class="ru.alcereo.pairlearning.DAO.UsersDAOPG"
+          p:dataSource-ref="postgresDataSource"
     />
 
     <bean id="topicRowsDAO"
           class="ru.alcereo.pairlearning.DAO.TopicRowsDAOPG"
+          p:dataSource-ref="postgresDataSource"
     />
+
+    <!--        HIBERNATE       -->
+
+    <!--<bean id="hibernateSessionFactory"-->
+          <!--class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"-->
+          <!--p:dataSource-ref="postgresDataSource"-->
+          <!--p:packagesToScan="ru.alcereo.pairlearning.DAO.Entity"-->
+          <!--p:hibernateProperties-ref="hibernateProperties"-->
+    <!--/>-->
+
+    <!--<util:properties id="hibernateProperties">-->
+        <!--<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>-->
+        <!--<prop key="hibernate.show_sql">true</prop>-->
+    <!--</util:properties>-->
 
     <!--        Services        -->
 

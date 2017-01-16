@@ -104,7 +104,7 @@ public class SessionDAOPGTest {
     public void getSessionById() throws Exception {
 
         SessionDAOPG sessionDAOPG = new SessionDAOPG();
-        SessionDAOPG.setDs(ds);
+        sessionDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -132,7 +132,7 @@ public class SessionDAOPGTest {
     public void getSessionByUser() throws Exception {
 
         SessionDAOPG sessionDAOPG = new SessionDAOPG();
-        SessionDAOPG.setDs(ds);
+        sessionDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -159,7 +159,7 @@ public class SessionDAOPGTest {
     public void insertOrUpdateSession() throws Exception {
 
         SessionDAOPG sessionDAOPG = new SessionDAOPG();
-        SessionDAOPG.setDs(ds);
+        sessionDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -202,7 +202,7 @@ public class SessionDAOPGTest {
     public void insertOrUpdateNull() throws SessionDataError {
 
         SessionDAOPG sessionDAOPG = new SessionDAOPG();
-        SessionDAOPG.setDs(ds);
+        sessionDAOPG.setDataSource(ds);
 
         sessionDAOPG.insertOrUpdateSession(null);
 
@@ -212,7 +212,7 @@ public class SessionDAOPGTest {
     public void deleteSessionById() throws Exception {
 
         SessionDAOPG sessionDAOPG = new SessionDAOPG();
-        SessionDAOPG.setDs(ds);
+        sessionDAOPG.setDataSource(ds);
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),

@@ -1,14 +1,11 @@
 package ru.alcereo.pairlearning.DAO;
 
-import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.DAO.models.User;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,25 +17,10 @@ public class UsersDAOPG implements UsersDAO {
 
     private static final Logger log = LoggerFactory.getLogger(UsersDAOPG.class);
 
-    private static DataSource ds;
-    {
-        try {
-            ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/PairLearning");
-        } catch (NamingException e) {
+    private DataSource dataSource;
 
-            log.warn("DataSource не был загружен из контекста, используется PGSimpleDataSource");
-
-            PGSimpleDataSource source = new PGSimpleDataSource();
-            source.setServerName("localhost");
-            source.setDatabaseName("PairLearning");
-            source.setUser("postgres");
-            source.setPassword("");
-            ds = source;
-        }
-    }
-
-    public static void setDS(DataSource ds){
-        UsersDAOPG.ds = ds;
+    public void setDataSource(DataSource ds){
+        this.dataSource = ds;
     }
 
     private static final String getAllquery=
@@ -78,7 +60,7 @@ public class UsersDAOPG implements UsersDAO {
         List<User> result = new ArrayList<>();
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 Statement st = conn.createStatement();
                 ResultSet resultSet = st.executeQuery(getAllquery);
                 ){
@@ -99,7 +81,7 @@ public class UsersDAOPG implements UsersDAO {
         User result = null;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT * FROM users WHERE uid=?");
         ){
@@ -126,7 +108,7 @@ public class UsersDAOPG implements UsersDAO {
         Option<User, UserDataError> result = Option.NONE;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT * FROM users WHERE login=?");
         ){
@@ -156,7 +138,7 @@ public class UsersDAOPG implements UsersDAO {
         Boolean result = false;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT * FROM users WHERE login=?");
         ){
@@ -185,7 +167,7 @@ public class UsersDAOPG implements UsersDAO {
         User result = null;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "SELECT * FROM users WHERE login=?");
         ){
@@ -214,7 +196,7 @@ public class UsersDAOPG implements UsersDAO {
         boolean result = false;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(addQuery);
         ){
 
@@ -242,7 +224,7 @@ public class UsersDAOPG implements UsersDAO {
         return Option.asOption(() -> Objects.requireNonNull(user_n, "Передан пользователь с сылкой null"))
                 .map(user -> {
                     try (
-                            Connection conn = ds.getConnection();
+                            Connection conn = dataSource.getConnection();
                             PreparedStatement st = conn.prepareStatement(addQuery);
                     ) {
 
@@ -265,7 +247,7 @@ public class UsersDAOPG implements UsersDAO {
         boolean result = false;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(deleteQuery);
         ){
 
@@ -285,7 +267,7 @@ public class UsersDAOPG implements UsersDAO {
         User result=null;
 
         try(
-                Connection conn = ds.getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
                         "UPDATE users SET activae=TRUE WHERE uid=?"
                 )
