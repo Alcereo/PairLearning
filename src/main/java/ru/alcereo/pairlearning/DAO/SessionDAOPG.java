@@ -98,7 +98,7 @@ public class SessionDAOPG implements SessionDAO{
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            result = Option.exceptOpt(new SessionDataError("Ошибка обращения к данным сессий",e));
+            result = Option.asException(new SessionDataError("Ошибка обращения к данным сессий",e));
         }
 
         return result;

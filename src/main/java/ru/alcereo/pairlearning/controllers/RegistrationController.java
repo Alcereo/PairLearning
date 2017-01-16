@@ -62,7 +62,7 @@ public class RegistrationController {
                     ));
         }else {
 
-            regResultOpt = Option.exceptOpt(
+            regResultOpt = Option.asException(
                     new Exception("не заполнены поля: " +
                             String.join(",",
                                     Arrays.stream(

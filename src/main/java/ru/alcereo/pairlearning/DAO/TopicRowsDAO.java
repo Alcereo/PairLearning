@@ -1,8 +1,11 @@
 package ru.alcereo.pairlearning.DAO;
 
 
+import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.Service.models.Topic;
+import ru.alcereo.pairlearning.Service.models.TopicRow;
 import ru.alcereo.pairlearning.Service.models.User;
 
 import java.util.List;
@@ -54,6 +57,15 @@ public interface TopicRowsDAO {
      *  Ошибка доступа к данным
      */
     List<TopicRow> getAllByUser(User user) throws TopicRowDataError;
+
+    /**
+     * Получение данных связанных с пользователем о всех темах для изучения
+     * @param uuid
+     *  УИД пользователя
+     * @return
+     *  Список тем с признаками learn и teach
+     */
+    Option<List<TopicRowEntity>,TopicRowDataError> getAllByUserUID(UUID uuid);
 
 
     /**

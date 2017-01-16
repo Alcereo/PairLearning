@@ -135,7 +135,7 @@ public class UsersDAOPG implements UsersDAO {
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            result = Option.exceptOpt(
+            result = Option.asException(
                     new UserDataError(
                             "Ошибка обращения к данным по пользователям",
                             e));
@@ -163,7 +163,7 @@ public class UsersDAOPG implements UsersDAO {
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            return Option.exceptOpt(
+            return Option.asException(
                     new UserDataError(
                             "Ошибка обращения к данным по пользователям",
                             e)

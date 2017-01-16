@@ -1,6 +1,5 @@
 package ru.alcereo.pairlearning.Service.TopicService;
 
-import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
@@ -8,15 +7,12 @@ import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.Service.models.Topic;
-import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
-import ru.alcereo.pairlearning.Service.models.TopicRowFront;
-import ru.alcereo.pairlearning.Service.models.UserFront;
+import ru.alcereo.pairlearning.Service.models.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -28,7 +24,6 @@ public class TopicService {
 
     private UsersDAO users;
     private TopicRowsDAO topicRows;
-    private MapperFacade mapperFacade;
 
     public void setUsersDAO(UsersDAO usersDAO) {
         this.users = usersDAO;
@@ -38,44 +33,32 @@ public class TopicService {
         this.topicRows = topicRows;
     }
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
-    }
-
-
     /**
      * Получение всех тем с признаками для данного пользователя
-     * @param user
+     * @param user_n
      *  Пользователь
      * @return
      *  Список строк таблицы с темами и признаками для данного пользователя
      */
-    public List<TopicRowFront> getUserTopic(UserFront user) throws TopicServiceException {
+    public Option<List<TopicRowFront>,TopicServiceException> getUserTopicOpt(UserFront user_n) {
 
-        List<TopicRowFront> result = new ArrayList<>();
-
-        if (user == null)
-            throw new TopicServiceException(
-                    "Ошибка сервиса тем. Некорректные данные. Не заполнен пользователь.",
-                    new IllegalArgumentException("user == null")
-            );
-
-
-        users
-                .findByLoginOpt(user.getLogin())
-                .map(userEntity -> mapperFacade.map(userEntity, User.class))
-                .map(
-                        userModel -> {
-                            topicRows.getAllByUser(userModel).forEach(result::add);
-                            return null;
-                        })
-                .wrapAndTrowException(cause ->
-                        new TopicServiceException(
-                                "Ошибка сервиса тем изучения. Ошибка доступа к данным.",
-                                cause));
-
-        return result;
-
+        return Option.asNotNullWithExceptionOption(user_n)
+                .flatMap(
+                        user ->
+                           users
+                           .findByLoginOpt(user.getLogin())
+                           .map(User::wrapFrom)
+                           .flatMap(
+                                   userModel -> topicRows.getAllByUserUID(userModel.getUid())
+                           ).map(
+                               topicRowEntityList ->
+                                       topicRowEntityList
+                                       .stream()
+                                       .map(topicRowEntity -> (TopicRowFront)TopicRow.wrapFrom(topicRowEntity))
+                                       .collect(Collectors.toList())
+                                )
+                )
+                .wrapException(TopicService::topicServiceExceptionWrapper);
     }
 
 

@@ -12,9 +12,6 @@ import ru.alcereo.pairlearning.Service.models.User;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by alcereo on 16.01.17.
- */
 public class UsersDAOHibernate implements UsersDAO {
 
     private static final Logger log = LoggerFactory.getLogger(UsersDAOHibernate.class);
@@ -27,17 +24,17 @@ public class UsersDAOHibernate implements UsersDAO {
 
     @Override
     public List<User> getAll() throws UserDataError {
-        return null;
+        throw new UserDataError("NOT IMPLEMENTED!");
     }
 
     @Override
     public User findByUid(UUID uuid) throws UserDataError {
-        return null;
+        throw new UserDataError("NOT IMPLEMENTED!");
     }
 
     @Override
     public User findByLogin(String login) throws UserDataError {
-        return null;
+        throw new UserDataError("NOT IMPLEMENTED!");
     }
 
     @Override
@@ -54,26 +51,26 @@ public class UsersDAOHibernate implements UsersDAO {
 
     @Override
     public Option<Boolean, UserDataError> loginInUse(String login) {
-        return null;
+        return Option.asException(new UserDataError("NOT IMPLEMENTED!"));
     }
 
     @Override
     public boolean addUser(User user) throws UserDataError {
-        return false;
+        throw new UserDataError("NOT IMPLEMENTED!");
     }
 
     @Override
     public Option<Boolean, UserDataError> addUser_Opt(User user) {
-        return null;
+        return Option.asException(new UserDataError("NOT IMPLEMENTED!"));
     }
 
     @Override
     public boolean deleteUser(User user) throws UserDataError {
-        return false;
+        throw new UserDataError("NOT IMPLEMENTED!");
     }
 
     @Override
     public User makeActive(User user) throws UserDataError {
-        return null;
+        throw new UserDataError("NOT IMPLEMENTED!");
     }
 }

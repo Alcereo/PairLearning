@@ -39,7 +39,7 @@ public abstract class Option<T, Es extends Exception> {
             return new Some<>(value);
     }
 
-    public static <R,E extends Exception> Option<R,E> exceptOpt(E e){
+    public static <R,E extends Exception> Option<R,E> asException(E e){
         return new ExcOpt<R,E>(e);
     }
 

@@ -2,8 +2,11 @@ package ru.alcereo.pairlearning.DAO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.Service.models.Topic;
+import ru.alcereo.pairlearning.Service.models.TopicRow;
 import ru.alcereo.pairlearning.Service.models.User;
 
 import javax.sql.DataSource;
@@ -161,6 +164,11 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
         }
 
         return result;
+    }
+
+    @Override
+    public Option<List<TopicRowEntity>, TopicRowDataError> getAllByUserUID(UUID uuid){
+        return Option.asException(new TopicRowDataError("NOT IMPLEMENTED!!"));
     }
 
     @Override

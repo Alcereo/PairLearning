@@ -31,6 +31,12 @@
           class="ru.alcereo.pairlearning.DAO.UsersDAOHibernate"
           p:hibernateSessionFactory-ref="hibernateSessionFactory"/>
 
+    <bean id="topicRowsDAOHibernate"
+          class="ru.alcereo.pairlearning.DAO.TopicRowsDAOHibernate"
+          p:hibernateSessionFactory-ref="hibernateSessionFactory"
+    />
+
+
     <!--        HIBERNATE       -->
 
     <bean id="hibernateSessionFactory"
@@ -59,8 +65,7 @@
 
     <bean id="topicService"
           class="ru.alcereo.pairlearning.Service.TopicService.TopicService"
-          p:mapperFacade-ref="entityMapper"
-          p:topicRows-ref="topicRowsDAO"
+          p:topicRows-ref="topicRowsDAOHibernate"
           p:usersDAO-ref="usersDAOHibernate"
     />
 

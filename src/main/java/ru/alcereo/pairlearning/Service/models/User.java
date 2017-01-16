@@ -1,5 +1,7 @@
 package ru.alcereo.pairlearning.Service.models;
 
+import ru.alcereo.pairlearning.Service.EntityMapper;
+
 import java.util.UUID;
 
 public class User implements UserFront {
@@ -92,11 +94,11 @@ public class User implements UserFront {
         return "User{" +
                 "uid=" + uid +
                 ", login='" + login + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", active=" + active +
                 '}';
+    }
+
+    public static <FROM_TYPE> User wrapFrom(FROM_TYPE notUser){
+        return new EntityMapper().map(notUser, User.class);
     }
 
 }

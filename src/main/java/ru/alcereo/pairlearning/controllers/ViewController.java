@@ -7,12 +7,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.Service.TopicService.TopicService;
-import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
+import ru.alcereo.pairlearning.Service.models.TopicRowFront;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class ViewController {
@@ -51,18 +53,17 @@ public class ViewController {
 
         UserFront user = (UserFront)((UsernamePasswordAuthenticationToken) principal).getPrincipal();
 
-        try {
+        Option<List<TopicRowFront>,?> optResult = topicService.getUserTopicOpt(user);
+
+        if (!optResult.isException()){
             model.addAttribute("user", user);
-            model.addAttribute("topicRows", topicService.getUserTopic(user));
+            model.addAttribute("topicRows", optResult.getOrElse(null));
             result = "userCabinet";
-
-        } catch (TopicServiceException e) {
-            log.debug(e.getLocalizedMessage());
-            request.setAttribute("errorDescription", e.getLocalizedMessage());
+        }else {
+            log.debug(optResult.getExceptionMessage());
+            request.setAttribute("errorDescription", optResult.getExceptionMessage());
             result = "errorPage";
-
         }
-
 
         return result;
     }
