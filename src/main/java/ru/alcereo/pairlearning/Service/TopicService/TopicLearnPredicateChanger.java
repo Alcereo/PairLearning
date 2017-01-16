@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 
 /**

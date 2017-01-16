@@ -8,7 +8,7 @@ import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.RegistrationException;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 

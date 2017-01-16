@@ -35,7 +35,10 @@
     </http>
 
     <authentication-manager>
-        <authentication-provider ref="authManager"/>
+        <authentication-provider ref="authManager">
+
+        </authentication-provider>
+
     </authentication-manager>
 
     <beans:bean id="myEntryPoint"

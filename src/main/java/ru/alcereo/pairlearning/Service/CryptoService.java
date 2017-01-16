@@ -1,7 +1,7 @@
 package ru.alcereo.pairlearning.Service;
 
 import ru.alcereo.fUtils.Option;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

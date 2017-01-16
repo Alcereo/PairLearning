@@ -1,14 +1,14 @@
 package ru.alcereo.pairlearning.Service;
 
 
+import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
-import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.SessionServiceException;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;
 
@@ -24,16 +24,16 @@ public class SessionService {
     private static final Logger log = LoggerFactory.getLogger(SessionService.class);
 
     private UsersDAO users;
-    private SessionDAO sessions;
+
+    private MapperFacade mapperFacade;
 
     public void setUsers(UsersDAO users) {
         this.users = users;
     }
 
-    public void setSessions(SessionDAO sessions) {
-        this.sessions = sessions;
+    public void setMapperFacade(MapperFacade mapperFacade) {
+        this.mapperFacade = mapperFacade;
     }
-
 
     /**
      * Попытка авторизации пользователя
@@ -48,6 +48,7 @@ public class SessionService {
                 .flatMap( authData ->
                     users
                     .findByLoginOpt(authData.getLogin())
+                    .map(userEntity -> mapperFacade.map(userEntity, User.class))
                     .flatMap(
                             user -> CryptoService.cryptPass(authData.getPassHash(), user.getUid().toString())
                                     .filter(passwordHash ->

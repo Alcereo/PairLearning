@@ -3,8 +3,9 @@ package ru.alcereo.pairlearning.DAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.User;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -48,8 +49,19 @@ public class UsersDAOPG implements UsersDAO {
                 resultSet.getString("passwordhash"),
                 resultSet.getString("name"),
                 resultSet.getString("email"),
-                resultSet.getBoolean("activae")
+                resultSet.getBoolean("active")
         );
+    }
+
+    private UserEntity userEntityFromResultSet(ResultSet resultSet) throws SQLException {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUid(UUID.fromString(resultSet.getString("uid")));
+        userEntity.setPasswordHash(resultSet.getString("passwordhash"));
+        userEntity.setName(resultSet.getString("name"));
+        userEntity.setEmail(resultSet.getString("email"));
+        userEntity.setActive(resultSet.getBoolean("active"));
+
+        return userEntity;
     }
 
 
@@ -103,9 +115,9 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
-    public Option<User, UserDataError> findByLoginOpt(String login) {
+    public Option<UserEntity, UserDataError> findByLoginOpt(String login) {
 
-        Option<User, UserDataError> result = Option.NONE;
+        Option<UserEntity, UserDataError> result = Option.NONE;
 
         try(
                 Connection conn = dataSource.getConnection();
@@ -118,7 +130,7 @@ public class UsersDAOPG implements UsersDAO {
             try(ResultSet resultSet = st.executeQuery();){
 
                 while (resultSet.next())
-                    result = Option.asOption(userFromResultSet(resultSet));
+                    result = Option.asOption(userEntityFromResultSet(resultSet));
             }
 
         } catch (SQLException e) {

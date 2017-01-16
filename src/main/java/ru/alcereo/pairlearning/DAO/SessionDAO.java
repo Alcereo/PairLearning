@@ -2,8 +2,8 @@ package ru.alcereo.pairlearning.DAO;
 
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
-import ru.alcereo.pairlearning.DAO.models.Session;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.Session;
+import ru.alcereo.pairlearning.Service.models.User;
 
 /**
  * Класс доступа к данным сессий

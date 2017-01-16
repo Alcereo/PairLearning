@@ -2,8 +2,8 @@ package ru.alcereo.pairlearning.DAO;
 
 
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
-import ru.alcereo.pairlearning.DAO.models.Topic;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.Topic;
+import ru.alcereo.pairlearning.Service.models.User;
 
 import java.util.List;
 import java.util.Set;

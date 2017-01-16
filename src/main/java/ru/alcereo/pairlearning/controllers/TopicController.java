@@ -7,10 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.alcereo.pairlearning.Service.TopicService.TopicLearnPredicateChanger;
 import ru.alcereo.pairlearning.Service.TopicService.TopicRowChanger;
 import ru.alcereo.pairlearning.Service.TopicService.TopicService;
@@ -20,7 +17,6 @@ import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-
 
 @RestController
 public class TopicController {
@@ -39,7 +35,6 @@ public class TopicController {
     public TopicController(HttpServletRequest request) {
         this.request = request;
     }
-
 
     @RequestMapping(value = "/topic/api/concrete", method = RequestMethod.POST)
     public ResponseEntity setTopicPredicate(

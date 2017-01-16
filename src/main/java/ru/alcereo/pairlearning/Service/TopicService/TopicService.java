@@ -1,5 +1,6 @@
 package ru.alcereo.pairlearning.Service.TopicService;
 
+import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
@@ -7,8 +8,8 @@ import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.DAO.models.Topic;
-import ru.alcereo.pairlearning.DAO.models.User;
+import ru.alcereo.pairlearning.Service.models.Topic;
+import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
 import ru.alcereo.pairlearning.Service.models.TopicRowFront;
 import ru.alcereo.pairlearning.Service.models.UserFront;
@@ -27,6 +28,7 @@ public class TopicService {
 
     private UsersDAO users;
     private TopicRowsDAO topicRows;
+    private MapperFacade mapperFacade;
 
     public void setUsersDAO(UsersDAO usersDAO) {
         this.users = usersDAO;
@@ -36,6 +38,9 @@ public class TopicService {
         this.topicRows = topicRows;
     }
 
+    public void setMapperFacade(MapperFacade mapperFacade) {
+        this.mapperFacade = mapperFacade;
+    }
 
 
     /**
@@ -58,6 +63,7 @@ public class TopicService {
 
         users
                 .findByLoginOpt(user.getLogin())
+                .map(userEntity -> mapperFacade.map(userEntity, User.class))
                 .map(
                         userModel -> {
                             topicRows.getAllByUser(userModel).forEach(result::add);
