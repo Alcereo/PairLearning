@@ -5,7 +5,6 @@ import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.Service.models.User;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -16,33 +15,13 @@ public interface UsersDAO {
 
 
     /**
-     * Получение списка всех пользователей
-     * @return
-     *  Список пользователей
-     * @throws UserDataError
-     *  Ошибка доступа к данным
-     */
-    List<User> getAll() throws UserDataError;
-
-
-    /**
      * Получение пользователя по уникальному идетификатору
      * @param uuid
      *  Уникальный иеднтификатор пользователя
      * @return
      *  Пользователь с указанным уникальным идетификатором, либо null, если не наиден
      */
-    User findByUid(UUID uuid) throws UserDataError;
-
-
-    /**
-     * Получение пользователя по логину
-     * @param login
-     *  Логин пользователя
-     * @return
-     *  Пользователь с указанным логином, либо null, если не наиден
-     */
-    User findByLogin(String login) throws UserDataError;
+    Option<UserEntity,UserDataError> findByUidOpt(UUID uuid);
 
     Option<UserEntity, UserDataError> findByLoginOpt(String login);
 

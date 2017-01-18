@@ -9,7 +9,6 @@ import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.Service.models.User;
 
-import java.util.List;
 import java.util.UUID;
 
 public class UsersDAOHibernate implements UsersDAO {
@@ -23,18 +22,12 @@ public class UsersDAOHibernate implements UsersDAO {
     }
 
     @Override
-    public List<User> getAll() throws UserDataError {
-        throw new UserDataError("NOT IMPLEMENTED!");
-    }
-
-    @Override
-    public User findByUid(UUID uuid) throws UserDataError {
-        throw new UserDataError("NOT IMPLEMENTED!");
-    }
-
-    @Override
-    public User findByLogin(String login) throws UserDataError {
-        throw new UserDataError("NOT IMPLEMENTED!");
+    public Option<UserEntity, UserDataError> findByUidOpt(UUID uuid) {
+        try(Session session = sessionFactory.openSession()){
+            return Option.asOption(
+                    session.get(UserEntity.class, uuid)
+            );
+        }
     }
 
     @Override

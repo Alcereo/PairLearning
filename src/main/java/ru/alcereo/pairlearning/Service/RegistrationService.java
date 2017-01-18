@@ -4,7 +4,6 @@ package ru.alcereo.pairlearning.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
-import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
@@ -24,22 +23,11 @@ public class RegistrationService {
     private static final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
     private UsersDAO users;
-    private SessionDAO sessions;
-    private SendingService sendingService;
 
     private static final Map<Integer, User> confirmCodes = new HashMap<>();
 
-
-    public void setSendingService(SendingService sendingService) {
-        this.sendingService = sendingService;
-    }
-
     public void setUsers(UsersDAO users) {
         this.users = users;
-    }
-
-    public void setSessions(SessionDAO sessions) {
-        this.sessions = sessions;
     }
 
 

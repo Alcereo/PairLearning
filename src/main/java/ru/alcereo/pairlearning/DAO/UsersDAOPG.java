@@ -8,9 +8,10 @@ import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.Service.models.User;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,8 +25,8 @@ public class UsersDAOPG implements UsersDAO {
         this.dataSource = ds;
     }
 
-    private static final String getAllquery=
-            "SELECT * FROM users";
+//    private static final String getAllquery=
+//            "SELECT * FROM users";
 
     private static final String addQuery=
             "INSERT INTO users(" +
@@ -66,31 +67,30 @@ public class UsersDAOPG implements UsersDAO {
 
 
 
-    @Override
-    public List<User> getAll() throws UserDataError {
+//    @Override
+//    public List<User> getAll() throws UserDataError {
+//
+//        List<User> result = new ArrayList<>();
+//
+//        try(
+//                Connection conn = dataSource.getConnection();
+//                Statement st = conn.createStatement();
+//                ResultSet resultSet = st.executeQuery(getAllquery);
+//                ){
+//
+//            while (resultSet.next())
+//                result.add(userFromResultSet(resultSet));
+//
+//        } catch (SQLException e) {
+//            log.warn(e.getLocalizedMessage());
+//            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
+//        }
+//
+//        return result;
+//    }
 
-        List<User> result = new ArrayList<>();
-
-        try(
-                Connection conn = dataSource.getConnection();
-                Statement st = conn.createStatement();
-                ResultSet resultSet = st.executeQuery(getAllquery);
-                ){
-
-            while (resultSet.next())
-                result.add(userFromResultSet(resultSet));
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-        }
-
-        return result;
-    }
-
-    @Override
-    public User findByUid(UUID uuid) throws UserDataError {
-        User result = null;
+    UserEntity findByUid(UUID uuid) throws UserDataError {
+        UserEntity result = null;
 
         try(
                 Connection conn = dataSource.getConnection();
@@ -103,7 +103,7 @@ public class UsersDAOPG implements UsersDAO {
             try(ResultSet resultSet = st.executeQuery();){
 
                 while (resultSet.next())
-                    result = userFromResultSet(resultSet);
+                    result = userEntityFromResultSet(resultSet);
             }
 
         } catch (SQLException e) {
@@ -112,6 +112,11 @@ public class UsersDAOPG implements UsersDAO {
         }
 
         return result;
+    }
+
+    @Override
+    public Option<UserEntity, UserDataError> findByUidOpt(UUID uuid) {
+        return Option.asOption(() -> findByUid(uuid));
     }
 
     @Override
@@ -173,32 +178,32 @@ public class UsersDAOPG implements UsersDAO {
         return Option.asOption(result);
     }
 
-    @Override
-    public User findByLogin(String login) throws UserDataError {
-
-        User result = null;
-
-        try(
-                Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(
-                        "SELECT * FROM users WHERE login=?");
-        ){
-
-            st.setString(1, login);
-
-            try(ResultSet resultSet = st.executeQuery();){
-
-                while (resultSet.next())
-                    result = userFromResultSet(resultSet);
-            }
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-        }
-
-        return result;
-    }
+//    @Override
+//    public User findByLogin(String login) throws UserDataError {
+//
+//        User result = null;
+//
+//        try(
+//                Connection conn = dataSource.getConnection();
+//                PreparedStatement st = conn.prepareStatement(
+//                        "SELECT * FROM users WHERE login=?");
+//        ){
+//
+//            st.setString(1, login);
+//
+//            try(ResultSet resultSet = st.executeQuery();){
+//
+//                while (resultSet.next())
+//                    result = userFromResultSet(resultSet);
+//            }
+//
+//        } catch (SQLException e) {
+//            log.warn(e.getLocalizedMessage());
+//            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
+//        }
+//
+//        return result;
+//    }
 
     @Override
     public boolean addUser(User user) throws UserDataError {

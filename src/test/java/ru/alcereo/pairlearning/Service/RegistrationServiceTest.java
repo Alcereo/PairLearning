@@ -1,7 +1,6 @@
 package ru.alcereo.pairlearning.Service;
 
 import org.junit.Test;
-import ru.alcereo.pairlearning.DAO.SessionDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 
@@ -14,13 +13,10 @@ public class RegistrationServiceTest {
     public void registration() throws Exception {
 
         UsersDAO users = mock(UsersDAO.class);
-        SessionDAO sessionDAO = mock(SessionDAO.class);
         SendingService sendingService = mock(SendingService.class);
 
         RegistrationService registrationService = new RegistrationService();
-        registrationService.setSessions(sessionDAO);
         registrationService.setUsers(users);
-        registrationService.setSendingService(sendingService);
 
         RegistrationService.RegResult result = registrationService.registration(
                 new RegistrationData(

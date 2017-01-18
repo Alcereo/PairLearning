@@ -69,16 +69,14 @@ public class TopicService {
      * @param userFront
      *  Пользователь
      */
-    public void setTopicRow(TopicRowChanger changer, UserFront userFront) throws TopicServiceException {
-
-        try {
-            User user = users.findByUid(userFront.getUid());
-            changer.setPredicate(topicRows, user);
-        } catch (UserDataError e) {
-            log.warn(e.getLocalizedMessage());
-            throw new TopicServiceException("Ошибка сервиса тем. Ошибка обращения к данным.", e);
-        }
-
+    public Option<Boolean, TopicServiceException> setTopicRow(TopicRowChanger changer, UserFront userFront){
+        return users.findByUidOpt(userFront.getUid())
+                .map(User::wrapFrom)
+                .map(userModel -> {
+                    changer.setPredicate(topicRows, userModel);
+                    return true;
+                })
+                .wrapException(TopicService::topicServiceExceptionWrapper);
     }
 
     /**

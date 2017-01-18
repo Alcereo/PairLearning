@@ -12,11 +12,6 @@
                      expected-type="javax.sql.DataSource"
                      jndi-name="java:comp/env/jdbc/PairLearning" />
 
-    <bean id="sessionDAO"
-          class="ru.alcereo.pairlearning.DAO.SessionDAOPG"
-          p:dataSource-ref="postgresDataSource"
-    />
-
     <bean id="usersDAO"
           class="ru.alcereo.pairlearning.DAO.UsersDAOPG"
           p:dataSource-ref="postgresDataSource"
@@ -29,7 +24,8 @@
 
     <bean id="usersDAOHibernate"
           class="ru.alcereo.pairlearning.DAO.UsersDAOHibernate"
-          p:hibernateSessionFactory-ref="hibernateSessionFactory"/>
+          p:hibernateSessionFactory-ref="hibernateSessionFactory"
+    />
 
     <bean id="topicRowsDAOHibernate"
           class="ru.alcereo.pairlearning.DAO.TopicRowsDAOHibernate"
@@ -70,11 +66,9 @@
     />
 
     <bean id="registrationService"
-          class="ru.alcereo.pairlearning.Service.RegistrationService" >
-        <property name="users" ref="usersDAO"/>
-        <property name="sessions" ref="sessionDAO"/>
-        <property name="sendingService" ref="sendingService"/>
-    </bean>
+          class="ru.alcereo.pairlearning.Service.RegistrationService"
+          p:users-ref="usersDAO"
+    />
 
     <bean id="sendingService"
           class="ru.alcereo.pairlearning.Service.SendingServiceMock"
