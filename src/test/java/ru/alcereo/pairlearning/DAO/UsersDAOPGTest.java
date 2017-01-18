@@ -5,7 +5,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
+import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
+import ru.alcereo.pairlearning.Service.EntityMapper;
 import ru.alcereo.pairlearning.Service.models.User;
 
 import javax.sql.DataSource;
@@ -81,88 +83,14 @@ public class UsersDAOPGTest {
         }
     }
 
-//    @Test
-//    public void getAll() throws Exception {
-//
-//        UsersDAOPG usersDAO = new UsersDAOPG();
-//        usersDAO.setDataSource(ds);
-//
-//        assertEquals(
-//                "Не верное количество строк",
-//                usersDAO.getAll().size(),
-//                3
-//        );
-//
-//    }
-
-//    @Test
-//    public void findByUid() throws Exception {
-//
-//        UsersDAOPG usersDAO = new UsersDAOPG();
-//        usersDAO.setDataSource(ds);
-//
-//        assertEquals(
-//                "Наиден не тот пользователь",
-//                usersDAO.findByUid(UUID.fromString("11111111-1111-1111-1111-111111111111")),
-//                new User(
-//                        UUID.fromString("11111111-1111-1111-1111-111111111111"),
-//                        "user1",
-//                        "123",
-//                        "user1",
-//                        "mail",
-//                        true)
-//        );
-//
-//        assertEquals(
-//                "Наиден пользователь по некорректному запросу",
-//                usersDAO.findByUid(UUID.fromString("11111111-1111-1111-1111-11111110000")),
-//                null
-//        );
-//
-//        assertEquals(
-//                "Наиден пользователь по некорректному запросу",
-//                usersDAO.findByUid(null),
-//                null
-//        );
-//
-//    }
-
-//    @Test
-//    public void findByLogin() throws Exception {
-//
-//        UsersDAOPG usersDAO = new UsersDAOPG();
-//        usersDAO.setDataSource(ds);
-//
-//        assertEquals(
-//                "Наиден не тот пользователь",
-//                usersDAO.findByLogin("user1"),
-//                new User(
-//                        UUID.fromString("11111111-1111-1111-1111-111111111111"),
-//                        "user1",
-//                        "123",
-//                        "user1",
-//                        "mail",
-//                        true)
-//        );
-//
-//        assertEquals(
-//                "Наиден пользователь по некорректному запросу",
-//                usersDAO.findByLogin("user5"),
-//                null
-//        );
-//
-//        assertEquals(
-//                "Наиден пользователь по некорректному запросу",
-//                usersDAO.findByLogin(null),
-//                null
-//        );
-//    }
-
     @Test
     public void addUser() throws UserDataError {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
         usersDAO.setDataSource(ds);
+
+        //Пока вручную потом посмотреть ка кв спринге инжект в тесты делать
+        EntityMapper entityMapper = new EntityMapper();
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111118888"),
@@ -173,7 +101,7 @@ public class UsersDAOPGTest {
                 true);
 
         assertTrue(
-                usersDAO.addUser(user)
+                usersDAO.addUserOpt(entityMapper.map(user, UserEntity.class)).getOrElse(null)
         );
 
         assertEquals(
@@ -190,6 +118,9 @@ public class UsersDAOPGTest {
         UsersDAOPG usersDAO = new UsersDAOPG();
         usersDAO.setDataSource(ds);
 
+        //Пока вручную потом посмотреть ка кв спринге инжект в тесты делать
+        EntityMapper entityMapper = new EntityMapper();
+
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111118888"),
                 "user5",
@@ -199,9 +130,9 @@ public class UsersDAOPGTest {
                 true);
 
 
-        usersDAO.addUser(user);
+        usersDAO.addUserOpt(entityMapper.map(user, UserEntity.class)).getOrElse(null);
 
-        usersDAO.addUser(user);
+        usersDAO.addUserOpt(entityMapper.map(user, UserEntity.class)).getOrElse(null);
 
     }
 
@@ -209,13 +140,16 @@ public class UsersDAOPGTest {
     public void addNullUser() throws UserDataError {
         UsersDAOPG usersDAO = new UsersDAOPG();
         usersDAO.setDataSource(ds);
-        usersDAO.addUser(null);
+        usersDAO.addUserOpt(null).getOrElse(null);
     }
 
     @Test(expected = UserDataError.class)
     public void addUserLoginUses() throws UserDataError {
         UsersDAOPG usersDAO = new UsersDAOPG();
         usersDAO.setDataSource(ds);
+
+        //Пока вручную потом посмотреть ка кв спринге инжект в тесты делать
+        EntityMapper entityMapper = new EntityMapper();
 
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111118888"),
@@ -225,44 +159,7 @@ public class UsersDAOPGTest {
                 "mail",
                 true);
 
-        usersDAO.addUser(user);
-    }
-
-    @Test
-    public void deleteUser() throws Exception {
-        UsersDAOPG usersDAO = new UsersDAOPG();
-        usersDAO.setDataSource(ds);
-
-        User user = new User(
-                UUID.fromString("11111111-1111-1111-1111-111111111111"),
-                "user1",
-                "123",
-                "user1",
-                "mail",
-                true);
-
-        assertTrue(
-                "Не удалился пользователь",
-                usersDAO.deleteUser(user)
-        );
-
-//        assertEquals(
-//                "Не удалился пользователь",
-//                usersDAO.getAll().size(),
-//                2
-//        );
-
-        user = new User(
-                UUID.fromString("11111111-1111-1111-1111-111111118888"),
-                "user1",
-                "123",
-                "user1",
-                "mail",
-                true);
-
-        assertFalse("Признак удаления некосистемных данных",
-                usersDAO.deleteUser(user));
-
+        usersDAO.addUserOpt(entityMapper.map(user, UserEntity.class)).getOrElse(null);
     }
 
     @Test
@@ -271,6 +168,9 @@ public class UsersDAOPGTest {
         UsersDAOPG usersDAO = new UsersDAOPG();
         usersDAO.setDataSource(ds);
 
+        //Пока вручную потом посмотреть ка кв спринге инжект в тесты делать
+        EntityMapper entityMapper = new EntityMapper();
+
         User user = new User(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
                 "user1",
@@ -279,7 +179,7 @@ public class UsersDAOPGTest {
                 "mail",
                 true);
 
-        usersDAO.makeActive(user);
+        usersDAO.makeActive(entityMapper.map(user, UserEntity.class));
 
         assertEquals(
                 "Не установился признак активности",

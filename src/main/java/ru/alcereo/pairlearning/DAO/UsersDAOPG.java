@@ -25,9 +25,6 @@ public class UsersDAOPG implements UsersDAO {
         this.dataSource = ds;
     }
 
-//    private static final String getAllquery=
-//            "SELECT * FROM users";
-
     private static final String addQuery=
             "INSERT INTO users(" +
             "uid, " +
@@ -64,30 +61,6 @@ public class UsersDAOPG implements UsersDAO {
 
         return userEntity;
     }
-
-
-
-//    @Override
-//    public List<User> getAll() throws UserDataError {
-//
-//        List<User> result = new ArrayList<>();
-//
-//        try(
-//                Connection conn = dataSource.getConnection();
-//                Statement st = conn.createStatement();
-//                ResultSet resultSet = st.executeQuery(getAllquery);
-//                ){
-//
-//            while (resultSet.next())
-//                result.add(userFromResultSet(resultSet));
-//
-//        } catch (SQLException e) {
-//            log.warn(e.getLocalizedMessage());
-//            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-//        }
-//
-//        return result;
-//    }
 
     UserEntity findByUid(UUID uuid) throws UserDataError {
         UserEntity result = null;
@@ -178,73 +151,15 @@ public class UsersDAOPG implements UsersDAO {
         return Option.asOption(result);
     }
 
-//    @Override
-//    public User findByLogin(String login) throws UserDataError {
-//
-//        User result = null;
-//
-//        try(
-//                Connection conn = dataSource.getConnection();
-//                PreparedStatement st = conn.prepareStatement(
-//                        "SELECT * FROM users WHERE login=?");
-//        ){
-//
-//            st.setString(1, login);
-//
-//            try(ResultSet resultSet = st.executeQuery();){
-//
-//                while (resultSet.next())
-//                    result = userFromResultSet(resultSet);
-//            }
-//
-//        } catch (SQLException e) {
-//            log.warn(e.getLocalizedMessage());
-//            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-//        }
-//
-//        return result;
-//    }
-
     @Override
-    public boolean addUser(User user) throws UserDataError {
-
-        Objects.requireNonNull(user, "Передан пользователь с сылкой null");
-
-        boolean result = false;
-
-        try(
-                Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(addQuery);
-        ){
-
-
-            st.setObject(1,user.getUid());
-            st.setString(2,user.getLogin());
-            st.setString(3,user.getPasswordHash());
-            st.setString(4,user.getEmail());
-            st.setBoolean(5,user.isActive());
-            st.setString(6,user.getName());
-
-            result = st.executeUpdate()==1;
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-        }
-
-        return result;
-
-    }
-
-    @Override
-    public Option<Boolean, UserDataError> addUser_Opt(User user_n) {
+    public Option<Boolean, UserDataError> addUserOpt(UserEntity user_n) {
 
         return Option.asOption(() -> Objects.requireNonNull(user_n, "Передан пользователь с сылкой null"))
                 .map(user -> {
                     try (
                             Connection conn = dataSource.getConnection();
-                            PreparedStatement st = conn.prepareStatement(addQuery);
+                            PreparedStatement st = conn.prepareStatement(addQuery)
                     ) {
-
                         st.setObject(1, user.getUid());
                         st.setString(2, user.getLogin());
                         st.setString(3, user.getPasswordHash());
@@ -259,48 +174,28 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
-    public boolean deleteUser(User user) throws UserDataError {
-
-        boolean result = false;
-
-        try(
-                Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(deleteQuery);
-        ){
-
-            st.setObject(1,user.getUid());
-            result = st.executeUpdate()==1;
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-        }
-
-        return result;
-    }
-
-    @Override
-    public User makeActive(User user) throws UserDataError {
-        User result=null;
-
-        try(
-                Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(
-                        "UPDATE users SET activae=TRUE WHERE uid=?"
-                )
-        ){
-
-            st.setObject(1,user.getUid());
-
-            if (st.executeUpdate()==1)
-                result = user.makeActive();
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-        }
-
-        return result;
+    public Option<UserEntity, UserDataError> makeActive(UserEntity user) {
+//        User result=null;
+//
+//        try(
+//                Connection conn = dataSource.getConnection();
+//                PreparedStatement st = conn.prepareStatement(
+//                        "UPDATE users SET activae=TRUE WHERE uid=?"
+//                )
+//        ){
+//
+//            st.setObject(1,user.getUid());
+//
+//            if (st.executeUpdate()==1)
+//                result = user.makeActive();
+//
+//        } catch (SQLException e) {
+//            log.warn(e.getLocalizedMessage());
+//            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
+//        }
+//
+//        return result;
+        return Option.asException(new UserDataError("NOT IMPLEMENTED!"));
     }
 
     private static UserDataError userDataErrorWrapper(Throwable cause) {

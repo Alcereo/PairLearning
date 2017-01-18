@@ -4,6 +4,7 @@ package ru.alcereo.pairlearning.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
@@ -23,6 +24,7 @@ public class RegistrationService {
     private static final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
     private UsersDAO users;
+    private EntityMapper entityMapper;
 
     private static final Map<Integer, User> confirmCodes = new HashMap<>();
 
@@ -30,6 +32,9 @@ public class RegistrationService {
         this.users = users;
     }
 
+    public void setEntityMapper(EntityMapper entityMapper) {
+        this.entityMapper = entityMapper;
+    }
 
     /**
      * Регистрация нового пользователя
@@ -60,7 +65,7 @@ public class RegistrationService {
                                     true))
                             .flatMap(
                                     newUser ->
-                                            users.addUser_Opt(newUser)
+                                            users.addUserOpt(entityMapper.map(newUser, UserEntity.class))
                                             .map(confirmCode -> RegResult.SUCCESS)
                             );
                 }

@@ -68,7 +68,9 @@
     <bean id="registrationService"
           class="ru.alcereo.pairlearning.Service.RegistrationService"
           p:users-ref="usersDAO"
-    />
+    >
+        <property name="entityMapper" ref="entityMapper"/>
+    </bean>
 
     <bean id="sendingService"
           class="ru.alcereo.pairlearning.Service.SendingServiceMock"

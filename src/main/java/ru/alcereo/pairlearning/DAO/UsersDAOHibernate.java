@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
-import ru.alcereo.pairlearning.Service.models.User;
 
 import java.util.UUID;
 
@@ -48,22 +47,12 @@ public class UsersDAOHibernate implements UsersDAO {
     }
 
     @Override
-    public boolean addUser(User user) throws UserDataError {
-        throw new UserDataError("NOT IMPLEMENTED!");
-    }
-
-    @Override
-    public Option<Boolean, UserDataError> addUser_Opt(User user) {
+    public Option<Boolean, UserDataError> addUserOpt(UserEntity user) {
         return Option.asException(new UserDataError("NOT IMPLEMENTED!"));
     }
 
     @Override
-    public boolean deleteUser(User user) throws UserDataError {
-        throw new UserDataError("NOT IMPLEMENTED!");
-    }
-
-    @Override
-    public User makeActive(User user) throws UserDataError {
-        throw new UserDataError("NOT IMPLEMENTED!");
+    public Option<UserEntity, UserDataError> makeActive(UserEntity user) {
+        return Option.asException(new UserDataError("NOT IMPLEMENTED!"));
     }
 }
