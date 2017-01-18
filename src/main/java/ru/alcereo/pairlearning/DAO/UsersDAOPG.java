@@ -130,7 +130,7 @@ public class UsersDAOPG implements UsersDAO {
         try(
                 Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(
-                        "SELECT * FROM users WHERE login=?");
+                        "SELECT * FROM users WHERE login=?")
         ){
 
             st.setString(1, login);
@@ -174,27 +174,7 @@ public class UsersDAOPG implements UsersDAO {
     }
 
     @Override
-    public Option<UserEntity, UserDataError> makeActive(UserEntity user) {
-//        User result=null;
-//
-//        try(
-//                Connection conn = dataSource.getConnection();
-//                PreparedStatement st = conn.prepareStatement(
-//                        "UPDATE users SET activae=TRUE WHERE uid=?"
-//                )
-//        ){
-//
-//            st.setObject(1,user.getUid());
-//
-//            if (st.executeUpdate()==1)
-//                result = user.makeActive();
-//
-//        } catch (SQLException e) {
-//            log.warn(e.getLocalizedMessage());
-//            throw new UserDataError("Ошибка обращения к данным по пользователям", e);
-//        }
-//
-//        return result;
+    public Option<Boolean, UserDataError> save(UserEntity user) {
         return Option.asException(new UserDataError("NOT IMPLEMENTED!"));
     }
 

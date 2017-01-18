@@ -44,7 +44,6 @@ public class RegistrationService {
      *  Результат регистрации
      */
     public Option<RegResult, RegistrationException> registration(RegistrationData regDataNullable){
-
         return Option.asNotNullWithExceptionOption(regDataNullable)
         .flatMap(regData ->
             users
@@ -65,14 +64,15 @@ public class RegistrationService {
                                     true))
                             .flatMap(
                                     newUser ->
-                                            users.addUserOpt(entityMapper.map(newUser, UserEntity.class))
-                                            .map(confirmCode -> RegResult.SUCCESS)
+                                            users.addUserOpt(
+                                                    entityMapper.map(newUser, UserEntity.class)
+                                            )
+                                            .map(result -> result ? RegResult.SUCCESS : RegResult.ERROR)
                             );
                 }
             })
         )
         .wrapException(RegistrationService::registrationExceptionWrapper);
-
     }
 
     /**

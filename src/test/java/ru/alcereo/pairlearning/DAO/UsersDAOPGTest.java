@@ -163,7 +163,7 @@ public class UsersDAOPGTest {
     }
 
     @Test
-    public void makeActive() throws Exception {
+    public void save() throws Exception {
 
         UsersDAOPG usersDAO = new UsersDAOPG();
         usersDAO.setDataSource(ds);
@@ -179,12 +179,12 @@ public class UsersDAOPGTest {
                 "mail",
                 true);
 
-        usersDAO.makeActive(entityMapper.map(user, UserEntity.class));
+        usersDAO.save(entityMapper.map(user, UserEntity.class));
 
         assertEquals(
                 "Не установился признак активности",
                 usersDAO.findByUidOpt(user.getUid()).getOrElse(null),
-                user.makeActive()
+                entityMapper.map(user.makeActive(), UserEntity.class)
         );
 
     }

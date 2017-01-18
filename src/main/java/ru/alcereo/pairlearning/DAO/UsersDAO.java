@@ -12,7 +12,6 @@ import java.util.UUID;
  */
 public interface UsersDAO {
 
-
     /**
      * Получение пользователя по уникальному идетификатору
      * @param uuid
@@ -46,6 +45,6 @@ public interface UsersDAO {
      * @throws UserDataError
      *  Ошибка обращения к данным
      */
-    Option<UserEntity,UserDataError> makeActive(UserEntity user);
+    Option<Boolean,UserDataError> save(UserEntity user);
 
 }
