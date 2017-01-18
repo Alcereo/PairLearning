@@ -43,11 +43,11 @@
 
     <beans:bean id="myEntryPoint"
                 class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
-        c:loginFormUrl="/"
+                c:loginFormUrl="/"
     />
 
     <beans:bean id="authManager"
-                class="ru.alcereo.security.authManager"
+                class="ru.alcereo.pairlearning.security.authManager"
                 p:sessionService-ref="sessionService"
     />
 

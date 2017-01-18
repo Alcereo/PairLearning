@@ -1,4 +1,4 @@
-package ru.alcereo.security;
+package ru.alcereo.pairlearning.security;
 
 
 import org.slf4j.Logger;
