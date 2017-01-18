@@ -3,18 +3,20 @@ package ru.alcereo.pairlearning.DAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.Service.models.Topic;
-import ru.alcereo.pairlearning.Service.models.TopicRow;
 import ru.alcereo.pairlearning.Service.models.User;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 
 public class TopicRowsDAOPG implements TopicRowsDAO {
@@ -123,146 +125,92 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
     }
 
     @Override
-    public List<TopicRow> getAllByUser(User user) throws TopicRowDataError {
-        List<TopicRow> result=new ArrayList<>();
-
-        Objects.requireNonNull(user, "user == null");
-
-        try(
-                Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(
-                        "SELECT\n" +
-                                "  uid,\n" +
-                                "  id,\n" +
-                                "  title,\n" +
-                                "  CASE WHEN learn IS NULL THEN FALSE ELSE learn END AS learn,\n" +
-                                "  CASE WHEN teach IS NULL THEN FALSE ELSE teach END AS teach\n" +
-                                "FROM\n" +
-                                "  topics LEFT JOIN topic_rows ON topics.uid = topic_rows.topic_uid AND topic_rows.user_uid = ?\n");
-        ){
-
-            st.setObject(1,user.getUid());
-
-            try (ResultSet resultSet = st.executeQuery()){
-                while (resultSet.next())
-                    result.add(new TopicRow(
-                            resultSet.getBoolean("learn"),
-                            resultSet.getBoolean("teach"),
-                            user,
-                            new Topic(
-                                    UUID.fromString(resultSet.getString("uid")),
-                                    resultSet.getLong("id"),
-                                    resultSet.getString("title")
-                            )
-
-                    ));
-            }
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
-        }
-
-        return result;
-    }
-
-    @Override
-    public Option<List<TopicRowEntity>, TopicRowDataError> getAllByUserUID(UUID uuid){
+    public Option<List<TopicRowEntity>, TopicRowDataError> getAllByUserUIDOpt(UUID uuid){
         return Option.asException(new TopicRowDataError("NOT IMPLEMENTED!!"));
     }
 
     @Override
-    public Set<Topic> getLearnTopicsByUser(User user) throws TopicRowDataError {
-        return getLearnTopicsByUserUID(user.getUid());
+    public Option<Set<TopicEntity>,TopicRowDataError> getLearnTopicsByUserUID(UUID uuid) {
+//        Set<Topic> result=new HashSet<>();
+//
+//        UUID userUid = uuid;
+//
+//        try(
+//                Connection conn = dataSource.getConnection();
+//                PreparedStatement st = conn.prepareStatement(
+//                        "SELECT\n" +
+//                                "  topics.uid,\n" +
+//                                "  topics.id,\n" +
+//                                "  topics.title\n" +
+//                                "FROM\n" +
+//                                "  topic_rows,\n" +
+//                                "  topics\n" +
+//                                "WHERE\n" +
+//                                "  topic_rows.user_uid = ? AND\n" +
+//                                "    topic_rows.topic_uid = topics.uid AND\n" +
+//                                "    topic_rows.learn");
+//        ){
+//
+//            st.setObject(1, userUid);
+//
+//            try(ResultSet resultSet = st.executeQuery()){
+//                while (resultSet.next())
+//                    result.add(
+//                            new Topic(
+//                                    UUID.fromString(resultSet.getString("uid")),
+//                                    resultSet.getLong("id"),
+//                                    resultSet.getString("title")
+//                            )
+//                    );
+//            }
+//
+//        } catch (SQLException e) {
+//            log.warn(e.getLocalizedMessage());
+//            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
+//        }
+
+        return Option.asException(new TopicRowDataError("NOT IMPLEMENTED!"));
     }
 
     @Override
-    public Set<Topic> getLearnTopicsByUserUID(UUID uuid) throws TopicRowDataError {
-        Set<Topic> result=new HashSet<>();
+    public Option<Set<TopicEntity>,TopicRowDataError>  getTeachTopicsByUserUID(UUID uuid) {
+//        Set<Topic> result=new HashSet<>();
+//
+//        try(
+//                Connection conn = dataSource.getConnection();
+//                PreparedStatement st = conn.prepareStatement(
+//                        "SELECT\n" +
+//                                "  topics.uid,\n" +
+//                                "  topics.id,\n" +
+//                                "  topics.title\n" +
+//                                "FROM\n" +
+//                                "  topic_rows,\n" +
+//                                "  topics\n" +
+//                                "WHERE\n" +
+//                                "  topic_rows.user_uid = ? AND\n" +
+//                                "    topic_rows.topic_uid = topics.uid AND\n" +
+//                                "    topic_rows.teach");
+//        ){
+//
+//            st.setObject(1, uuid);
+//
+//            try(ResultSet resultSet = st.executeQuery()){
+//                while (resultSet.next())
+//                    result.add(
+//                            new Topic(
+//                                    UUID.fromString(resultSet.getString("uid")),
+//                                    resultSet.getLong("id"),
+//                                    resultSet.getString("title")
+//                            )
+//                    );
+//            }
+//
+//        } catch (SQLException e) {
+//            log.warn(e.getLocalizedMessage());
+//            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
+//        }
 
-        UUID userUid = uuid;
-
-        try(
-                Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(
-                        "SELECT\n" +
-                                "  topics.uid,\n" +
-                                "  topics.id,\n" +
-                                "  topics.title\n" +
-                                "FROM\n" +
-                                "  topic_rows,\n" +
-                                "  topics\n" +
-                                "WHERE\n" +
-                                "  topic_rows.user_uid = ? AND\n" +
-                                "    topic_rows.topic_uid = topics.uid AND\n" +
-                                "    topic_rows.learn");
-        ){
-
-            st.setObject(1, userUid);
-
-            try(ResultSet resultSet = st.executeQuery()){
-                while (resultSet.next())
-                    result.add(
-                            new Topic(
-                                    UUID.fromString(resultSet.getString("uid")),
-                                    resultSet.getLong("id"),
-                                    resultSet.getString("title")
-                            )
-                    );
-            }
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
-        }
-
-        return result;
-    }
-
-    @Override
-    public Set<Topic> getTeachTopicsByUser(User user) throws TopicRowDataError {
-        return getTeachTopicsByUserUID(user.getUid());
-    }
-
-    @Override
-    public Set<Topic> getTeachTopicsByUserUID(UUID uuid) throws TopicRowDataError {
-        Set<Topic> result=new HashSet<>();
-
-        try(
-                Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(
-                        "SELECT\n" +
-                                "  topics.uid,\n" +
-                                "  topics.id,\n" +
-                                "  topics.title\n" +
-                                "FROM\n" +
-                                "  topic_rows,\n" +
-                                "  topics\n" +
-                                "WHERE\n" +
-                                "  topic_rows.user_uid = ? AND\n" +
-                                "    topic_rows.topic_uid = topics.uid AND\n" +
-                                "    topic_rows.teach");
-        ){
-
-            st.setObject(1, uuid);
-
-            try(ResultSet resultSet = st.executeQuery()){
-                while (resultSet.next())
-                    result.add(
-                            new Topic(
-                                    UUID.fromString(resultSet.getString("uid")),
-                                    resultSet.getLong("id"),
-                                    resultSet.getString("title")
-                            )
-                    );
-            }
-
-        } catch (SQLException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
-        }
-
-        return result;
+        return Option.asException(new TopicRowDataError("NOT IMPLEMENTED!"));
     }
 
 

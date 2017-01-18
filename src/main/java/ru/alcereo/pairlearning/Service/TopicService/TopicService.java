@@ -8,10 +8,12 @@ import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
-import ru.alcereo.pairlearning.Service.models.*;
+import ru.alcereo.pairlearning.Service.models.TopicRow;
+import ru.alcereo.pairlearning.Service.models.TopicRowFront;
+import ru.alcereo.pairlearning.Service.models.User;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -49,7 +51,7 @@ public class TopicService {
                            .findByLoginOpt(user.getLogin())
                            .map(User::wrapFrom)
                            .flatMap(
-                                   userModel -> topicRows.getAllByUserUID(userModel.getUid())
+                                   userModel -> topicRows.getAllByUserUIDOpt(userModel.getUid())
                            ).map(
                                topicRowEntityList ->
                                        topicRowEntityList
@@ -106,36 +108,25 @@ public class TopicService {
         return Option.asNotNullWithExceptionOption(user1_n)
         .flatMap(user1 ->
         Option.asNotNullWithExceptionOption(user2_n)
-        .map(user2 ->{
-
-            log.debug("Определяем возможность входа для: {}, {}", user1_n, user2_n);
-
-            boolean OptResult = false;
-
-            Set<Topic> userSet1 = topicRows.getLearnTopicsByUserUID(user1.getUid());
-            Set<Topic> userSet2 = topicRows.getLearnTopicsByUserUID(user2.getUid());
-
-            userSet1.retainAll(userSet2);
-
-            log.debug("Количество пересечений 1: {}", userSet1.size());
-
-            if (userSet1.size() > 0) {
-
-                userSet1 = topicRows.getTeachTopicsByUserUID(user1.getUid());
-                userSet2 = topicRows.getLearnTopicsByUserUID(user2.getUid());
-
-                userSet1.retainAll(userSet2);
-
-                log.debug("Количество пересечений 2: {}", userSet1.size());
-
-                if (userSet1.size() > 0)
-                    OptResult = true;
-            }
-
-            return OptResult;
-
-        })).wrapException(TopicService::topicServiceExceptionWrapper);
-
+        .flatMap(user2 -> topicRows
+            .getLearnTopicsByUserUID(user1.getUid())
+            .flatMap(
+                    user1Set -> topicRows
+                            .getLearnTopicsByUserUID(user2.getUid())
+                            .map(user1Set::retainAll)
+            ).flatMap(
+                    haveFirstRetain ->
+                        haveFirstRetain ?
+                            topicRows
+                            .getTeachTopicsByUserUID(user1.getUid())
+                            .flatMap(userSet1 ->
+                                    topicRows.getLearnTopicsByUserUID(user2.getUid())
+                                    .map(userSet1::retainAll))
+                                :
+                            Option.asOption(false)
+            )
+        ))
+        .wrapException(TopicService::topicServiceExceptionWrapper);
     }
 
     private static TopicServiceException topicServiceExceptionWrapper(Throwable cause) {

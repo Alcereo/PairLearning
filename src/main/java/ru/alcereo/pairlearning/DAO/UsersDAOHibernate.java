@@ -70,11 +70,12 @@ public class UsersDAOHibernate implements UsersDAO {
     private <RESULT> Option<RESULT,UserDataError> sessionedAndOptionedAction(Function<Session,RESULT> function){
         try(Session session = sessionFactory.openSession()) {
             return Option.asOption(() -> function.apply(session))
-                    .wrapException(this::userDataErrorWrapper);
+                    .wrapException(this::errorWrapper);
         }
     }
 
-    UserDataError userDataErrorWrapper(Throwable cause){
+    UserDataError errorWrapper(Throwable cause){
+        log.error(cause.getLocalizedMessage());
         return new UserDataError("Ошибка доступа к данным", cause);
     }
 

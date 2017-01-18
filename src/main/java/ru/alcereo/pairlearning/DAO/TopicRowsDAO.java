@@ -2,10 +2,9 @@ package ru.alcereo.pairlearning.DAO;
 
 
 import ru.alcereo.fUtils.Option;
+import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
-import ru.alcereo.pairlearning.Service.models.Topic;
-import ru.alcereo.pairlearning.Service.models.TopicRow;
 import ru.alcereo.pairlearning.Service.models.User;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.UUID;
  * Класс доступа к пользовательским данным связанных с изучением тем
  */
 public interface TopicRowsDAO {
-
 
     /**
      * Установка признака `LEARN` для пользователя
@@ -32,7 +30,6 @@ public interface TopicRowsDAO {
      */
     void setLearnPredicate(Long id, User user, boolean predicate) throws TopicRowDataError;
 
-
     /**
      * Установка признака `TEACH` для пользователя
      * @param id
@@ -46,18 +43,6 @@ public interface TopicRowsDAO {
      */
     void setTeachPredicate(Long id, User user, boolean predicate) throws TopicRowDataError;
 
-
-    /**
-     * Получение данных связанных с пользователем о всех темах для изучения
-     * @param user
-     *  Объект пользователя
-     * @return
-     *  Список тем с признаками learn и teach
-     * @throws TopicRowDataError
-     *  Ошибка доступа к данным
-     */
-    List<TopicRow> getAllByUser(User user) throws TopicRowDataError;
-
     /**
      * Получение данных связанных с пользователем о всех темах для изучения
      * @param uuid
@@ -65,19 +50,7 @@ public interface TopicRowsDAO {
      * @return
      *  Список тем с признаками learn и teach
      */
-    Option<List<TopicRowEntity>,TopicRowDataError> getAllByUserUID(UUID uuid);
-
-
-    /**
-     * Получение списока тем, которые пользователь выделил признаком Learn
-     * @param user
-     *  Объект пользователя
-     * @return
-     *  Список тем
-     * @throws TopicRowDataError
-     *  Ошибка доступа к данным
-     */
-    Set<Topic> getLearnTopicsByUser(User user) throws TopicRowDataError;
+    Option<List<TopicRowEntity>,TopicRowDataError> getAllByUserUIDOpt(UUID uuid);
 
     /**
      * Получение списока тем, которые пользователь выделил признаком Learn
@@ -88,18 +61,7 @@ public interface TopicRowsDAO {
      * @throws TopicRowDataError
      *  Ошибка доступа к данным
      */
-    Set<Topic> getLearnTopicsByUserUID(UUID uuid) throws TopicRowDataError;
-
-    /**
-     * Получение списока тем, которые пользователь выделил признаком Teach
-     * @param user
-     *  Объект пользователя
-     * @return
-     *  Список тем
-     * @throws TopicRowDataError
-     *  Ошибка доступа к данным
-     */
-    Set<Topic> getTeachTopicsByUser(User user) throws TopicRowDataError;
+    Option<Set<TopicEntity>,TopicRowDataError> getLearnTopicsByUserUID(UUID uuid);
 
     /**
      * Получение списока тем, которые пользователь выделил признаком Teach
@@ -110,6 +72,6 @@ public interface TopicRowsDAO {
      * @throws TopicRowDataError
      *  Ошибка доступа к данным
      */
-    Set<Topic> getTeachTopicsByUserUID(UUID uid) throws TopicRowDataError;
+    Option<Set<TopicEntity>,TopicRowDataError> getTeachTopicsByUserUID(UUID uid);
 
 }

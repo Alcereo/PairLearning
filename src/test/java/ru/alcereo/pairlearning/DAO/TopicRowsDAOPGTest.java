@@ -157,7 +157,7 @@ public class TopicRowsDAOPGTest {
 
         assertEquals(
                 "Нашел какие-то темы, после их удаления из обучения",
-                topicRowsDAOPG.getLearnTopicsByUser(user).size(),
+                topicRowsDAOPG.getLearnTopicsByUserUID(user.getUid()).getOrElse(null).size(),
                 0
         );
 
@@ -165,7 +165,7 @@ public class TopicRowsDAOPGTest {
 
         assertEquals(
                 "Нашел какие-то темы после установки с неправильным id",
-                topicRowsDAOPG.getLearnTopicsByUser(user).size(),
+                topicRowsDAOPG.getLearnTopicsByUserUID(user.getUid()).getOrElse(null).size(),
                 0
         );
 
@@ -188,14 +188,14 @@ public class TopicRowsDAOPGTest {
         topicRowsDAOPG.setTeachPredicate(1L, user, true);
 
         assertEquals(
-                topicRowsDAOPG.getTeachTopicsByUser(user).size(),
+                topicRowsDAOPG.getTeachTopicsByUserUID(user.getUid()).getOrElse(null).size(),
                 2
         );
 
         topicRowsDAOPG.setLearnPredicate(30L, user, true);
 
         assertEquals(
-                topicRowsDAOPG.getTeachTopicsByUser(user).size(),
+                topicRowsDAOPG.getTeachTopicsByUserUID(user.getUid()).getOrElse(null).size(),
                 2
         );
     }
@@ -225,29 +225,19 @@ public class TopicRowsDAOPGTest {
 
 
         assertEquals(
-                topicRowsDAOPG.getAllByUser(user1).size(),
-                topicRowsDAOPG.getAllByUser(user2).size()
+                topicRowsDAOPG.getAllByUserUIDOpt(user1.getUid()).getOrElse(null).size(),
+                topicRowsDAOPG.getAllByUserUIDOpt(user1.getUid()).getOrElse(null).size()
         );
 
         assertEquals(
-                topicRowsDAOPG.getAllByUser(user1).size(),
+                topicRowsDAOPG.getAllByUserUIDOpt(user1.getUid()).getOrElse(null).size(),
                 3
         );
 
     }
 
-    @Test(expected = NullPointerException.class)
-    public void getAllByUserNull() throws Exception {
-
-        TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
-        topicRowsDAOPG.setDataSource(ds);
-
-        topicRowsDAOPG.getAllByUser(null);
-
-    }
-
     @Test
-    public void getLearnTopicsByUser() throws Exception {
+    public void getLearnTopicsByUserUID() throws Exception {
         TopicRowsDAOPG topicRowsDAOPG = new TopicRowsDAOPG();
         topicRowsDAOPG.setDataSource(ds);
 
@@ -262,7 +252,7 @@ public class TopicRowsDAOPGTest {
 
         assertTrue(
                 "Не содержит первую строку в списке learn",
-                topicRowsDAOPG.getLearnTopicsByUser(user).contains(
+                topicRowsDAOPG.getLearnTopicsByUserUID(user.getUid()).getOrElse(null).contains(
                         new Topic(
                                 UUID.fromString("22211111-1111-1111-1111-111111111111"),
                                 1,
@@ -273,7 +263,7 @@ public class TopicRowsDAOPGTest {
 
         assertEquals(
                 "Содержит больше одной строки в списке learn",
-                topicRowsDAOPG.getLearnTopicsByUser(user).size(),
+                topicRowsDAOPG.getLearnTopicsByUserUID(user.getUid()).getOrElse(null).size(),
                 1
         );
 
@@ -296,7 +286,7 @@ public class TopicRowsDAOPGTest {
 
         assertTrue(
                 "Не содержит первую строку в списке learn",
-                topicRowsDAOPG.getTeachTopicsByUser(user).contains(
+                topicRowsDAOPG.getTeachTopicsByUserUID(user.getUid()).getOrElse(null).contains(
                         new Topic(
                                 UUID.fromString("44411111-1111-1111-1111-111111111111"),
                                 3,
@@ -307,7 +297,7 @@ public class TopicRowsDAOPGTest {
 
         assertEquals(
                 "Содержит больше одной строки в списке learn",
-                topicRowsDAOPG.getTeachTopicsByUser(user).size(),
+                topicRowsDAOPG.getTeachTopicsByUserUID(user.getUid()).getOrElse(null).size(),
                 1
         );
     }
