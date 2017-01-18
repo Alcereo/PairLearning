@@ -17,9 +17,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * Created by alcereo on 16.01.17.
- */
+
 public class TopicRowsDAOHibernate implements TopicRowsDAO {
 
     private static final Logger log = LoggerFactory.getLogger(TopicRowsDAOHibernate.class);
@@ -31,33 +29,64 @@ public class TopicRowsDAOHibernate implements TopicRowsDAO {
     }
 
     @Override
-    public void setLearnPredicate(Long id, User user, boolean predicate) throws TopicRowDataError {
+    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate) {
+        return sessionedAndOptionedAction(session -> {
+                    session.beginTransaction();
+                    boolean result = session
+                            .createQuery(
+                                    "update TopicRowEntity set learn=:predicate where " +
+                                            "user in (from UserEntity as u where uid=:uid) " +
+                                            "and " +
+                                            "topic in (from TopicEntity as t where id=:id)"
+                            )
+                            .setParameter("predicate", predicate)
+                            .setParameter("uid", user.getUid())
+                            .setParameter("id", id)
+                            .executeUpdate() > 0;
+                    session.getTransaction().commit();
+                    return result;
+                }
+        );
     }
 
     @Override
-    public void setTeachPredicate(Long id, User user, boolean predicate) throws TopicRowDataError {
+    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User user, boolean predicate) {
+        return sessionedAndOptionedAction(session -> {
+                    session.beginTransaction();
+                    boolean result = session
+                            .createQuery(
+                                    "update TopicRowEntity set teach=:predicate where " +
+                                            "user in (from UserEntity as u where uid=:uid) " +
+                                            "and " +
+                                            "topic in (from TopicEntity as t where id=:id)"
+                            )
+                            .setParameter("predicate", predicate)
+                            .setParameter("uid", user.getUid())
+                            .setParameter("id", id)
+                            .executeUpdate() > 0;
+                    session.getTransaction().commit();
+                    return result;
+                }
+        );
     }
 
     @Override
     public Option<List<TopicRowEntity>,TopicRowDataError> getAllByUserUIDOpt(UUID uuid){
         return sessionedAndOptionedAction(session ->
             session
-            .createQuery(
-                    "from TopicRowEntity where user.uid=:uuid",
-                    TopicRowEntity.class
-            )
+            .createQuery("from TopicRowEntity where user.uid=:uuid order by topic.id ", TopicRowEntity.class)
             .setParameter("uuid", Objects.requireNonNull(uuid))
             .getResultList()
         );
     }
 
     @Override
-    public Option<Set<TopicEntity>,TopicRowDataError> getLearnTopicsByUserUID(UUID uuid){
+    public Option<Set<TopicEntity>,TopicRowDataError> getLearnTopicsByUserUID(UUID uid){
         return sessionedAndOptionedAction(session ->
                 session.createQuery(
-                        "select TopicRowEntity.topic from TopicRowEntity where user.uid=:uuid and learn",
+                        "select tre.topic from TopicRowEntity as tre where tre.user.uid=:uid and tre.learn=true",
                         TopicEntity.class
-                )
+                ).setParameter("uid", uid)
                 .list().stream().collect(Collectors.toSet())
         );
     }
@@ -66,12 +95,14 @@ public class TopicRowsDAOHibernate implements TopicRowsDAO {
     public Option<Set<TopicEntity>,TopicRowDataError> getTeachTopicsByUserUID(UUID uid) {
         return sessionedAndOptionedAction(session ->
                 session.createQuery(
-                        "select TopicRowEntity.topic from TopicRowEntity where user.uid=:uuid and teach",
+                        "select tre.topic from TopicRowEntity as tre where tre.user.uid=:uid and tre.teach=true",
                         TopicEntity.class
-                )
-                        .list().stream().collect(Collectors.toSet())
+                ).setParameter("uid", uid)
+                .list().stream().collect(Collectors.toSet())
         );
     }
+
+
 
     private <RESULT> Option<RESULT,TopicRowDataError> sessionedAndOptionedAction(Function<Session,RESULT> function){
         try(Session session = sessionFactory.openSession()) {

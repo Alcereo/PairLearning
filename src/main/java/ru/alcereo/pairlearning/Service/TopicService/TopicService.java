@@ -74,10 +74,8 @@ public class TopicService {
     public Option<Boolean, TopicServiceException> setTopicRow(TopicRowChanger changer, UserFront userFront){
         return users.findByUidOpt(userFront.getUid())
                 .map(User::wrapFrom)
-                .map(userModel -> {
-                    changer.setPredicate(topicRows, userModel);
-                    return true;
-                })
+                .flatMap(userModel ->
+                        changer.setPredicate(topicRows, userModel))
                 .wrapException(TopicService::topicServiceExceptionWrapper);
     }
 

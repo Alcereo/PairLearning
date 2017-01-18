@@ -31,7 +31,9 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
 
     @Override
-    public void setLearnPredicate(Long id, User user, boolean predicate) throws TopicRowDataError {
+    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate) {
+
+        Option<Boolean,TopicRowDataError> result = Option.asOption(true);
 
         Objects.requireNonNull(user, "User == null");
         Objects.requireNonNull(id, "User == null");
@@ -74,14 +76,17 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
+            result = Option.asException(new TopicRowDataError("Ошибка обращения к данным по темам", e));
         }
+
+        return result;
 
     }
 
     @Override
-    public void setTeachPredicate(Long id, User userModel, boolean predicate) throws TopicRowDataError {
+    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User userModel, boolean predicate){
 
+        Option<Boolean,TopicRowDataError> result = Option.asOption(true);
 
         try(
                 Connection conn = dataSource.getConnection();
@@ -119,8 +124,10 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
         } catch (SQLException e) {
             log.warn(e.getLocalizedMessage());
-            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
+            result = Option.asException(new TopicRowDataError("Ошибка обращения к данным по темам", e));
         }
+
+        return result;
 
     }
 

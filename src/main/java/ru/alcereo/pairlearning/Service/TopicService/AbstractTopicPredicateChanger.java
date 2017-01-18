@@ -9,7 +9,7 @@ abstract class AbstractTopicPredicateChanger implements TopicRowChanger{
     private static final Logger log = LoggerFactory.getLogger(AbstractTopicPredicateChanger.class);
 
     protected boolean value;
-    protected long id = -1;
+    protected Long id = null;
 
     @Override
     public TopicRowChanger setPredicateValue(boolean value) {

@@ -28,7 +28,7 @@ public interface TopicRowsDAO {
      * @throws TopicRowDataError
      *  Ошибка доступа к данным
      */
-    void setLearnPredicate(Long id, User user, boolean predicate) throws TopicRowDataError;
+    Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate);
 
     /**
      * Установка признака `TEACH` для пользователя
@@ -41,7 +41,7 @@ public interface TopicRowsDAO {
      * @throws TopicRowDataError
      *  Ошибка доступа к данным
      */
-    void setTeachPredicate(Long id, User user, boolean predicate) throws TopicRowDataError;
+    Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User user, boolean predicate);
 
     /**
      * Получение данных связанных с пользователем о всех темах для изучения

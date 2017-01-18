@@ -1,10 +1,8 @@
 package ru.alcereo.pairlearning.DAO.Entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +26,21 @@ public class UserEntity implements Serializable {
 
     @Column
     private boolean active;
+
+    @OneToMany(
+            targetEntity = TopicRowEntity.class,
+            mappedBy = "user",
+            fetch = FetchType.LAZY
+    )
+    private List<TopicRowEntity> topicRows;
+
+    public List<TopicRowEntity> getTopicRows() {
+        return topicRows;
+    }
+
+    public void setTopicRows(List<TopicRowEntity> topicRows) {
+        this.topicRows = topicRows;
+    }
 
     public UserEntity() {
     }

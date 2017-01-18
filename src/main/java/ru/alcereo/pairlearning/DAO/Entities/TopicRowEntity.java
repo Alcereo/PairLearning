@@ -8,11 +8,11 @@ import java.io.Serializable;
 public class TopicRowEntity implements Serializable{
 
     @Id
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity user;
 
     @Id
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private TopicEntity topic;
 
     @Column

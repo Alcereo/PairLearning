@@ -1,13 +1,14 @@
 package ru.alcereo.pairlearning.Service.TopicService;
 
 
+import ru.alcereo.fUtils.Option;
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
-import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.exeptions.TopicServiceException;
+import ru.alcereo.pairlearning.Service.models.User;
 
 public interface TopicRowChanger {
 
-    void setPredicate(TopicRowsDAO topicRows, User user) throws TopicServiceException;
+    Option<Boolean, TopicServiceException> setPredicate(TopicRowsDAO topicRows, User user);
 
     TopicRowChanger setPredicateValue(boolean predicate);
 

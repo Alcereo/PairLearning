@@ -43,7 +43,7 @@
     />
 
     <util:properties id="hibernateProperties">
-        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>
+        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
         <prop key="hibernate.show_sql">true</prop>
     </util:properties>
 
