@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 

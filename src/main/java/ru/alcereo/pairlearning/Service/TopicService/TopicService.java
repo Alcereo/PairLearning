@@ -2,7 +2,8 @@ package ru.alcereo.pairlearning.Service.TopicService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.fUtils.Option;
+import org.springframework.transaction.annotation.Transactional;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
@@ -42,6 +43,7 @@ public class TopicService {
      * @return
      *  Список строк таблицы с темами и признаками для данного пользователя
      */
+    @Transactional
     public Option<List<TopicRowFront>,TopicServiceException> getUserTopicOpt(UserFront user_n) {
 
         return Option.asNotNullWithExceptionOption(user_n)

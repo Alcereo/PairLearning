@@ -2,7 +2,7 @@ package ru.alcereo.pairlearning.DAO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
@@ -138,85 +138,11 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
     @Override
     public Option<Set<TopicEntity>,TopicRowDataError> getLearnTopicsByUserUID(UUID uuid) {
-//        Set<Topic> result=new HashSet<>();
-//
-//        UUID userUid = uuid;
-//
-//        try(
-//                Connection conn = dataSource.getConnection();
-//                PreparedStatement st = conn.prepareStatement(
-//                        "SELECT\n" +
-//                                "  topics.uid,\n" +
-//                                "  topics.id,\n" +
-//                                "  topics.title\n" +
-//                                "FROM\n" +
-//                                "  topic_rows,\n" +
-//                                "  topics\n" +
-//                                "WHERE\n" +
-//                                "  topic_rows.user_uid = ? AND\n" +
-//                                "    topic_rows.topic_uid = topics.uid AND\n" +
-//                                "    topic_rows.learn");
-//        ){
-//
-//            st.setObject(1, userUid);
-//
-//            try(ResultSet resultSet = st.executeQuery()){
-//                while (resultSet.next())
-//                    result.add(
-//                            new Topic(
-//                                    UUID.fromString(resultSet.getString("uid")),
-//                                    resultSet.getLong("id"),
-//                                    resultSet.getString("title")
-//                            )
-//                    );
-//            }
-//
-//        } catch (SQLException e) {
-//            log.warn(e.getLocalizedMessage());
-//            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
-//        }
-
         return Option.asException(new TopicRowDataError("NOT IMPLEMENTED!"));
     }
 
     @Override
     public Option<Set<TopicEntity>,TopicRowDataError>  getTeachTopicsByUserUID(UUID uuid) {
-//        Set<Topic> result=new HashSet<>();
-//
-//        try(
-//                Connection conn = dataSource.getConnection();
-//                PreparedStatement st = conn.prepareStatement(
-//                        "SELECT\n" +
-//                                "  topics.uid,\n" +
-//                                "  topics.id,\n" +
-//                                "  topics.title\n" +
-//                                "FROM\n" +
-//                                "  topic_rows,\n" +
-//                                "  topics\n" +
-//                                "WHERE\n" +
-//                                "  topic_rows.user_uid = ? AND\n" +
-//                                "    topic_rows.topic_uid = topics.uid AND\n" +
-//                                "    topic_rows.teach");
-//        ){
-//
-//            st.setObject(1, uuid);
-//
-//            try(ResultSet resultSet = st.executeQuery()){
-//                while (resultSet.next())
-//                    result.add(
-//                            new Topic(
-//                                    UUID.fromString(resultSet.getString("uid")),
-//                                    resultSet.getLong("id"),
-//                                    resultSet.getString("title")
-//                            )
-//                    );
-//            }
-//
-//        } catch (SQLException e) {
-//            log.warn(e.getLocalizedMessage());
-//            throw new TopicRowDataError("Ошибка обращения к данным по темам", e);
-//        }
-
         return Option.asException(new TopicRowDataError("NOT IMPLEMENTED!"));
     }
 

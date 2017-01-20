@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "topic_rows")
+@IdClass(TopicRowsIdClass.class)
 public class TopicRowEntity implements Serializable{
 
     @Id

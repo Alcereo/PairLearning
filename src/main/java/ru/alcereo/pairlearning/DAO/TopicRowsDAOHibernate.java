@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
@@ -74,7 +74,7 @@ public class TopicRowsDAOHibernate implements TopicRowsDAO {
     public Option<List<TopicRowEntity>,TopicRowDataError> getAllByUserUIDOpt(UUID uuid){
         return sessionedAndOptionedAction(session ->
             session
-            .createQuery("from TopicRowEntity where user.uid=:uuid order by topic.id ", TopicRowEntity.class)
+            .createQuery("select tr from TopicRowEntity as tr right join tr.topic as top on tr.user.uid=:uuid order by tr.topic.id", TopicRowEntity.class)
             .setParameter("uuid", Objects.requireNonNull(uuid))
             .getResultList()
         );

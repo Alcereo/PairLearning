@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="ru.alcereo.pairlearning"/>
+    <context:component-scan base-package="ru.alcereo.pairlearning.controllers"/>
 
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver" >

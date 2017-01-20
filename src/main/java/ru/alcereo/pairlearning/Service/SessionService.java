@@ -4,7 +4,7 @@ package ru.alcereo.pairlearning.Service;
 import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
@@ -60,7 +60,7 @@ public class SessionService {
     }
 
     private static SessionServiceException sessionServiceExceptionWrapper(Throwable cause) {
-        log.warn(cause.getMessage());
+        log.warn(cause.getLocalizedMessage());
 
         if (cause instanceof NoSuchAlgorithmException)
             return new SessionServiceException(

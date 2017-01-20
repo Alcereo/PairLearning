@@ -1,5 +1,6 @@
 package ru.alcereo.pairlearning.Service.models;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.alcereo.pairlearning.Service.EntityMapper;
 
 public class TopicRow implements TopicRowFront {
@@ -36,6 +37,7 @@ public class TopicRow implements TopicRowFront {
         return teach;
     }
 
+    @Transactional(readOnly=true)
     public static <FROM_TYPE> TopicRow wrapFrom(FROM_TYPE notTopicRow) {
         return new EntityMapper().map(notTopicRow, TopicRow.class);
     }

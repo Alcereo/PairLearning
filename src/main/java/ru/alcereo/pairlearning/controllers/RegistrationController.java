@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.Service.RegistrationService;
 import ru.alcereo.pairlearning.Service.models.RegistrationData;
 

@@ -1,6 +1,6 @@
 package ru.alcereo.pairlearning.DAO;
 
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
 

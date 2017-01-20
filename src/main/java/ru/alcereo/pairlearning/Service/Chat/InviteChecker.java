@@ -1,6 +1,6 @@
 package ru.alcereo.pairlearning.Service.Chat;
 
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.Service.Chat.exceptions.ChatInviteException;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 

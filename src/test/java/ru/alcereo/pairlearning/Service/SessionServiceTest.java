@@ -1,7 +1,7 @@
 package ru.alcereo.pairlearning.Service;
 
 import org.junit.Test;
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.models.AuthorizationData;

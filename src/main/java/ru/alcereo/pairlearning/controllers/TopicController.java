@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.alcereo.fUtils.Option;
+import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.Service.TopicService.TopicLearnPredicateChanger;
 import ru.alcereo.pairlearning.Service.TopicService.TopicRowChanger;
 import ru.alcereo.pairlearning.Service.TopicService.TopicService;
