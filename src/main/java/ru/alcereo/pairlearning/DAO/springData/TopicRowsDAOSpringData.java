@@ -1,5 +1,8 @@
 package ru.alcereo.pairlearning.DAO.springData;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.alcereo.exoption.Func;
 import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
@@ -12,10 +15,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * Created by alcereo on 20.01.17.
- */
+
 public class TopicRowsDAOSpringData implements TopicRowsDAO{
+    private static final Logger log = LoggerFactory.getLogger(TopicRowsDAOSpringData.class);
 
     public void setRepository(TopicRowViewEntityRepository repository) {
         this.repository = repository;
@@ -23,44 +25,68 @@ public class TopicRowsDAOSpringData implements TopicRowsDAO{
 
     private TopicRowViewEntityRepository repository;
 
+
+//     * -------------------------------------------------------- *
+//     *                     ОСНОВНЫЕ ФУНКЦИИ                     *
+//     * -------------------------------------------------------- *
+
     @Override
     public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate) {
-        return Option.asOption(
-                () -> repository.setLearnPredicateByUserUID(predicate, user.getUid(), id)>0
+        return optionedRepositoryAction(repository ->
+                repository.setLearnPredicateByUserUID(predicate, user.getUid(), id)>0
         );
     }
 
     @Override
     public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User user, boolean predicate) {
-        return Option.asOption(
-                () -> repository.setTeachPredicateByUserUID(predicate, user.getUid(), id)>0
+        return optionedRepositoryAction(repository ->
+                repository.setTeachPredicateByUserUID(predicate, user.getUid(), id)>0
         );
     }
 
     @Override
     public Option<List<TopicRowEntity>, TopicRowDataError> getAllByUserUIDOpt(UUID uuid) {
-        return Option.asOption(() -> repository.findByUserUid(uuid));
+        return optionedRepositoryAction(repository ->
+                repository.findByUserUid(uuid)
+        );
     }
 
     @Override
     public Option<Set<TopicEntity>, TopicRowDataError> getLearnTopicsByUserUID(UUID uuid) {
-        return Option.asOption(
-                () -> repository
-                        .findByUserUidAndLearnTrue(uuid)
-                        .stream()
-                        .map(TopicRowEntity::getTopic)
-                        .collect(Collectors.toSet())
+        return optionedRepositoryAction(repository ->
+                repository
+                .findByUserUidAndLearnTrue(uuid)
+                .stream()
+                .map(TopicRowEntity::getTopic)
+                .collect(Collectors.toSet())
         );
     }
 
     @Override
     public Option<Set<TopicEntity>, TopicRowDataError> getTeachTopicsByUserUID(UUID uuid) {
-        return Option.asOption(
-                () -> repository
-                        .findByUserUidAndTeachTrue(uuid)
-                        .stream()
-                        .map(TopicRowEntity::getTopic)
-                        .collect(Collectors.toSet())
+        return optionedRepositoryAction(repository ->
+                repository
+                .findByUserUidAndTeachTrue(uuid)
+                .stream()
+                .map(TopicRowEntity::getTopic)
+                .collect(Collectors.toSet())
         );
+    }
+
+
+//     * -------------------------------------------------------- *
+//     *                       СЛУЖЕБНЫЕ                          *
+//     * -------------------------------------------------------- *
+
+    private<RESULT> Option<RESULT, TopicRowDataError>
+    optionedRepositoryAction(Func<TopicRowViewEntityRepository, RESULT,TopicRowDataError> func){
+        return Option.asOption(
+                () -> func.execute(repository)
+        ).wrapException(this::errorWrapper);
+    }
+
+    TopicRowDataError errorWrapper(Throwable cause){
+        log.error(cause.getLocalizedMessage());
+        return new TopicRowDataError("Ошибка получения данных тем", cause);
     }
 }

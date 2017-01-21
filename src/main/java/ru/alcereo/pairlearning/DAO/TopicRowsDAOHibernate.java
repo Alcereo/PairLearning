@@ -104,7 +104,8 @@ public class TopicRowsDAOHibernate implements TopicRowsDAO {
 
 
 
-    private <RESULT> Option<RESULT,TopicRowDataError> sessionedAndOptionedAction(Function<Session,RESULT> function){
+    private <RESULT> Option<RESULT,TopicRowDataError>
+        sessionedAndOptionedAction(Function<Session,RESULT> function){
         try(Session session = sessionFactory.openSession()) {
             return Option.asOption(() -> function.apply(session))
                     .wrapException(this::errorWrapper);
