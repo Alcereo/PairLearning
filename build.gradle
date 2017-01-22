@@ -1,18 +1,3 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath group: 'org.hsqldb', name: 'hsqldb', version: gradle.hsqldbVersion
-    }
-}
-
-plugins {
-    id 'org.liquibase.gradle' version '1.1.1'
-}
-
 group 'ru.alcereo'
 version '0.1.4'
 
@@ -66,32 +51,4 @@ dependencies {
 
     compile 'com.github.Alcereo:exOption:0.2'
 
-}
-
-
-apply from: 'databaseHSQL.gradle'
-
-
-def dbUser = project.properties['dbUser'] ?: gradle.dbUser
-def dbPassword = project.properties['dbPassword'] ?: gradle.dbPassword
-def dbUrl = project.properties['dbUrl'] ?: gradle.dbUrl
-
-liquibase {
-    activities {
-        //noinspection GroovyAssignabilityCheck
-        main {
-            changeLogFile 'src/sql/main/changelog.xml'
-            url dbUrl
-            username dbUser
-            password dbPassword
-        }
-    }
-}
-
-task updateDbMain(dependsOn: startDatabase) {
-    group = 'develop'
-    doLast {
-        liquibase.runList = 'main'
-        tasks.update.execute()
-    }
 }
