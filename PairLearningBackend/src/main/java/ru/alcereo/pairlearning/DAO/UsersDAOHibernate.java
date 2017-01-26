@@ -4,6 +4,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
 import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.UserDataError;
@@ -12,12 +15,15 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
+@Lazy
+@Repository
 public class UsersDAOHibernate implements UsersDAO {
 
     private static final Logger log = LoggerFactory.getLogger(UsersDAOHibernate.class);
 
     private SessionFactory sessionFactory;
 
+    @Autowired
     public void setHibernateSessionFactory(SessionFactory hibernateSessionFactory) {
         this.sessionFactory = hibernateSessionFactory;
     }

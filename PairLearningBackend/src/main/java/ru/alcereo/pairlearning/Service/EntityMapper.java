@@ -1,10 +1,11 @@
 package ru.alcereo.pairlearning.Service;
 
 import ma.glasnost.orika.impl.ConfigurableMapper;
+import org.springframework.stereotype.Component;
 import ru.alcereo.pairlearning.Service.models.TopicRow;
 import ru.alcereo.pairlearning.Service.models.User;
 
-
+@Component
 public class EntityMapper extends ConfigurableMapper {
 
     public <FROM_TYPE> User wrapToUser(FROM_TYPE notUser){

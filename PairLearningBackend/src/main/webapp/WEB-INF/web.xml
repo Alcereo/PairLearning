@@ -6,11 +6,6 @@
         version="3.1"
         metadata-complete="false">
 
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/js/*</url-pattern>
-    </servlet-mapping>
-
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -21,11 +16,5 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-
-    <!--DB-->
-    <resource-ref>
-        <description>Database for application</description>
-        <res-ref-name>jdbc/PairLearning</res-ref-name>
-    </resource-ref>
 
 </web-app>

@@ -2,6 +2,8 @@ package ru.alcereo.pairlearning.Service.TopicService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Сервис работы с темами для изучения
  */
+@Service
 public class TopicServiceImpl implements TopicService {
 
     private static final Logger log = LoggerFactory.getLogger(TopicServiceImpl.class);
@@ -31,14 +34,17 @@ public class TopicServiceImpl implements TopicService {
     private TopicRowsDAO topicRows;
     private EntityMapper entityMapper;
 
+    @Autowired
     public void setEntityMapper(EntityMapper entityMapper){
         this.entityMapper = entityMapper;
     }
 
+    @Autowired
     public void setUsersDAO(UsersDAO usersDAO) {
         this.users = usersDAO;
     }
 
+    @Autowired
     public void setTopicRows(TopicRowsDAO topicRows) {
         this.topicRows = topicRows;
     }

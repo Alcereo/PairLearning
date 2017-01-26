@@ -58,7 +58,6 @@ public class ViewController {
         if (!optResult.isException()){
             model.addAttribute("user", user);
             model.addAttribute("topicRows", optResult.getOrElse(null));
-            log.info("{}",optResult.getOrElse(null));
             result = "userCabinet";
         }else {
             log.debug(optResult.getExceptionMessage());

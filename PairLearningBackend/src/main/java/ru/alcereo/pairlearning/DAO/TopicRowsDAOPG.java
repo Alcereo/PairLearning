@@ -2,6 +2,9 @@ package ru.alcereo.pairlearning.DAO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
 import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
@@ -9,6 +12,7 @@ import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.Service.models.Topic;
 import ru.alcereo.pairlearning.Service.models.User;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,13 +22,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-
+@Lazy
+@Repository
 public class TopicRowsDAOPG implements TopicRowsDAO {
 
     private static final Logger log = LoggerFactory.getLogger(TopicRowsDAOPG.class);
 
     private DataSource dataSource;
 
+    @Autowired
     public void setDataSource(DataSource dataSource){
         this.dataSource = dataSource;
     }

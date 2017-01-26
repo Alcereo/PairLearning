@@ -4,6 +4,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
 import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
@@ -17,13 +20,15 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-
+@Lazy
+@Repository
 public class TopicRowsDAOHibernate implements TopicRowsDAO {
 
     private static final Logger log = LoggerFactory.getLogger(TopicRowsDAOHibernate.class);
 
     private SessionFactory sessionFactory;
 
+    @Autowired
     public void setHibernateSessionFactory(SessionFactory hibernateSessionFactory) {
         this.sessionFactory = hibernateSessionFactory;
     }

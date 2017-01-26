@@ -3,6 +3,8 @@ package ru.alcereo.pairlearning.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.UserEntity;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
@@ -19,6 +21,7 @@ import java.util.UUID;
 /**
  * Сервис регистрации новых пользователей
  */
+@Service
 public class RegistrationServiceIml implements RegistrationService {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationServiceIml.class);
@@ -28,10 +31,12 @@ public class RegistrationServiceIml implements RegistrationService {
 
     private static final Map<Integer, User> confirmCodes = new HashMap<>();
 
+    @Autowired
     public void setUsers(UsersDAO users) {
         this.users = users;
     }
 
+    @Autowired
     public void setEntityMapper(EntityMapper entityMapper) {
         this.entityMapper = entityMapper;
     }

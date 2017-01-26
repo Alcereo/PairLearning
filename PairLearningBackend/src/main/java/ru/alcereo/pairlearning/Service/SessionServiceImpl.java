@@ -4,6 +4,9 @@ package ru.alcereo.pairlearning.Service;
 import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.UsersDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.SessionDataError;
@@ -19,6 +22,7 @@ import java.util.Objects;
 /**
  * Сервис работы с сессиями
  */
+@Service
 public class SessionServiceImpl implements SessionService {
     
     private static final Logger log = LoggerFactory.getLogger(SessionServiceImpl.class);
@@ -27,10 +31,12 @@ public class SessionServiceImpl implements SessionService {
 
     private MapperFacade mapperFacade;
 
+    @Autowired
     public void setUsers(UsersDAO users) {
         this.users = users;
     }
 
+    @Autowired
     public void setMapperFacade(MapperFacade mapperFacade) {
         this.mapperFacade = mapperFacade;
     }
