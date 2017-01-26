@@ -68,7 +68,7 @@
         <!--поиск сущностей в этом пакете-->
         <property name="packagesToScan" value="ru.alcereo.pairlearning.DAO.Entities"/>
 
-        <property name="persistenceUnitName" value="publishing"/>
+        <property name="persistenceUnitName" value="JPA_Hibernate"/>
         <property name="jpaProperties">
             <props>
                 <prop key="javax.persistence.validation.mode">none</prop>
