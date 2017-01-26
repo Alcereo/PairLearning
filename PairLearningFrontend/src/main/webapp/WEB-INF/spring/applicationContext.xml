@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--        DAO             -->
+
+    <bean id="sessionService"
+          class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
+          p:serviceUrl="rmi://localhost:1199/sessionService"
+          p:serviceInterface="ru.alcereo.pairlearning.Service.SessionService"
+    />
+
+    <bean id="topicService"
+          class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
+          p:serviceUrl="rmi://localhost:1199/topicService"
+          p:serviceInterface="ru.alcereo.pairlearning.Service.TopicService.TopicService"
+    />
+
+    <bean id="registrationService"
+          class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
+          p:serviceUrl="rmi://localhost:1199/registrationService"
+          p:serviceInterface="ru.alcereo.pairlearning.Service.RegistrationService"
+    />
+
+
+    <bean id="topicInviteChecker"
+          class="ru.alcereo.pairlearning.Service.Chat.TopicInviteChecker">
+        <property name="topicService" ref="topicService"/>
+    </bean>
+
+    <bean id="chatRoom"
+          class="ru.alcereo.pairlearning.Service.Chat.ChatRoomGrouped" >
+        <property name="inviteChecker" ref="topicInviteChecker"/>
+    </bean>
+
+    <bean id="socketSessionProvider"
+          class="ru.alcereo.pairlearning.SocketChat.SocketSessionProvider" >
+        <property name="sessionService" ref="sessionService"/>
+        <property name="chatRoom" ref="chatRoom"/>
+    </bean>
+
+    <bean id="chatSocketConnection"
+          class="ru.alcereo.pairlearning.SocketChat.ChatSocketConnection" >
+        <property name="socketSessionProvider" ref="socketSessionProvider"/>
+    </bean>
+
+</beans>

@@ -8,3 +8,8 @@
 /gradle/*
 gradlew.bat
 
+build
+.gradle
+gradlew
+gradle
+out

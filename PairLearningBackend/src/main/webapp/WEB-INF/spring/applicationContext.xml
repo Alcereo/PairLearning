@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--        DAO             -->
+
+    <jpa:repositories
+            base-package="ru.alcereo.pairlearning.DAO.springData"
+            entity-manager-factory-ref="myEntityManagerFactory"
+    />
+
+    <jee:jndi-lookup id="postgresDataSource"
+                     expected-type="javax.sql.DataSource"
+                     jndi-name="java:comp/env/jdbc/PairLearning" />
+
+    <bean id="usersDAOJDBC"
+          class="ru.alcereo.pairlearning.DAO.UsersDAOPG"
+          p:dataSource-ref="postgresDataSource"
+    />
+
+    <bean id="topicRowsDAOJDBC"
+          class="ru.alcereo.pairlearning.DAO.TopicRowsDAOPG"
+          p:dataSource-ref="postgresDataSource"
+    />
+
+    <bean id="usersDAOHibernate"
+          class="ru.alcereo.pairlearning.DAO.UsersDAOHibernate"
+          p:hibernateSessionFactory-ref="hibernateSessionFactory"
+    />
+
+    <bean id="topicRowsDAOHibernate"
+          class="ru.alcereo.pairlearning.DAO.TopicRowsDAOHibernate"
+          p:hibernateSessionFactory-ref="hibernateSessionFactory"
+    />
+
+    <bean id="usersDAOSpringData"
+          class="ru.alcereo.pairlearning.DAO.springData.UsersDAOSpringData"
+          p:repository-ref="userEntityRepository"
+    />
+
+    <bean id="topicRowsDAOSpringData"
+          class="ru.alcereo.pairlearning.DAO.springData.TopicRowsDAOSpringData"
+          p:repository-ref="topicRowViewEntityRepository"
+    />
+
+
+    <!--        HIBERNATE       -->
+
+    <bean id="hibernateSessionFactory"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean"
+          p:entityManagerFactory-ref="myEntityManagerFactory"
+    />
+
+    <bean id="myEntityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+
+        <property name="dataSource" ref="postgresDataSource"/>
+        <!--Поставщик данных - hibernate-->
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+
+        <!--поиск сущностей в этом пакете-->
+        <property name="packagesToScan" value="ru.alcereo.pairlearning.DAO.Entities"/>
+
+        <property name="persistenceUnitName" value="JPA_Hibernate"/>
+        <property name="jpaProperties">
+            <props>
+                <prop key="javax.persistence.validation.mode">none</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+
+    </bean>
+
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.jpa.JpaTransactionManager"
+          p:entityManagerFactory-ref="myEntityManagerFactory"
+    />
+    <tx:annotation-driven/>
+    <!--        Services        -->
+
+    <bean id="entityMapper"
+          class="ru.alcereo.pairlearning.Service.EntityMapper"
+          />
+
+    <bean id="sessionService"
+          class="ru.alcereo.pairlearning.Service.SessionServiceImpl"
+          p:users-ref="usersDAOSpringData"
+          p:mapperFacade-ref="entityMapper"
+    />
+
+    <bean id="topicService"
+          class="ru.alcereo.pairlearning.Service.TopicService.TopicServiceImpl"
+          p:topicRows-ref="topicRowsDAOSpringData"
+          p:usersDAO-ref="usersDAOSpringData"
+          p:entityMapper-ref="entityMapper"
+    />
+
+    <bean id="registrationService"
+          class="ru.alcereo.pairlearning.Service.RegistrationServiceIml"
+          p:users-ref="usersDAOSpringData"
+          p:entityMapper-ref="entityMapper"
+    />
+
+    <bean id="sendingService"
+          class="ru.alcereo.pairlearning.Service.SendingServiceMock"
+    />
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="sessionService"/>
+        <property name="service" ref="sessionService"/>
+        <property name="serviceInterface" value="ru.alcereo.pairlearning.Service.SessionService"/>
+        <property name="registryPort" value="1199"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="topicService"/>
+        <property name="service" ref="topicService"/>
+        <property name="serviceInterface" value="ru.alcereo.pairlearning.Service.TopicService.TopicService"/>
+        <property name="registryPort" value="1199"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="registrationService"/>
+        <property name="service" ref="registrationService"/>
+        <property name="serviceInterface" value="ru.alcereo.pairlearning.Service.RegistrationService"/>
+        <property name="registryPort" value="1199"/>
+    </bean>
+
+</beans>
