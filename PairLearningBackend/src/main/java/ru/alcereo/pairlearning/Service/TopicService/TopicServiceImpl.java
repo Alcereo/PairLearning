@@ -18,6 +18,7 @@ import ru.alcereo.pairlearning.Service.models.User;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,13 @@ public class TopicServiceImpl implements TopicService {
     private UsersDAO users;
     private TopicRowsDAO topicRows;
     private EntityMapper entityMapper;
+
+    private List<TopicRowChanger> topicsList;
+
+    @Autowired
+    public void setTopicsList(List<TopicRowChanger> topicsList) {
+        this.topicsList = topicsList;
+    }
 
     @Autowired
     public void setEntityMapper(EntityMapper entityMapper){
@@ -78,20 +86,23 @@ public class TopicServiceImpl implements TopicService {
                 .wrapException(TopicServiceImpl::topicServiceExceptionWrapper);
     }
 
-
     /**
      * Изменение выбранного признака для темы
-     * @param changer
-     *  Объект изменяющий предикат
-     * @param userFront
-     *  Пользователь
+     * @param data_n
+     *  Данные с информацией об изменениях
      */
-    public Option<Boolean, TopicServiceException> setTopicRow(TopicRowChanger changer, UserFront userFront){
-        return users.findByUidOpt(userFront.getUid())
-                .map(entityMapper::wrapToUser)
-                .flatMap(userModel ->
-                        changer.setPredicate(topicRows, userModel))
-                .wrapException(TopicServiceImpl::topicServiceExceptionWrapper);
+    @Override
+    public Option<Boolean, TopicServiceException> setTopicRow(TopicChangeData data_n){
+        return Option.asNotNullWithExceptionOption(data_n)
+        .flatMap(data ->
+           Option.asOption(() ->
+                  topicsList
+                  .stream()
+                  .filter(topicRowChanger -> topicRowChanger.canSubmitThisData(data))
+                  .findFirst()
+                  .get()
+           ).flatMap(topicRowChanger -> topicRowChanger.setPredicate(data))
+        ).wrapException(TopicServiceImpl::topicServiceExceptionWrapper);
     }
 
     /**

@@ -8,10 +8,8 @@ import ru.alcereo.pairlearning.Service.models.User;
 
 public interface TopicRowChanger {
 
-    Option<Boolean, TopicServiceException> setPredicate(TopicRowsDAO topicRows, User user);
+    Option<Boolean, TopicServiceException> setPredicate(TopicChangeData data);
 
-    TopicRowChanger setPredicateValue(boolean predicate);
-
-    TopicRowChanger setTopicId(Long id);
+    Boolean canSubmitThisData(TopicChangeData data);
 
 }

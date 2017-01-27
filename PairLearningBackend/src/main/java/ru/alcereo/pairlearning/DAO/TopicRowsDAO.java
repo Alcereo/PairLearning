@@ -5,7 +5,7 @@ import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
-import ru.alcereo.pairlearning.Service.models.User;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.util.List;
 import java.util.Set;
@@ -28,7 +28,7 @@ public interface TopicRowsDAO {
      * @throws TopicRowDataError
      *  Ошибка доступа к данным
      */
-    Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate);
+    Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, UserFront user, boolean predicate);
 
     /**
      * Установка признака `TEACH` для пользователя
@@ -41,7 +41,7 @@ public interface TopicRowsDAO {
      * @throws TopicRowDataError
      *  Ошибка доступа к данным
      */
-    Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User user, boolean predicate);
+    Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, UserFront user, boolean predicate);
 
     /**
      * Получение данных связанных с пользователем о всех темах для изучения

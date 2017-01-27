@@ -10,9 +10,8 @@ import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
 import ru.alcereo.pairlearning.Service.models.Topic;
-import ru.alcereo.pairlearning.Service.models.User;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,7 +36,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
 
 
     @Override
-    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate) {
+    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, UserFront user, boolean predicate) {
 
         Option<Boolean,TopicRowDataError> result = Option.asOption(true);
 
@@ -90,7 +89,7 @@ public class TopicRowsDAOPG implements TopicRowsDAO {
     }
 
     @Override
-    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User userModel, boolean predicate){
+    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, UserFront userModel, boolean predicate){
 
         Option<Boolean,TopicRowDataError> result = Option.asOption(true);
 

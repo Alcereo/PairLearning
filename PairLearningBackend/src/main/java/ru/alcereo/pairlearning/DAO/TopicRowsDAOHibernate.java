@@ -11,7 +11,7 @@ import ru.alcereo.exoption.Option;
 import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
-import ru.alcereo.pairlearning.Service.models.User;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class TopicRowsDAOHibernate implements TopicRowsDAO {
     }
 
     @Override
-    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate) {
+    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, UserFront user, boolean predicate) {
         return sessionedAndOptionedAction(session -> {
                     session.beginTransaction();
                     boolean result = session
@@ -55,7 +55,7 @@ public class TopicRowsDAOHibernate implements TopicRowsDAO {
     }
 
     @Override
-    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User user, boolean predicate) {
+    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, UserFront user, boolean predicate) {
         return sessionedAndOptionedAction(session -> {
                     session.beginTransaction();
                     boolean result = session

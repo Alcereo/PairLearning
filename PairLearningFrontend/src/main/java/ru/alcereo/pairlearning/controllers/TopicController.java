@@ -14,12 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.alcereo.exoption.Option;
 //import ru.alcereo.pairlearning.Service.TopicService.TopicLearnPredicateChanger;
 //import ru.alcereo.pairlearning.Service.TopicService.TopicRowChanger;
+//import ru.alcereo.pairlearning.Service.TopicService.TopicRowChanger;
+import ru.alcereo.pairlearning.Service.TopicService.TopicChangeData;
+import ru.alcereo.pairlearning.Service.TopicService.TopicPredicate;
 import ru.alcereo.pairlearning.Service.TopicService.TopicService;
 //import ru.alcereo.pairlearning.Service.TopicService.TopicTeachPredicateChanger;
 import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class TopicController {
@@ -54,44 +60,34 @@ public class TopicController {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Content-Type", "text/html; charset=utf-16");
 
-//        TopicRowChanger changer;
-//
-//        switch (value) {
-//            case "learn":
-//                // new Factory - LEARN
-//                changer = new TopicLearnPredicateChanger();
-//
-//                break;
-//            case "teach":
-//                //new Factory - TEACH
-//                changer = new TopicTeachPredicateChanger();
-//                break;
-//
-//            default:
-//                return new ResponseEntity<>("Ошибка запроса. Предикат: "+value+" не наиден.",
-//                        requestHeaders,
-//                        HttpStatus.BAD_REQUEST);
-//        }
-//
-//        changer.setPredicateValue(predicate)
-//                .setTopicId(id);
-//
-//
-//        Option<Boolean,?> setResult = topicService.setTopicRow(changer, user);
+        TopicChangeData data = Arrays.stream(TopicPredicate.values())
+                .filter(topicPredicate -> topicPredicate.equalToName(value))
+                .findFirst()
+                .map(topicPredicate ->
+                        new TopicChangeData(
+                                predicate,
+                                id,
+                                topicPredicate,
+                                user
+                        )
+                ).orElse(null);
 
-//        if (!setResult.isException()) {
-//            result = new ResponseEntity(HttpStatus.OK);
-//        }else {
-//            return new ResponseEntity<>("Ошибка сервиса тем."+setResult.getExceptionMessage(),
-//                    requestHeaders,
-//                    HttpStatus.BAD_REQUEST);
-//        }
+        if (data==null){
+            log.error("Неизвестный предикат: {}", value);
+            result = new ResponseEntity<>("Ошибка запроса. Предикат: "+value+" не наиден.",
+                        requestHeaders,
+                        HttpStatus.BAD_REQUEST);
+        }
 
-        //Временно! ++
-        result = new ResponseEntity<>("Ошибка сервиса тем.",
-                requestHeaders,
-                HttpStatus.BAD_REQUEST);
-        // --
+        Option<Boolean,?> setResult = topicService.setTopicRow(data);
+
+        if (!setResult.isException()) {
+            result = new ResponseEntity(HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("Ошибка сервиса тем."+setResult.getExceptionMessage(),
+                    requestHeaders,
+                    HttpStatus.BAD_REQUEST);
+        }
 
         return result;
     }

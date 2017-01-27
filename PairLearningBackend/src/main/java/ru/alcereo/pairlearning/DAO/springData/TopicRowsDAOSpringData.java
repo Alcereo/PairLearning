@@ -3,7 +3,6 @@ package ru.alcereo.pairlearning.DAO.springData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.alcereo.exoption.Func;
@@ -12,7 +11,7 @@ import ru.alcereo.pairlearning.DAO.Entities.TopicEntity;
 import ru.alcereo.pairlearning.DAO.Entities.TopicRowEntity;
 import ru.alcereo.pairlearning.DAO.TopicRowsDAO;
 import ru.alcereo.pairlearning.DAO.exceptions.TopicRowDataError;
-import ru.alcereo.pairlearning.Service.models.User;
+import ru.alcereo.pairlearning.Service.models.UserFront;
 
 import java.util.List;
 import java.util.Set;
@@ -37,14 +36,14 @@ public class TopicRowsDAOSpringData implements TopicRowsDAO{
 //     * -------------------------------------------------------- *
 
     @Override
-    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, User user, boolean predicate) {
+    public Option<Boolean, TopicRowDataError> setLearnPredicate(Long id, UserFront user, boolean predicate) {
         return optionedRepositoryAction(repository ->
                 repository.setLearnPredicateByUserUID(predicate, user.getUid(), id)>0
         );
     }
 
     @Override
-    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, User user, boolean predicate) {
+    public Option<Boolean, TopicRowDataError> setTeachPredicate(Long id, UserFront user, boolean predicate) {
         return optionedRepositoryAction(repository ->
                 repository.setTeachPredicateByUserUID(predicate, user.getUid(), id)>0
         );
