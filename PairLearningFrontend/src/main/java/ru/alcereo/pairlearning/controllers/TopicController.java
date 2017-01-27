@@ -45,6 +45,10 @@ public class TopicController {
         this.request = request;
     }
 
+//     * -------------------------------------------------------- *
+//     *                     ОСНОВНЫЕ ФУНКЦИИ                     *
+//     * -------------------------------------------------------- *
+
     @RequestMapping(value = "/topic/api/concrete", method = RequestMethod.POST)
     public ResponseEntity setTopicPredicate(
             @RequestParam(value = "value") String value,
@@ -77,16 +81,17 @@ public class TopicController {
             result = new ResponseEntity<>("Ошибка запроса. Предикат: "+value+" не наиден.",
                         requestHeaders,
                         HttpStatus.BAD_REQUEST);
-        }
-
-        Option<Boolean,?> setResult = topicService.setTopicRow(data);
-
-        if (!setResult.isException()) {
-            result = new ResponseEntity(HttpStatus.OK);
         }else {
-            return new ResponseEntity<>("Ошибка сервиса тем."+setResult.getExceptionMessage(),
-                    requestHeaders,
-                    HttpStatus.BAD_REQUEST);
+
+            Option<Boolean, ?> setResult = topicService.setTopicRow(data);
+
+            if (!setResult.isException()) {
+                result = new ResponseEntity(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Ошибка сервиса тем." + setResult.getExceptionMessage(),
+                        requestHeaders,
+                        HttpStatus.BAD_REQUEST);
+            }
         }
 
         return result;

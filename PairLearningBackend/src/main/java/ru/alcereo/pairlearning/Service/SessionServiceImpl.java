@@ -41,6 +41,10 @@ public class SessionServiceImpl implements SessionService {
         this.mapperFacade = mapperFacade;
     }
 
+//     * -------------------------------------------------------- *
+//     *                     ОСНОВНЫЕ ФУНКЦИИ                     *
+//     * -------------------------------------------------------- *
+
     /**
      * Попытка авторизации пользователя
      * @param authData_n
@@ -65,6 +69,10 @@ public class SessionServiceImpl implements SessionService {
                     )
                     .wrapException(SessionServiceImpl::sessionServiceExceptionWrapper));
     }
+
+//     * -------------------------------------------------------- *
+//     *                       СЛУЖЕБНЫЕ                          *
+//     * -------------------------------------------------------- *
 
     private static SessionServiceException sessionServiceExceptionWrapper(Throwable cause) {
         log.warn(cause.getLocalizedMessage());

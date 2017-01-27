@@ -21,6 +21,10 @@ public class TopicTeachPredicateChanger implements TopicRowChanger {
         this.topicRows = topicRows;
     }
 
+//     * -------------------------------------------------------- *
+//     *                     ОСНОВНЫЕ ФУНКЦИИ                     *
+//     * -------------------------------------------------------- *
+
     @Override
     public Option<Boolean, TopicServiceException> setPredicate(TopicChangeData data_n) {
 
@@ -31,6 +35,15 @@ public class TopicTeachPredicateChanger implements TopicRowChanger {
         .wrapException(this::exceptionWrapper);
     }
 
+    @Override
+    public Boolean canSubmitThisData(TopicChangeData data) {
+        return TopicPredicate.TEACH.equals(data.getPredicate());
+    }
+
+//     * -------------------------------------------------------- *
+//     *                       СЛУЖЕБНЫЕ                          *
+//     * -------------------------------------------------------- *
+
     TopicServiceException exceptionWrapper(Throwable cause){
         log.error(cause.getLocalizedMessage());
 
@@ -40,8 +53,4 @@ public class TopicTeachPredicateChanger implements TopicRowChanger {
         return new TopicServiceException("Ошибка сервиса тем.", cause);
     }
 
-    @Override
-    public Boolean canSubmitThisData(TopicChangeData data) {
-        return TopicPredicate.TEACH.equals(data.getPredicate());
-    }
 }

@@ -41,6 +41,10 @@ public class RegistrationServiceIml implements RegistrationService {
         this.entityMapper = entityMapper;
     }
 
+//     * -------------------------------------------------------- *
+//     *                     ОСНОВНЫЕ ФУНКЦИИ                     *
+//     * -------------------------------------------------------- *
+
     /**
      * Регистрация нового пользователя
      * @param regDataNullable
@@ -80,6 +84,10 @@ public class RegistrationServiceIml implements RegistrationService {
         )
         .wrapException(RegistrationServiceIml::registrationExceptionWrapper);
     }
+
+//     * -------------------------------------------------------- *
+//     *                       СЛУЖЕБНЫЕ                          *
+//     * -------------------------------------------------------- *
 
     private static RegistrationException registrationExceptionWrapper(Throwable cause) {
         log.warn(cause.getMessage());

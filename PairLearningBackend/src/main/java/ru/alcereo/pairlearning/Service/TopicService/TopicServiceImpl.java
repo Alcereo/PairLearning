@@ -57,6 +57,10 @@ public class TopicServiceImpl implements TopicService {
         this.topicRows = topicRows;
     }
 
+//     * -------------------------------------------------------- *
+//     *                     ОСНОВНЫЕ ФУНКЦИИ                     *
+//     * -------------------------------------------------------- *
+
     /**
      * Получение всех тем с признаками для данного пользователя
      * @param user_n
@@ -153,6 +157,10 @@ public class TopicServiceImpl implements TopicService {
         ))
         .wrapException(TopicServiceImpl::topicServiceExceptionWrapper);
     }
+
+//     * -------------------------------------------------------- *
+//     *                       СЛУЖЕБНЫЕ                          *
+//     * -------------------------------------------------------- *
 
     private static TopicServiceException topicServiceExceptionWrapper(Throwable cause) {
         log.warn(cause.getMessage());

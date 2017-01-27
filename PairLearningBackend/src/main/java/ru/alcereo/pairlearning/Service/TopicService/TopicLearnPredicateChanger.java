@@ -23,6 +23,10 @@ public class TopicLearnPredicateChanger implements TopicRowChanger{
         this.topicRows = topicRows;
     }
 
+//     * -------------------------------------------------------- *
+//     *                     ОСНОВНЫЕ ФУНКЦИИ                     *
+//     * -------------------------------------------------------- *
+
     @Override
     public Option<Boolean, TopicServiceException> setPredicate(TopicChangeData data_n) {
 
@@ -33,6 +37,15 @@ public class TopicLearnPredicateChanger implements TopicRowChanger{
         .wrapException(this::exceptionWrapper);
     }
 
+    @Override
+    public Boolean canSubmitThisData(TopicChangeData data) {
+        return TopicPredicate.LEARN.equals(data.getPredicate());
+    }
+
+//     * -------------------------------------------------------- *
+//     *                       СЛУЖЕБНЫЕ                          *
+//     * -------------------------------------------------------- *
+
     TopicServiceException exceptionWrapper(Throwable cause){
         log.error(cause.getLocalizedMessage());
 
@@ -40,11 +53,6 @@ public class TopicLearnPredicateChanger implements TopicRowChanger{
             return new TopicServiceException("Ошибка сервиса тем. Ошибка обращения к данным.", cause);
 
         return new TopicServiceException("Ошибка сервиса тем.", cause);
-    }
-
-    @Override
-    public Boolean canSubmitThisData(TopicChangeData data) {
-        return TopicPredicate.LEARN.equals(data.getPredicate());
     }
 
 }
